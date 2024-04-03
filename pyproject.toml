@@ -13,6 +13,7 @@ sentry-sdk = "^1.44.1"
 pydantic-settings = "^2.2.1"
 sqlmodel = "^0.0.16"
 tenacity = "^8.2.3"
+pydantic-extra-types = "^2.6.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
