@@ -1,0 +1,104 @@
+{
+    "email": "paul.clientman@email.com",
+    "name": "Paul Clientman",
+    "pronouns": "he-him",
+    "over_18": true,
+    "preferred_contact": "email",
+    "phone_number": "123-456-7890"
+}
+
+{
+    "email": "emily.clientkid@email.com",
+    "name": "Emily Clientkid",
+    "pronouns": "she-her",
+    "over_18": false,
+    "preferred_contact": "email",
+    "phone_number": "123-456-7890"
+}
+
+{
+    "email": "nicki.clientkid@email.com",
+    "name": "Nicki Clientkid",
+    "pronouns": "she-her",
+    "over_18": false,
+    "preferred_contact": "phone",
+    "phone_number": "123-456-7890"
+}
+
+{
+    "email": "kim.clientkid@email.com",
+    "start": "2021-06-11T00:00:00",
+    "end": "2021-06-11T00:00:00"
+}
+
+{
+    "email": "vibe.clientkid@email.com",
+    "start": "2024-04-08T02:00",
+    "end": "2024-04-08T04:00"
+}
+
+{
+    "email": "jeff.smandersond@email.com",
+    "name": "Jeff Smanderson",
+    "pronouns": "he-him",
+    "over_18": true,
+    "preferred_contact": "email",
+    "phone_number": "999-999-9999",
+    "start": "2024-04-06T02:00",
+    "end": "2024-04-06T04:00"
+}
+
+{
+    "user_id": "30b73336-29c0-482f-8e88-4cf9b115cdff",
+    "client_email": "bigbadbob@email.com",
+    "name": "Bob McAffee",
+    "pronouns": "he-him",
+    "over_18": true,
+    "preferred_contact": "phone",
+    "phone_number": "999-999-9999",
+    "start": "2024-04-06T02:00",
+    "end": "2024-04-06T04:00"
+}
+
+{
+    "user_id": "30b73336-29c0-482f-8e88-4cf9b115cdff",
+    "name": "Tattoo Consult",
+    "active": false,
+    "duration": 0.5,
+    "max_per_day": 2,
+    "start": "2024-04-01",
+    "end": "2024-07-31",
+    "schedule": {
+        "0": {
+            "open": "09:00",
+            "close": "16:00"
+        }
+}
+
+{
+    "user_id": "30b73336-29c0-482f-8e88-4cf9b115cdff",
+    "name": "Tattoo Consult",
+    "active": false,
+    "duration": 30,
+    "max_per_day": 2,
+    "start": "2024-04-01",
+    "end": "2024-07-28",
+    "schedule": {
+        "0": {
+            "open": "09:00",
+            "close": "16:00"
+        },
+        "2": {
+            "open": "09:00",
+            "close": "16:00"
+        },
+        "4": {
+            "open": "09:00",
+            "close": "16:00"
+        },
+        "5": {
+            "open": "11:00",
+            "close": "14:00"
+        }
+    }
+}

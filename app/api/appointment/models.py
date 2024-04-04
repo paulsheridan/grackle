@@ -1,10 +1,11 @@
 import uuid as uuid_pkg
 
 from datetime import datetime
+
 from pydantic import EmailStr, field_serializer
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.api.user import User
+from app.api.user.models import User
 
 
 class Appointment(SQLModel, table=True):

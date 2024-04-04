@@ -1,10 +1,13 @@
 import uuid as uuid_pkg
 
 from datetime import datetime
+
 from pydantic import EmailStr, field_serializer
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.api.appointment import Appointment
+from app.api.appointment.models import Appointment
+from app.api.client.models import Client
+from app.api.service.models import Service
 
 
 class User(SQLModel, table=True):
@@ -14,7 +17,10 @@ class User(SQLModel, table=True):
     shop_name: str
     is_active: bool
     created_at: datetime
+
     appointments: list[Appointment] = Relationship(back_populates="artist")
+    clients: list[Client] = Relationship(back_populates="artist")
+    services: list[Service] = Relationship(back_populates="artist")
 
     @field_serializer("id", check_fields=False)
     def serialize_uuid(self, id: uuid_pkg.UUID) -> str:
