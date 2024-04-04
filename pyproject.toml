@@ -14,6 +14,9 @@ pydantic-settings = "^2.2.1"
 sqlmodel = "^0.0.16"
 tenacity = "^8.2.3"
 pydantic-extra-types = "^2.6.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+alembic = "^1.13.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.1.1"
