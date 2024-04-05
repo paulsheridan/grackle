@@ -22,4 +22,4 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> UsersRes
     statement = select(User).offset(skip).limit(limit)
     users = session.exec(statement).all()
 
-    return UsersResponse(data=users, count=count)
+    return UsersResponse(data=users, count=count)  # type: ignore

@@ -152,3 +152,8 @@ class UsersResponse(SQLModel):
 #     # @field_serializer("open", "close", check_fields=False)
 #     # def serialize_time(self, time: time):
 #     #     return time.isoformat()
+
+
+class Token(SQLModel):
+    access_token: str
+    token_type: str = "bearer"
