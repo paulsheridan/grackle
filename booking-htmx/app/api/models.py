@@ -1,7 +1,11 @@
 import uuid as uuid_pkg
 
 from datetime import datetime, time, timezone
-from typing import List
+from fastapi_users_db_sqlmodel import (
+    SQLModelBaseOAuthAccount,
+    SQLModelBaseUserDB,
+    SQLModelUserDatabaseAsync,
+)
 
 from pydantic import field_serializer
 from sqlmodel import Field, Relationship, SQLModel

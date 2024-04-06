@@ -10,7 +10,7 @@ from app.api.models import (
 router = APIRouter()
 
 
-@router.get("/", response_model=UsersResponse)
+@router.get("/", response_model=UsersResponse, tags=["users"])
 def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> UsersResponse:
     """
     Retrieve users.
