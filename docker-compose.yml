@@ -1,7 +1,9 @@
 services:
   db:
     image: postgres:16
-    restart: always
+    restart: "no"
+    ports:
+      - "5432:5432"
     volumes:
       - app-db-data:/var/lib/postgresql/data/pgdata
     env_file:
@@ -14,9 +16,12 @@ services:
 
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
-    restart: always
-    networks:
-      - default
+    restart: "no"
+    ports:
+      - "8888:80"
+    volumes:
+      - ./booking-htmx/:/app
+    # command: sleep infinity  # Infinite loop to keep container alive doing nothing
     depends_on:
       - db
     env_file:
@@ -41,12 +46,12 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - SENTRY_DSN=${SENTRY_DSN}
-
     build:
       context: ./booking-htmx
       args:
-        INSTALL_DEV: ${INSTALL_DEV-false}
+        INSTALL_DEV: ${INSTALL_DEV-true}
     platform: linux/amd64 # Patch for M1 Mac
+    command: /start-reload.sh
 
 volumes:
   app-db-data:

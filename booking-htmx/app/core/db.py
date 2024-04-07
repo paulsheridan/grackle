@@ -1,11 +1,15 @@
-from sqlmodel import Session, create_engine, select
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine, select
 
 from app.core.config import settings
 from app.api.database import create_user
 from app.api.models import UserCreate, User
 
-engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
 
+engine = create_engine(
+    str(settings.SQLALCHEMY_DATABASE_URI), connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # make sure all SQLModel models are imported (app.models) before initializing DB
 # otherwise, SQLModel might fail to initialize relationships properly
@@ -22,7 +26,7 @@ def init_db(session: Session) -> None:
     # This works because the models are already imported and registered from app.models
     # SQLModel.metadata.create_all(engine)
 
-    user = session.exec(
+    user = session.execute(
         select(User).where(User.email == settings.FIRST_SUPERUSER)
     ).first()
     if not user:
