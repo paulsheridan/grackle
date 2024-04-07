@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
 
 from app.core.config import settings
@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def init() -> None:
-    engine = create_engine(
-        str(settings.SQLALCHEMY_DATABASE_URI), connect_args={"check_same_thread": False}
-    )
+    engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     with Session(engine) as session:
         init_db(session)

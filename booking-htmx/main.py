@@ -6,6 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.api.main import api_router
+from app.core.db import SessionLocal, engine
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:

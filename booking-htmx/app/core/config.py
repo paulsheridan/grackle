@@ -54,23 +54,11 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str = ""
 
-    # @computed_field  # type: ignore[misc]
-    # @property
-    # def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
-    #     return MultiHostUrl.build(
-    #         scheme="postgresql+psychopg",
-    #         username=self.POSTGRES_USER,
-    #         password=self.POSTGRES_PASSWORD,
-    #         host=self.POSTGRES_SERVER,
-    #         port=self.POSTGRES_PORT,
-    #         path=self.POSTGRES_DB,
-    #     )
-
     @computed_field
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
         return MultiHostUrl.build(
-            scheme="postgresql+psychopg",
+            scheme="postgresql+psycopg",
             username=self.POSTGRES_USER,
             password=self.POSTGRES_PASSWORD,
             host=self.POSTGRES_SERVER,
@@ -107,6 +95,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
     FIRST_SUPERUSER_USERNAME: str
+    FIRST_SUPERUSER_NAME: str
     FIRST_SUPERUSER_SHOP: str
     USERS_OPEN_REGISTRATION: bool = False
 

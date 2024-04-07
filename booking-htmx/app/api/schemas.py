@@ -1,20 +1,25 @@
 import uuid as uuid_pkg
 
+from typing import Optional
 from datetime import datetime, time, timezone
 
 from pydantic import BaseModel, EmailStr, Field, field_serializer
 
 
 class UserBase(BaseModel):
-    id: uuid_pkg.UUID
     email: EmailStr
     username: str
-    hashed_password: str
-    full_name: str | None = None
+    full_name: Optional[str]
     shop_name: str
-    created_at: datetime
-    is_active: bool = True
-    is_superuser: bool = False
+    is_active: Optional[bool] = Field(default=True)
+    is_superuser: Optional[bool] = Field(default=False)
+
+    class Config:
+        from_attributes = True
+
+
+class UserCreate(UserBase):
+    password: str
 
 
 class UserRegister(BaseModel):
@@ -22,10 +27,6 @@ class UserRegister(BaseModel):
     password: str
     full_name: str | None = None
     shop_name: str
-
-
-class UserCreate(UserBase):
-    password: str
 
 
 class UserResponse(UserBase):
@@ -134,8 +135,3 @@ class UsersResponse(BaseModel):
 #     # @field_serializer("open", "close", check_fields=False)
 #     # def serialize_time(self, time: time):
 #     #     return time.isoformat()
-
-
-# class Token(SQLModel):
-#     access_token: str
-#     token_type: str = "bearer"

@@ -2,18 +2,21 @@ from app.core.security import get_password_hash
 
 from sqlalchemy.orm import Session
 
-from models import User
-from schemas import UserCreate
+from app.api.models import User
+from app.api.schemas import UserCreate
 from app.core.security import verify_password
 
 
-def create_user(db: Session, user: UserCreate) -> User:
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = User(email=user.email, hashed_password=fake_hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+def create_user(*, session: Session, user_create: UserCreate) -> User:
+    print(user_create)
+    db_obj = User(
+        **user_create.model_dump(exclude={"password"}),
+        hashed_password=get_password_hash(user_create.password),
+    )
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+    return db_obj
 
 
 # def get_user_by_email(*, session: Session, email: str) -> User | None:
