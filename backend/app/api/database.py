@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List, Tuple
 
 from app.core.security import get_password_hash
 
@@ -10,7 +10,7 @@ from app.api.schemas import UserCreate, UserUpdate
 from app.core.security import verify_password
 
 
-async def create_user(*, session: Session, user_create: UserCreate) -> User:
+def create_user(*, session: Session, user_create: UserCreate) -> User:
     print(user_create)
     db_obj = User(
         **user_create.model_dump(exclude={"password"}),
@@ -41,16 +41,6 @@ def get_user_by_email(*, session: Session, email: str) -> User | None:
     statement = select(User).where(User.email == email)
     session_user = session.execute(statement).first()
     return session_user
-
-
-def list_users(*, session: Session, skip: int = 0, limit: int = 100):
-    """
-    Retrieve users.
-    """
-    count = session.query(User.id).count()
-    users = session.query(User).offset(skip).limit(limit).all()
-
-    return (count, users)  # type: ignore # types: ignore
 
 
 def authenticate(*, session: Session, email: str, password: str) -> User | None:

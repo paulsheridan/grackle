@@ -86,7 +86,7 @@ class UserBase(BaseModel):
     appointments: List[Appointment] = []
     clients: List[Client] = []
     services: List[Service] = []
-    availability: List[Availability] = []
+    availabilities: List[Availability] = []
 
     model_config = ConfigDict(
         from_attributes=True,
