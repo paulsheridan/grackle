@@ -3,7 +3,7 @@ import uuid as uuid_pkg
 from typing import Optional
 from datetime import datetime, time, timezone
 
-from pydantic import BaseModel, EmailStr, Field, field_serializer
+from pydantic import BaseModel, EmailStr, Field, field_serializer, ConfigDict
 
 
 class UserBase(BaseModel):
@@ -14,8 +14,9 @@ class UserBase(BaseModel):
     is_active: Optional[bool] = Field(default=True)
     is_superuser: Optional[bool] = Field(default=False)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
 
 class UserCreate(UserBase):
@@ -29,16 +30,16 @@ class UserRegister(BaseModel):
     shop_name: str
 
 
-class UserResponse(UserBase):
+class UserOut(UserBase):
     id: uuid_pkg.UUID
 
 
-class UsersResponse(BaseModel):
-    data: list[UserResponse]
+class UsersOut(BaseModel):
+    data: list[UserOut]
     count: int
 
 
-# class Appointment(SQLModel, table=True):
+# class Appointment(BaseModel, table=True):
 #     id: uuid_pkg.UUID = Field(default=None, primary_key=True)
 #     client_email: str
 #     start: datetime
@@ -61,7 +62,7 @@ class UsersResponse(BaseModel):
 #     #     return str(id)
 
 
-# class Availability(SQLModel):
+# class Availability(BaseModel):
 #     id: uuid_pkg.UUID = Field(default=None, primary_key=True)
 #     date: datetime
 #     windows: list["Window"] = Relationship(back_populates="owner")
@@ -71,7 +72,7 @@ class UsersResponse(BaseModel):
 #     artist: User | None = Relationship(back_populates="appointments")
 
 
-# class Window(SQLModel):
+# class Window(BaseModel):
 #     id: uuid_pkg.UUID = Field(default=None, primary_key=True)
 #     start: datetime
 #     end: datetime
@@ -81,7 +82,7 @@ class UsersResponse(BaseModel):
 #     availability: Availability | None = Relationship(back_populates="windows")
 
 
-# class Client(SQLModel, table=True):
+# class Client(BaseModel, table=True):
 #     id: uuid_pkg.UUID = Field(default=None, primary_key=True)
 #     email: str
 #     first_name: str
@@ -102,7 +103,7 @@ class UsersResponse(BaseModel):
 #     #     return str(id)
 
 
-# class Service(SQLModel, table=True):
+# class Service(BaseModel, table=True):
 #     id: uuid_pkg.UUID = Field(default=None, primary_key=True)
 #     name: str
 #     active: bool
@@ -122,7 +123,7 @@ class UsersResponse(BaseModel):
 #     #     return datetime.isoformat("T", "minutes")
 
 
-# class DailySchedule(SQLModel):
+# class DailySchedule(BaseModel):
 #     weekday: int
 #     open: time
 #     close: time

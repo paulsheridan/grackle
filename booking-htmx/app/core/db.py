@@ -7,10 +7,6 @@ from app.api.models import User
 from app.api.schemas import UserCreate
 
 
-engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
 def init_db(session: Session) -> None:
 
     user = session.execute(
