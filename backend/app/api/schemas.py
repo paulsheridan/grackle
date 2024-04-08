@@ -35,7 +35,7 @@ class Window(BaseModel):
     availability_id: int
 
 
-class Client(BaseModel, table=True):
+class Client(BaseModel):
     id: uuid.UUID
     email: str
     first_name: str
@@ -48,7 +48,7 @@ class Client(BaseModel, table=True):
     artist_id: uuid.UUID
 
 
-class Service(BaseModel, table=True):
+class Service(BaseModel):
     id: uuid.UUID
     name: str
     active: bool

@@ -30,16 +30,12 @@ class User(Base):
     )
 
     appointments: Mapped[List["Appointment"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+        cascade="all, delete-orphan"
     )
-    clients: Mapped[List["Client"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
-    services: Mapped[List["Service"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
-    availability: Mapped[List["Availability"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+    clients: Mapped[List["Client"]] = relationship(cascade="all, delete-orphan")
+    services: Mapped[List["Service"]] = relationship(cascade="all, delete-orphan")
+    availabilities: Mapped[List["Availability"]] = relationship(
+        cascade="all, delete-orphan"
     )
 
 
@@ -59,14 +55,10 @@ class Appointment(Base):
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
+    user: Mapped["User"] = relationship(back_populates="appointments")
 
     client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("client.id"))
-    client: Mapped["Client"] = relationship(
-        back_populates="client", cascade="all, delete-orphan"
-    )
+    client: Mapped["Client"] = relationship(back_populates="appointments")
 
 
 class Availability(Base):
@@ -77,14 +69,10 @@ class Availability(Base):
     )
     date: Mapped[datetime]
 
-    windows: Mapped[List["Window"]] = relationship(
-        back_populates="availability", cascade="all, delete-orphan"
-    )
+    windows: Mapped[List["Window"]] = relationship(cascade="all, delete-orphan")
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
+    user: Mapped["User"] = relationship(back_populates="availabilities")
 
 
 class Window(Base):
@@ -95,9 +83,7 @@ class Window(Base):
     end: Mapped[datetime]
 
     availability_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("availability.id"))
-    availability: Mapped["Availability"] = relationship(
-        back_populates="windows", cascade="all, delete-orphan"
-    )
+    availability: Mapped["Availability"] = relationship(back_populates="windows")
 
 
 class Client(Base):
@@ -119,8 +105,10 @@ class Client(Base):
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+    user: Mapped["User"] = relationship(back_populates="clients")
+
+    appointments: Mapped[List["Appointment"]] = relationship(
+        cascade="all, delete-orphan"
     )
 
 
@@ -142,9 +130,7 @@ class Service(Base):
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
-    user: Mapped["User"] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
-    )
+    user: Mapped["User"] = relationship(back_populates="services")
 
 
 class DailySchedule(Base):
@@ -156,6 +142,4 @@ class DailySchedule(Base):
     close: Mapped[time]
 
     service_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("service.id"))
-    service: Mapped["Service"] = relationship(
-        back_populates="daily_schedules", cascade="all, delete-orphan"
-    )
+    service: Mapped["Service"] = relationship(back_populates="daily_schedules")
