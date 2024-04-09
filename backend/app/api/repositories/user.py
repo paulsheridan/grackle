@@ -1,16 +1,25 @@
+from datetime import datetime
 from typing import Any, List, Tuple
 
-from app.core.security import get_password_hash
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from app.api.models import User
 from app.api.schemas import UserCreate, UserUpdate
-from app.core.security import verify_password
+from app.core.security import verify_password, get_password_hash
 
 
-def create_user(*, session: Session, user_create: UserCreate) -> User:
+def authenticate(session: Session, email: str, password: str) -> User | None:
+    db_user = get_user_by_email(session=session, email=email)
+    if not db_user:
+        return None
+    if not verify_password(password, db_user.hashed_password):
+        return None
+    return db_user
+
+
+def create(session: Session, user_create: UserCreate) -> User:
     db_obj = User(
         **user_create.model_dump(exclude={"password"}),
         hashed_password=get_password_hash(user_create.password),
@@ -21,99 +30,21 @@ def create_user(*, session: Session, user_create: UserCreate) -> User:
     return db_obj
 
 
-def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
+def update(session: Session, user_id: int, user_in: UserUpdate):
     user_data = user_in.model_dump(exclude_unset=True)
-    extra_data = {}
-    if "password" in user_data:
-        password = user_data["password"]
-        hashed_password = get_password_hash(password)
-        extra_data["hashed_password"] = hashed_password
-    for key, value in user_data.items():
-        setattr(db_user, key, value)
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
-    return db_user
+    password = user_data.pop("password", None)
+    if password:
+        user_data["hashed_password"] = get_password_hash(password)
+    stmt = (
+        update(User)  # type: ignore
+        .where(User.id == user_id)
+        .values(user_data)
+        .returning(User)
+    )
+    return session.execute(stmt)
 
 
-def get_user_by_email(*, session: Session, email: str) -> User | None:
-    statement = select(User).where(User.email == email)
-    session_user = session.execute(statement).first()
-    return session_user
-
-
-def authenticate(*, session: Session, email: str, password: str) -> User | None:
-    db_user = get_user_by_email(session=session, email=email)
-    if not db_user:
-        return None
-    if not verify_password(password, db_user.hashed_password):
-        return None
-    return db_user
-
-
-# def get_user(user_id: str) -> User:
-#     table = get_dynamodb_table()
-
-#     user_id_key: str = f"USER#{user_id}"
-#     response: dict = table.query(
-#         KeyConditionExpression=Key("PK").eq(user_id_key) & Key("SK").eq(user_id_key)
-#     )
-#     return User(**response["Items"][0])
-
-
-# def create_or_update_user(user: User) -> User:
-#     table = get_dynamodb_table()
-
-#     table.put_item(Item=user.to_item())
-#     return user
-
-
-# def create_or_update_appointment(appointment: Appointment) -> Appointment:
-#     table = get_dynamodb_table()
-#     # TODO: Make sure there's a legit user attached. I created an appointment with a deleted user
-#     table.put_item(Item=appointment.to_item())
-#     return appointment
-
-
-# def create_or_update_client(client: Client) -> Client:
-#     table = get_dynamodb_table()
-
-#     table.put_item(Item=client.to_item())
-#     return client
-
-
-# def get_client(user_id: str, email: str) -> Client:
-#     table = get_dynamodb_table()
-
-#     response = table.query(
-#         KeyConditionExpression=Key("PK").eq(f"USER#{user_id}")
-#         & Key("SK").eq(f"CLIENT#{email}")
-#     )
-#     return Client(**response["Items"][0])
-
-
-# def list_clients(user_id: str) -> list[Client]:
-#     table = get_dynamodb_table()
-
-#     response = table.query(
-#         KeyConditionExpression=Key("PK").eq(f"USER#{user_id}")
-#         & Key("SK").begins_with("CLIENT#"),
-#     )
-#     return [Client(**item) for item in response["Items"]]
-
-
-# def create_service(service: Service) -> Service:
-#     table = get_dynamodb_table()
-#     # TODO: validate that dates are in the future, since Service won't anymore.
-#     table.put_item(Item=service.to_item())
-#     return service
-
-
-# def get_service(user_id: str, service_id: str) -> Service:
-#     table = get_dynamodb_table()
-
-#     response = table.query(
-#         KeyConditionExpression=Key("PK").eq(f"USER#{user_id}")
-#         & Key("SK").eq(f"SRVC#{service_id}")
-#     )
-#     return Service(**response["Items"][0])
+def get_user_by_email(session: Session, email: str) -> User | None:
+    stmt = select(User).where(User.email == email)
+    session_user = session.execute(stmt).first()
+    return session_user  # type: ignore

@@ -7,7 +7,6 @@ from pydantic import BaseModel, EmailStr, Field, field_serializer, ConfigDict
 
 
 class AppointmentBase(BaseModel):
-    id: uuid.UUID
     client_email: str
     start: datetime
     end: datetime  # TODO: validate that end is after start and that they're both on the same day
@@ -34,6 +33,14 @@ class AppointmentRegister(BaseModel):
 class AppointmentUpdate(AppointmentBase):
     email: EmailStr | None = None  # type: ignore
     password: str | None = None
+
+
+class AppointmentOut(AppointmentBase):
+    id: uuid.UUID
+
+
+class AppointmentsOut(BaseModel):
+    data: list[AppointmentOut]
 
 
 class Availability(BaseModel):
@@ -130,7 +137,6 @@ class UserOut(UserBase):
 
 class UsersOut(BaseModel):
     data: list[UserOut]
-    count: int
 
 
 # JSON payload containing access token
