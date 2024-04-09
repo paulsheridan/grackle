@@ -2,7 +2,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine, select
 
 from app.core.config import settings
-from app.api.database import create_user
+from app.api.repositories.user import create_user
 from app.api.models import User
 from app.api.schemas import UserCreate
 

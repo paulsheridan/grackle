@@ -8,7 +8,7 @@
 # from models import Availability
 # from models import Appointment, Service, DailySchedule
 # from database import get_service
-# from database import list_appointments
+# from repositories.appointment import fetch_between_dates
 
 
 # def get_daily_schedule(service: Service, to_find: int) -> Optional[DailySchedule]:
@@ -32,7 +32,7 @@
 
 #     service: Service = get_service(user_id, service_id)
 #     earliest, latest = determine_date_range(service, year_month)
-#     appointments: list[Appointment] = list_appointments(user_id, earliest, latest)
+#     appointments: list[Appointment] = fetch_between_dates(user_id, earliest, latest)
 
 #     cal = calendar.Calendar()
 #     for day in cal.itermonthdates(earliest.year, earliest.month):

@@ -6,19 +6,34 @@ from datetime import datetime, time, timezone
 from pydantic import BaseModel, EmailStr, Field, field_serializer, ConfigDict
 
 
-class Appointment(BaseModel):
+class AppointmentBase(BaseModel):
     id: uuid.UUID
     client_email: str
     start: datetime
     end: datetime  # TODO: validate that end is after start and that they're both on the same day
     confirmed: bool = False
     canceled: bool = False  # TODO: validate that these are mutually exclusive
-    created_at: datetime
     artist_id: uuid.UUID
 
     # @field_serializer("start", "end", "date_created", check_fields=False)
     # def serialize_datetime(self, datetime: datetime) -> str:
     #     return datetime.isoformat("T", "minutes")
+
+
+class AppointmentCreate(AppointmentBase):
+    pass
+
+
+class AppointmentRegister(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str | None = None
+    shop_name: str
+
+
+class AppointmentUpdate(AppointmentBase):
+    email: EmailStr | None = None  # type: ignore
+    password: str | None = None
 
 
 class Availability(BaseModel):
@@ -83,7 +98,7 @@ class UserBase(BaseModel):
     is_active: Optional[bool] = Field(default=True)
     is_superuser: Optional[bool] = Field(default=False)
 
-    appointments: List[Appointment] = []
+    appointments: List[AppointmentBase] = []
     clients: List[Client] = []
     services: List[Service] = []
     availabilities: List[Availability] = []
