@@ -1,6 +1,6 @@
 import uuid
 
-from typing import Optional, List
+from typing import Optional, List, Sequence
 from datetime import datetime, time, timezone
 
 from pydantic import BaseModel, EmailStr, Field, field_serializer, ConfigDict
@@ -40,7 +40,7 @@ class AppointmentOut(AppointmentBase):
 
 
 class AppointmentsOut(BaseModel):
-    data: list[AppointmentOut]
+    data: Sequence[AppointmentOut]
 
 
 class Availability(BaseModel):
@@ -136,7 +136,7 @@ class UserOut(UserBase):
 
 
 class UsersOut(BaseModel):
-    data: list[UserOut]
+    data: Sequence[UserOut]
 
 
 # JSON payload containing access token
@@ -147,7 +147,7 @@ class Token(BaseModel):
 
 # Contents of JWT token
 class TokenPayload(BaseModel):
-    sub: int | None = None
+    sub: uuid.UUID | None = None
 
 
 class NewPassword(BaseModel):

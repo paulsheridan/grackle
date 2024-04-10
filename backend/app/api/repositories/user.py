@@ -3,7 +3,7 @@ from typing import Any, List, Tuple
 
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, inspect
 
 from app.api.models import User
 from app.api.schemas import UserCreate, UserUpdate
@@ -19,7 +19,7 @@ def authenticate(session: Session, email: str, password: str) -> User | None:
     return db_user
 
 
-def create(session: Session, user_create: UserCreate) -> User:
+def create_user(session: Session, user_create: UserCreate) -> User:
     db_obj = User(
         **user_create.model_dump(exclude={"password"}),
         hashed_password=get_password_hash(user_create.password),
@@ -30,7 +30,7 @@ def create(session: Session, user_create: UserCreate) -> User:
     return db_obj
 
 
-def update(session: Session, user_id: int, user_in: UserUpdate):
+def update_user(session: Session, user_id: int, user_in: UserUpdate):
     user_data = user_in.model_dump(exclude_unset=True)
     password = user_data.pop("password", None)
     if password:
@@ -46,5 +46,5 @@ def update(session: Session, user_id: int, user_in: UserUpdate):
 
 def get_user_by_email(session: Session, email: str) -> User | None:
     stmt = select(User).where(User.email == email)
-    session_user = session.execute(stmt).first()
+    session_user = session.scalars(stmt).first()
     return session_user  # type: ignore
