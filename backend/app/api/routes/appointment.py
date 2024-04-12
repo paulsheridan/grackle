@@ -1,19 +1,26 @@
-from typing import Any
+import uuid
+
+from typing import Any, Union, Sequence
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
-from sqlalchemy import func, select, update, delete
+from sqlalchemy import select, update, delete
 
 from app.api.deps import CurrentUser, SessionDep
-from app.api.models import Appointment
+from app.api.models import Appointment, Client
+from app.api.repositories.db_service import PostgresService
 from app.api.schemas import (
-    AppointmentBase,
     AppointmentCreate,
     AppointmentOut,
     AppointmentsOut,
     AppointmentUpdate,
+    AppointmentRegister,
+    ClientRegister,
+    ClientCreate,
+    ClientOut,
     Message,
 )
+
 
 router = APIRouter()
 
@@ -22,76 +29,112 @@ router = APIRouter()
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
-    start: datetime,
-    end: datetime,
+    start: datetime | None = None,
+    end: datetime | None = None,
     skip: int = 0,
     limit: int = 100,
+) -> AppointmentsOut:
+    db_service = PostgresService(session, Appointment)
+    if not start or not end:
+        appointments = db_service.list(current_user.id, skip, limit)
+    else:
+        appointments = db_service.list_between_dates(
+            current_user.id, start, end, skip, limit
+        )
+    return AppointmentsOut(data=appointments)  # type: ignore
+
+
+@router.get("/{appt_id}", response_model=AppointmentOut)
+def get_appointment(
+    session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
-    stmt = (
-        select(Appointment)
-        .where(Appointment.user_id == current_user.id)
-        .where(Appointment.start.between(start, end).offset(skip).limit(limit))
-    )
-    appointments = session.scalars(stmt).all()
+    db_service = PostgresService(session, Appointment)
+    appointment = db_service.read(appt_id)
 
-    return AppointmentsOut(data=appointments)
-
-
-@router.get("/{id}", response_model=AppointmentOut)
-def get_appointment(session: SessionDep, current_user: CurrentUser, id: int) -> Any:
-    appointment = session.execute(select(Appointment).where(Appointment.id == id))
     if not appointment:
-        raise HTTPException(status_code=404, detail="Appointment not found")
-    if not current_user.is_superuser and (appointment.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise HTTPException(status_code=404, detail="Not found")
+    if not current_user.is_superuser and (appointment.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not authorized")
     return appointment
 
 
 @router.post("/", response_model=AppointmentOut)
 def create_appointment(
-    *, session: SessionDep, current_user: CurrentUser, appointment_in: AppointmentCreate
+    session: SessionDep, current_user: CurrentUser, appt_in: AppointmentCreate
 ) -> Any:
-    appointment = AppointmentCreate.model_validate(
-        appointment_in, update={"owner_id": current_user.id}
-    )
-    session.add(appointment)
-    session.commit()
-    session.refresh(appointment)
+    db_service = PostgresService(session, Appointment)
+
+    existing_in_timeslot = db_service.read_by("start", appt_in.start)
+    if existing_in_timeslot:
+        raise HTTPException(status_code=409, detail="Appointment time already booked.")
+
+    appt_in.user_id = current_user.id
+    db_service = PostgresService(session, Appointment)
+    appointment = db_service.create(appt_in.model_dump())
     return appointment
 
 
-@router.put("/{id}", response_model=AppointmentOut)
+@router.patch("/{appt_id}", response_model=AppointmentOut)
 def update_appointment(
-    *,
     session: SessionDep,
     current_user: CurrentUser,
-    id: int,
-    appointment_in: AppointmentUpdate
+    appt_id: uuid.UUID,
+    appointment_in: AppointmentUpdate,
 ) -> Any:
-    appointment = session.get(Appointment, id)
+    db_service = PostgresService(session, Appointment)
+    appointment = db_service.read(appt_id)
+
     if not appointment:
-        raise HTTPException(status_code=404, detail="Appointment not found")
-    if not current_user.is_superuser and (appointment.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    update_dict = appointment_in.model_dump(exclude_unset=True)
-    stmt = (
-        update(Appointment)
-        .where(Appointment.id == id)
-        .values(update_dict)
-        .returning(Appointment)
-    )
-    return session.execute(stmt)
+        raise HTTPException(status_code=404, detail="Not Found")
+    if not current_user.is_superuser and (appointment.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not authorized")
+
+    update_dict = appointment_in.model_dump(exclude_none=True)
+    updated = db_service.update(appt_id, update_dict)
 
 
-@router.delete("/{id}")
+@router.delete("/{appt_id}")
 def delete_appointment(
-    session: SessionDep, current_user: CurrentUser, id: int
+    session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Message:
-    appointment = session.get(Appointment, id)
+    db_service = PostgresService(session, Appointment)
+    appointment = db_service.read(appt_id)
+
     if not appointment:
-        raise HTTPException(status_code=404, detail="Appointment not found")
-    if not current_user.is_superuser and (appointment.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    session.delete(appointment)
-    session.commit()
+        raise HTTPException(status_code=404, detail="Not Found")
+    if not current_user.is_superuser and (appointment.user_id != current_user.id):
+        raise HTTPException(status_code=400, detail="Not authorized")
+
+    db_service.delete(appt_id)
     return Message(message="Appointment deleted successfully")
+
+
+@router.post("/request", response_model=Union[AppointmentOut, ClientOut])
+def request_appointment(
+    session: SessionDep,
+    appt_in: AppointmentRegister,
+    client_in: ClientRegister,
+):
+    appt_service = PostgresService(session, Appointment)
+    client_service = PostgresService(session, Client)
+
+    existing_in_timeslot = appt_service.read_by("start", appt_in.start)
+    if existing_in_timeslot:
+        raise HTTPException(status_code=409, detail="Appointment time already booked.")
+
+    existing_client = client_service.read_by("email", client_in.email)
+    if existing_client:
+        client = existing_client
+    else:
+        print("I'm creating this client now")
+        client = client_service.create(client_in.model_dump())
+        print(client)
+    appt_in = appt_in.model_copy(update={"client_id": client.id})
+    print(appt_in)
+
+    appointment = appt_service.create(appt_in.model_dump())
+
+    if client:
+        return client
+    if appointment:
+        return appointment

@@ -9,9 +9,8 @@ from app.api.deps import (
 )
 
 from app.api.schemas import UsersOut
-from app.api.models import (
-    User,
-)
+from app.api.models import User
+
 
 router = APIRouter()
 
@@ -20,9 +19,6 @@ router = APIRouter()
     "/", dependencies=[Depends(get_current_active_superuser)], response_model=UsersOut
 )
 def read_users(session: SessionDep, skip: int = 0, limit: int = 100):
-    """
-    Retrieve users.
-    """
-    users = session.scalars(select(User)).all()
 
+    users = session.scalars(select(User)).all()
     return UsersOut(data=users)  # type: ignore

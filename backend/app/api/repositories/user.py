@@ -1,6 +1,7 @@
+import uuid
+
 from datetime import datetime
 from typing import Any, List, Tuple
-
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select, inspect
@@ -30,7 +31,7 @@ def create_user(session: Session, user_create: UserCreate) -> User:
     return db_obj
 
 
-def update_user(session: Session, user_id: int, user_in: UserUpdate):
+def update_user(session: Session, user_id: uuid.UUID, user_in: UserUpdate) -> User:
     user_data = user_in.model_dump(exclude_unset=True)
     password = user_data.pop("password", None)
     if password:

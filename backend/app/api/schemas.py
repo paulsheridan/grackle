@@ -6,97 +6,6 @@ from datetime import datetime, time, timezone
 from pydantic import BaseModel, EmailStr, Field, field_serializer, ConfigDict
 
 
-class AppointmentBase(BaseModel):
-    client_email: str
-    start: datetime
-    end: datetime  # TODO: validate that end is after start and that they're both on the same day
-    confirmed: bool = False
-    canceled: bool = False  # TODO: validate that these are mutually exclusive
-    artist_id: uuid.UUID
-
-    # @field_serializer("start", "end", "date_created", check_fields=False)
-    # def serialize_datetime(self, datetime: datetime) -> str:
-    #     return datetime.isoformat("T", "minutes")
-
-
-class AppointmentCreate(AppointmentBase):
-    pass
-
-
-class AppointmentRegister(BaseModel):
-    email: EmailStr
-    password: str
-    full_name: str | None = None
-    shop_name: str
-
-
-class AppointmentUpdate(AppointmentBase):
-    email: EmailStr | None = None  # type: ignore
-    password: str | None = None
-
-
-class AppointmentOut(AppointmentBase):
-    id: uuid.UUID
-
-
-class AppointmentsOut(BaseModel):
-    data: Sequence[AppointmentOut]
-
-
-class Availability(BaseModel):
-    id: uuid.UUID
-    date: datetime
-    windows: list["Window"]
-    artist_id: uuid.UUID
-
-
-class Window(BaseModel):
-    id: uuid.UUID
-    start: datetime
-    end: datetime
-    availability_id: int
-
-
-class Client(BaseModel):
-    id: uuid.UUID
-    email: str
-    first_name: str
-    last_name: str
-    pronouns: str
-    over_18: bool
-    preferred_contact: str
-    phone_number: int
-    reated_at: datetime
-    artist_id: uuid.UUID
-
-
-class Service(BaseModel):
-    id: uuid.UUID
-    name: str
-    active: bool
-    duration: int
-    max_per_day: int
-    start: datetime
-    end: datetime
-    schedule: List["DailySchedule"]
-    artist_id: uuid.UUID
-
-    # @field_serializer("start", "end", check_fields=False)
-    # def serialize_datetime(self, datetime: datetime) -> str:
-    #     return datetime.isoformat("T", "minutes")
-
-
-class DailySchedule(BaseModel):
-    weekday: int
-    open: time
-    close: time
-    service_id: uuid.UUID
-
-    # @field_serializer("open", "close", check_fields=False)
-    # def serialize_time(self, time: time):
-    #     return time.isoformat()
-
-
 class UserBase(BaseModel):
     email: EmailStr
     username: str
@@ -105,14 +14,17 @@ class UserBase(BaseModel):
     is_active: Optional[bool] = Field(default=True)
     is_superuser: Optional[bool] = Field(default=False)
 
-    appointments: List[AppointmentBase] = []
-    clients: List[Client] = []
-    services: List[Service] = []
-    availabilities: List[Availability] = []
+    model_config = ConfigDict(from_attributes=True)
 
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
+
+class User(UserBase):
+    id: uuid.UUID
+    hashed_password: str
+
+    appointments: List["Appointment"] = []
+    clients: List["Client"] = []
+    services: List["ServiceBase"] = []
+    availabilities: List["Availability"] = []
 
 
 class UserCreate(UserBase):
@@ -127,7 +39,7 @@ class UserRegister(BaseModel):
 
 
 class UserUpdate(UserBase):
-    email: EmailStr | None = None  # type: ignore
+    email: EmailStr | None = None
     password: str | None = None
 
 
@@ -139,13 +51,141 @@ class UsersOut(BaseModel):
     data: Sequence[UserOut]
 
 
-# JSON payload containing access token
+class AppointmentBase(BaseModel):
+    start: datetime
+    end: datetime  # TODO: validate that end is after start and that they're both on the same day
+    confirmed: bool = False
+    canceled: bool = False  # TODO: validate that these are mutually exclusive
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class Appointment(AppointmentBase):
+    user_id: uuid.UUID
+    client_id: uuid.UUID | None = None
+
+
+class AppointmentCreate(AppointmentBase):
+    pass
+
+
+class AppointmentRegister(BaseModel):
+    user_id: uuid.UUID
+    client_id: uuid.UUID | None = None
+    start: datetime
+    end: datetime
+
+
+class AppointmentUpdate(BaseModel):
+    canceled: bool = False
+    confirmed: bool = False
+    start: datetime | None = None
+    end: datetime | None = None
+
+
+class AppointmentOut(AppointmentBase):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    client_id: uuid.UUID
+
+
+class AppointmentsOut(BaseModel):
+    data: Sequence[AppointmentOut]
+
+
+class AvailabilityBase(BaseModel):
+    pass
+
+
+class Availability(AvailabilityBase):
+    id: uuid.UUID
+    date: datetime
+    windows: list["Window"]
+    user_id: uuid.UUID
+
+
+class Window(BaseModel):
+    id: uuid.UUID
+    start: datetime
+    end: datetime
+    availability_id: uuid.UUID
+
+
+class ClientBase(BaseModel):
+    email: str
+    first_name: str
+    last_name: str
+    pronouns: str
+    over_18: bool
+    preferred_contact: str
+    phone_number: str
+    user_id: uuid.UUID
+
+
+class Client(ClientBase):
+    id: uuid.UUID
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ClientCreate(ClientBase):
+    pass
+
+
+class ClientRegister(BaseModel):
+    email: str
+    first_name: str
+    last_name: str
+    pronouns: str
+    over_18: bool
+    preferred_contact: str
+    phone_number: str
+    user_id: uuid.UUID
+
+
+class ClientOut(ClientBase):
+    id: uuid.UUID
+
+
+class ClientsOut(BaseModel):
+    data: Sequence[ClientOut]
+
+
+class ServiceBase(BaseModel):
+    pass
+
+
+class Service(ServiceBase):
+    id: uuid.UUID
+    name: str
+    active: bool
+    duration: int
+    max_per_day: int
+    start: datetime
+    end: datetime
+    schedule: List["DailySchedule"]
+    user_id: uuid.UUID
+
+
+class DailySchedule(BaseModel):
+    weekday: int
+    open: time
+    close: time
+    service_id: uuid.UUID
+
+
+class AppointmentClientRequest(BaseModel):
+    # appointment fields
+    appointment: AppointmentRegister
+    # client fields
+    client: ClientRegister
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
 
-# Contents of JWT token
 class TokenPayload(BaseModel):
     sub: uuid.UUID | None = None
 

@@ -10,7 +10,7 @@ from pydantic import ValidationError
 
 from app.core import security
 from app.core.config import settings
-from app.api.schemas import Token, TokenPayload
+from app.api.schemas import TokenPayload
 from app.api.models import User
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -45,10 +45,8 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
             detail="Could not validate credentials",
         )
     user = session.get(User, token_data.sub)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+    if not user or not user.is_active:
+        raise HTTPException(status_code=404, detail="Unauthorized")
     return user
 
 
@@ -61,3 +59,6 @@ def get_current_active_superuser(current_user: CurrentUser) -> User:
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
+
+
+# SuperUser = Annotated[User, Depends(get_current_active_superuser)]

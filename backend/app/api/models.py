@@ -2,13 +2,20 @@ import uuid
 from typing import List, Optional
 from datetime import datetime, time, timezone
 
-from sqlalchemy import ForeignKey, Integer, String, DateTime, Uuid, Boolean
+from sqlalchemy import ForeignKey, DateTime, Uuid
+from sqlalchemy.types import Boolean, Integer, String
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql import func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
     pass
+
+
+class UserOwnedMixin(object):
+    id: Mapped[uuid.UUID]
+    user_id: Mapped[uuid.UUID]
 
 
 class User(Base):
@@ -22,8 +29,8 @@ class User(Base):
     hashed_password: Mapped[str]
     full_name: Mapped[Optional[str]]
     shop_name: Mapped[str] = mapped_column(unique=True)
-    is_active: Mapped[bool] = mapped_column(Boolean)
-    is_superuser: Mapped[bool] = mapped_column(Boolean)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -39,16 +46,16 @@ class User(Base):
     )
 
 
-class Appointment(Base):
+class Appointment(Base, UserOwnedMixin):
     __tablename__ = "appointment"
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
     )
-    start: Mapped[datetime]
-    end: Mapped[datetime]
-    confirmed: Mapped[bool] = mapped_column(Boolean)
-    canceled: Mapped[bool] = mapped_column(Boolean)
+    start: Mapped[datetime] = mapped_column(DateTime)
+    end: Mapped[datetime] = mapped_column(DateTime)
+    confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
+    canceled: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -86,7 +93,7 @@ class Window(Base):
     availability: Mapped["Availability"] = relationship(back_populates="windows")
 
 
-class Client(Base):
+class Client(Base, UserOwnedMixin):
     __tablename__ = "client"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -96,9 +103,9 @@ class Client(Base):
     first_name: Mapped[str]
     last_name: Mapped[str]
     pronouns: Mapped[Optional[str]]
-    over_18: Mapped[bool]
+    over_18: Mapped[bool] = mapped_column(Boolean)
     preferred_contact: Mapped[str]
-    phone_number: Mapped[int]
+    phone_number: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -112,7 +119,7 @@ class Client(Base):
     )
 
 
-class Service(Base):
+class Service(Base, UserOwnedMixin):
     __tablename__ = "service"
 
     id: Mapped[uuid.UUID] = mapped_column(
