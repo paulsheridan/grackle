@@ -10,7 +10,7 @@ from app.api.deps import CurrentUser, SessionDep
 from app.api.models import UserOwnedMixin
 
 
-class PostgresService:
+class PostgresRepo:
     def __init__(
         self,
         session: SessionDep,
@@ -56,7 +56,7 @@ class PostgresService:
 
     def list_between_dates(
         self, user_id: uuid.UUID, start: datetime, end: datetime, skip: int, limit: int
-    ):
+    ) -> Sequence[UserOwnedMixin]:
         stmt = (
             select(self.model)
             .where(self.model.user_id == user_id)

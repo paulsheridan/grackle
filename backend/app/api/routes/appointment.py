@@ -8,7 +8,7 @@ from sqlalchemy import select, update, delete
 
 from app.api.deps import CurrentUser, SessionDep
 from app.api.models import Appointment, Client
-from app.api.repositories.db_service import PostgresService
+from app.api.repositories.postgres import PostgresRepo
 from app.api.schemas import (
     AppointmentCreate,
     AppointmentOut,
@@ -16,7 +16,6 @@ from app.api.schemas import (
     AppointmentUpdate,
     AppointmentRegister,
     ClientRegister,
-    ClientCreate,
     ClientOut,
     Message,
 )
@@ -34,7 +33,7 @@ def list_appointments(
     skip: int = 0,
     limit: int = 100,
 ) -> AppointmentsOut:
-    db_service = PostgresService(session, Appointment)
+    db_service = PostgresRepo(session, Appointment)
     if not start or not end:
         appointments = db_service.list(current_user.id, skip, limit)
     else:
@@ -48,7 +47,7 @@ def list_appointments(
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
-    db_service = PostgresService(session, Appointment)
+    db_service = PostgresRepo(session, Appointment)
     appointment = db_service.read(appt_id)
 
     if not appointment:
@@ -62,14 +61,14 @@ def get_appointment(
 def create_appointment(
     session: SessionDep, current_user: CurrentUser, appt_in: AppointmentCreate
 ) -> Any:
-    db_service = PostgresService(session, Appointment)
+    db_service = PostgresRepo(session, Appointment)
 
     existing_in_timeslot = db_service.read_by("start", appt_in.start)
     if existing_in_timeslot:
         raise HTTPException(status_code=409, detail="Appointment time already booked.")
 
     appt_in.user_id = current_user.id
-    db_service = PostgresService(session, Appointment)
+    db_service = PostgresRepo(session, Appointment)
     appointment = db_service.create(appt_in.model_dump())
     return appointment
 
@@ -81,7 +80,7 @@ def update_appointment(
     appt_id: uuid.UUID,
     appointment_in: AppointmentUpdate,
 ) -> Any:
-    db_service = PostgresService(session, Appointment)
+    db_service = PostgresRepo(session, Appointment)
     appointment = db_service.read(appt_id)
 
     if not appointment:
@@ -91,13 +90,14 @@ def update_appointment(
 
     update_dict = appointment_in.model_dump(exclude_none=True)
     updated = db_service.update(appt_id, update_dict)
+    return updated
 
 
 @router.delete("/{appt_id}")
 def delete_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Message:
-    db_service = PostgresService(session, Appointment)
+    db_service = PostgresRepo(session, Appointment)
     appointment = db_service.read(appt_id)
 
     if not appointment:
@@ -115,8 +115,8 @@ def request_appointment(
     appt_in: AppointmentRegister,
     client_in: ClientRegister,
 ):
-    appt_service = PostgresService(session, Appointment)
-    client_service = PostgresService(session, Client)
+    appt_service = PostgresRepo(session, Appointment)
+    client_service = PostgresRepo(session, Client)
 
     existing_in_timeslot = appt_service.read_by("start", appt_in.start)
     if existing_in_timeslot:
@@ -126,11 +126,8 @@ def request_appointment(
     if existing_client:
         client = existing_client
     else:
-        print("I'm creating this client now")
         client = client_service.create(client_in.model_dump())
-        print(client)
     appt_in = appt_in.model_copy(update={"client_id": client.id})
-    print(appt_in)
 
     appointment = appt_service.create(appt_in.model_dump())
 

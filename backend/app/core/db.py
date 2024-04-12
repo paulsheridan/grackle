@@ -1,5 +1,5 @@
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.core.config import settings
 from app.api.repositories.user import create_user

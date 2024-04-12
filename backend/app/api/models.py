@@ -10,7 +10,9 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
-    pass
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
+    )
 
 
 class UserOwnedMixin(object):
@@ -21,9 +23,6 @@ class UserOwnedMixin(object):
 class User(Base):
     __tablename__ = "user"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
-    )
     email: Mapped[str] = mapped_column(unique=True, index=True)
     username: Mapped[str]
     hashed_password: Mapped[str]
@@ -49,9 +48,6 @@ class User(Base):
 class Appointment(Base, UserOwnedMixin):
     __tablename__ = "appointment"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
-    )
     start: Mapped[datetime] = mapped_column(DateTime)
     end: Mapped[datetime] = mapped_column(DateTime)
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -71,9 +67,6 @@ class Appointment(Base, UserOwnedMixin):
 class Availability(Base):
     __tablename__ = "availability"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
-    )
     date: Mapped[datetime]
 
     windows: Mapped[List["Window"]] = relationship(cascade="all, delete-orphan")
@@ -85,7 +78,6 @@ class Availability(Base):
 class Window(Base):
     __tablename__ = "window"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     start: Mapped[datetime]
     end: Mapped[datetime]
 
@@ -96,9 +88,6 @@ class Window(Base):
 class Client(Base, UserOwnedMixin):
     __tablename__ = "client"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
-    )
     email: Mapped[str] = mapped_column(unique=True, index=True)
     first_name: Mapped[str]
     last_name: Mapped[str]
@@ -122,9 +111,6 @@ class Client(Base, UserOwnedMixin):
 class Service(Base, UserOwnedMixin):
     __tablename__ = "service"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(as_uuid=True), default=uuid.uuid4, primary_key=True
-    )
     name: Mapped[str]
     active: Mapped[bool]
     duration: Mapped[int]
@@ -143,7 +129,6 @@ class Service(Base, UserOwnedMixin):
 class DailySchedule(Base):
     __tablename__ = "daily_schedule"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     weekday: Mapped[int]
     open: Mapped[time]
     close: Mapped[time]
