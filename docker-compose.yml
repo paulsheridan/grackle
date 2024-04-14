@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB?Variable not set}
 
   backend:
-    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
     restart: "no"
     ports:
       - "8888:80"
@@ -52,6 +52,8 @@ services:
         INSTALL_DEV: ${INSTALL_DEV-true}
     platform: linux/amd64 # Patch for M1 Mac
     command: /start-reload.sh
+    stdin_open: true
+    tty: true
 
 volumes:
   app-db-data:

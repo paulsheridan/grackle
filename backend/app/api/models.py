@@ -15,11 +15,6 @@ class Base(DeclarativeBase):
     )
 
 
-class UserOwnedMixin(object):
-    id: Mapped[uuid.UUID]
-    user_id: Mapped[uuid.UUID]
-
-
 class User(Base):
     __tablename__ = "user"
 
@@ -45,7 +40,7 @@ class User(Base):
     )
 
 
-class Appointment(Base, UserOwnedMixin):
+class Appointment(Base):
     __tablename__ = "appointment"
 
     start: Mapped[datetime] = mapped_column(DateTime)
@@ -85,7 +80,7 @@ class Window(Base):
     availability: Mapped["Availability"] = relationship(back_populates="windows")
 
 
-class Client(Base, UserOwnedMixin):
+class Client(Base):
     __tablename__ = "client"
 
     email: Mapped[str] = mapped_column(unique=True, index=True)
@@ -108,7 +103,7 @@ class Client(Base, UserOwnedMixin):
     )
 
 
-class Service(Base, UserOwnedMixin):
+class Service(Base):
     __tablename__ = "service"
 
     name: Mapped[str]

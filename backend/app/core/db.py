@@ -1,14 +1,13 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import create_engine, select
 
 from app.core.config import settings
-from app.api.repositories.user import create_user
+from app.api.domain.user import create_user
 from app.api.models import User
 from app.api.schemas import UserCreate
 
 
 def init_db(session: Session) -> None:
-
     user = session.execute(
         select(User).where(User.email == settings.FIRST_SUPERUSER)
     ).first()
@@ -21,5 +20,4 @@ def init_db(session: Session) -> None:
             shop_name=settings.FIRST_SUPERUSER_SHOP,
             is_superuser=True,
         )
-        print(user_in)
         user = create_user(session=session, user_create=user_in)

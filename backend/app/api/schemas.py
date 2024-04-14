@@ -9,10 +9,10 @@ from pydantic import BaseModel, EmailStr, Field, field_serializer, ConfigDict
 class UserBase(BaseModel):
     email: EmailStr
     username: str
-    full_name: Optional[str]
+    full_name: str | None = None
     shop_name: str
-    is_active: Optional[bool] = Field(default=True)
-    is_superuser: Optional[bool] = Field(default=False)
+    is_active: bool | None = Field(default=True)
+    is_superuser: bool | None = Field(default=False)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -38,9 +38,16 @@ class UserRegister(BaseModel):
     shop_name: str
 
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     email: EmailStr | None = None
-    password: str | None = None
+    username: str | None = None
+    full_name: str | None = None
+    shop_name: str | None = None
+
+
+class UpdatePassword(BaseModel):
+    current_password: str
+    new_password: str
 
 
 class UserOut(UserBase):
@@ -48,7 +55,7 @@ class UserOut(UserBase):
 
 
 class UsersOut(BaseModel):
-    data: Sequence[UserOut]
+    data: list[UserOut]
 
 
 class AppointmentBase(BaseModel):

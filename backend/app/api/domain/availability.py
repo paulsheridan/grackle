@@ -5,24 +5,9 @@ from collections import namedtuple
 from typing import Optional, List
 from pydantic import BaseModel
 
-from models import Availability
-from models import Appointment, Service, DailySchedule
+from models import Appointment, Service, DailySchedule, Availability
 from database import get_service
 from repositories.appointment import fetch_between_dates
-
-
-def get_daily_schedule(service: Service, to_find: int) -> Optional[DailySchedule]:
-    low, high = 0, len(service.schedule) - 1
-
-    while low <= high:
-        mid = (high + low) // 2
-        if service.schedule[mid].weekday < to_find:
-            low = mid + 1
-        elif service.schedule[mid].weekday > to_find:
-            high = mid - 1
-        else:
-            return service.schedule[mid]
-    return None
 
 
 def get_availability(
@@ -114,3 +99,16 @@ def calc_day_availability(service: Service, appointments: list[Appointment], day
             window_start + timedelta(minutes=service.duration) - timedelta(minutes=1)
         )
     return Availability(**today_slots)
+
+def get_daily_schedule(service: Service, to_find: int) -> Optional[DailySchedule]:
+    low, high = 0, len(service.schedule) - 1
+
+    while low <= high:
+        mid = (high + low) // 2
+        if service.schedule[mid].weekday < to_find:
+            low = mid + 1
+        elif service.schedule[mid].weekday > to_find:
+            high = mid - 1
+        else:
+            return service.schedule[mid]
+    return None
