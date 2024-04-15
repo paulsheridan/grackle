@@ -1,7 +1,6 @@
 import calendar
 
 from datetime import date, datetime, timedelta
-from collections import namedtuple
 from typing import Optional, List
 from pydantic import BaseModel
 
@@ -99,6 +98,7 @@ def calc_day_availability(service: Service, appointments: list[Appointment], day
             window_start + timedelta(minutes=service.duration) - timedelta(minutes=1)
         )
     return Availability(**today_slots)
+
 
 def get_daily_schedule(service: Service, to_find: int) -> Optional[DailySchedule]:
     low, high = 0, len(service.schedule) - 1

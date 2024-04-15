@@ -28,7 +28,7 @@ def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     db_service = PostgresRepo(session, models.User)
     users = db_service.list()
     users = session.scalars(select(models.User)).all()
-    return schemas.UsersOut(data=users) # types: ignore
+    return schemas.UsersOut(data=users)  # types: ignore
 
 
 @router.post(

@@ -84,8 +84,8 @@ class AppointmentRegister(BaseModel):
 
 
 class AppointmentUpdate(BaseModel):
-    canceled: bool = False
-    confirmed: bool = False
+    canceled: bool | None = None
+    confirmed: bool | None = None
     start: datetime | None = None
     end: datetime | None = None
 
@@ -128,11 +128,11 @@ class ClientBase(BaseModel):
     phone_number: str
     user_id: uuid.UUID
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class Client(ClientBase):
     id: uuid.UUID
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class ClientCreate(ClientBase):
@@ -159,19 +159,42 @@ class ClientsOut(BaseModel):
 
 
 class ServiceBase(BaseModel):
-    pass
-
-
-class Service(ServiceBase):
-    id: uuid.UUID
     name: str
     active: bool
     duration: int
     max_per_day: int
     start: datetime
     end: datetime
-    schedule: List["DailySchedule"]
     user_id: uuid.UUID
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class Service(ServiceBase):
+    id: uuid.UUID
+
+    schedule: List["DailySchedule"]
+
+
+class ServiceCreate(Service):
+    pass
+
+
+class ServiceUpdate(BaseModel):
+    name: str | None = None
+    active: bool | None = None
+    duration: int | None = None
+    max_per_day: int | None = None
+    start: datetime | None = None
+    end: datetime | None = None
+
+
+class ServiceOut(ServiceBase):
+    id: uuid.UUID
+
+
+class ServicesOut(ServiceOut):
+    data: list[UserOut]
 
 
 class DailySchedule(BaseModel):
@@ -179,13 +202,6 @@ class DailySchedule(BaseModel):
     open: time
     close: time
     service_id: uuid.UUID
-
-
-class AppointmentClientRequest(BaseModel):
-    # appointment fields
-    appointment: AppointmentRegister
-    # client fields
-    client: ClientRegister
 
 
 class Token(BaseModel):

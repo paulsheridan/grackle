@@ -25,11 +25,11 @@ def list_appointments(
     skip: int = 0,
     limit: int = 100,
 ) -> schemas.AppointmentsOut:
-    db_service = PostgresRepo(session, models.Appointment)
+    repo = PostgresRepo(session, models.Appointment)
     if not start or not end:
-        appointments = db_service.list("user_id", current_user.id, skip, limit)
+        appointments = repo.list("user_id", current_user.id, skip, limit)
     else:
-        appointments = db_service.list_between_dates(
+        appointments = repo.list_between_dates(
             "user_id", current_user.id, start, end, skip, limit
         )
     return schemas.AppointmentsOut(data=appointments)  # type: ignore
@@ -39,8 +39,8 @@ def list_appointments(
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
-    db_service = PostgresRepo(session, models.Appointment)
-    appointment = db_service.read(appt_id)
+    repo = PostgresRepo(session, models.Appointment)
+    appointment = repo.read(appt_id)
 
     if not appointment:
         raise HTTPException(status_code=404, detail="Not found")
@@ -53,15 +53,15 @@ def get_appointment(
 def create_appointment(
     session: SessionDep, current_user: CurrentUser, appt_in: schemas.AppointmentCreate
 ) -> Any:
-    db_service = PostgresRepo(session, models.Appointment)
+    repo = PostgresRepo(session, models.Appointment)
 
-    existing_in_timeslot = db_service.read_by("start", appt_in.start)
+    existing_in_timeslot = repo.read_by("start", appt_in.start)
     if existing_in_timeslot:
         raise HTTPException(status_code=409, detail="Appointment time already booked.")
 
     appt_in.user_id = current_user.id
-    db_service = PostgresRepo(session, models.Appointment)
-    appointment = db_service.create(appt_in.model_dump())
+    repo = PostgresRepo(session, models.Appointment)
+    appointment = repo.create(appt_in.model_dump())
     return appointment
 
 
@@ -72,8 +72,8 @@ def update_appointment(
     appt_id: uuid.UUID,
     appointment_in: schemas.AppointmentUpdate,
 ) -> Any:
-    db_service = PostgresRepo(session, models.Appointment)
-    appointment = db_service.read(appt_id)
+    repo = PostgresRepo(session, models.Appointment)
+    appointment = repo.read(appt_id)
 
     if not appointment:
         raise HTTPException(status_code=404, detail="Not Found")
@@ -81,7 +81,7 @@ def update_appointment(
         raise HTTPException(status_code=400, detail="Not authorized")
 
     update_dict = appointment_in.model_dump(exclude_none=True)
-    updated = db_service.update(appt_id, update_dict)
+    updated = repo.update(appt_id, update_dict)
     return updated
 
 
@@ -89,15 +89,15 @@ def update_appointment(
 def delete_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> schemas.Message:
-    db_service = PostgresRepo(session, models.Appointment)
-    appointment = db_service.read(appt_id)
+    repo = PostgresRepo(session, models.Appointment)
+    appointment = repo.read(appt_id)
 
     if not appointment:
         raise HTTPException(status_code=404, detail="Not Found")
     if not current_user.is_superuser and (appointment.user_id != current_user.id):  # type: ignore
         raise HTTPException(status_code=400, detail="Not authorized")
 
-    db_service.delete(appt_id)
+    repo.delete(appt_id)
     return schemas.Message(message="Appointment deleted successfully")
 
 
@@ -129,7 +129,7 @@ def request_appointment(
         else:
             client = client_service.create(client_in.model_dump())
         appt_in = appt_in.model_copy(update={"client_id": client.id})
-    except(ForeignKeyViolation):
+    except ForeignKeyViolation:
         raise HTTPException(status_code=404, detail="Artist Not Found")
 
     appointment = appt_service.create(appt_in.model_dump())
