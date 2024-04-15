@@ -2,7 +2,7 @@
     "email": "paul.clientman@email.com",
     "name": "Paul Clientman",
     "pronouns": "he-him",
-    "over_18": true,
+    "birthday": datetime.datetime(),
     "preferred_contact": "email",
     "phone_number": "123-456-7890"
 }
@@ -11,7 +11,7 @@
     "email": "emily.clientkid@email.com",
     "name": "Emily Clientkid",
     "pronouns": "she-her",
-    "over_18": false,
+    "birthday": false,
     "preferred_contact": "email",
     "phone_number": "123-456-7890"
 }
@@ -20,7 +20,7 @@
     "email": "nicki.clientkid@email.com",
     "name": "Nicki Clientkid",
     "pronouns": "she-her",
-    "over_18": false,
+    "birthday": false,
     "preferred_contact": "phone",
     "phone_number": "123-456-7890"
 }
@@ -41,7 +41,7 @@
     "email": "jeff.smandersond@email.com",
     "name": "Jeff Smanderson",
     "pronouns": "he-him",
-    "over_18": true,
+    "birthday": true,
     "preferred_contact": "email",
     "phone_number": "999-999-9999",
     "start": "2024-04-06T02:00",
@@ -53,7 +53,7 @@
     "client_email": "bigbadbob@email.com",
     "name": "Bob McAffee",
     "pronouns": "he-him",
-    "over_18": true,
+    "birthday": true,
     "preferred_contact": "phone",
     "phone_number": "999-999-9999",
     "start": "2024-04-06T02:00",

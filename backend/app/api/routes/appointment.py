@@ -51,7 +51,7 @@ def get_appointment(
 
 @router.post("/", response_model=schemas.AppointmentOut)
 def create_appointment(
-    session: SessionDep, current_user: CurrentUser, appt_in: schemas.AppointmentCreate
+    session: SessionDep, current_user: CurrentUser, appt_in: schemas.AppointmentRegister
 ) -> Any:
     repo = PostgresRepo(session, models.Appointment)
 
@@ -59,9 +59,10 @@ def create_appointment(
     if existing_in_timeslot:
         raise HTTPException(status_code=409, detail="Appointment time already booked.")
 
-    appt_in.user_id = current_user.id
-    repo = PostgresRepo(session, models.Appointment)
-    appointment = repo.create(appt_in.model_dump())
+    appt_create = schemas.AppointmentCreate(
+        **appt_in.model_dump(), user_id=current_user.id
+    )
+    appointment = repo.create(appt_create.model_dump())
     return appointment
 
 
@@ -101,40 +102,36 @@ def delete_appointment(
     return schemas.Message(message="Appointment deleted successfully")
 
 
-@router.post(
-    "/request", response_model=Union[schemas.AppointmentOut, schemas.ClientOut]
-)
+@router.post("/request", response_model=schemas.ClientAppointmentRequest)
 def request_appointment(
-    session: SessionDep,
-    appt_in: schemas.AppointmentRegister,
-    client_in: schemas.ClientRegister,
+    session: SessionDep, appt_request: schemas.ClientAppointmentRequest
 ):
-    user_service = PostgresRepo(session, models.User)
-    appt_service = PostgresRepo(session, models.Appointment)
-    client_service = PostgresRepo(session, models.Client)
+    user_repo = PostgresRepo(session, models.User)
+    appt_repo = PostgresRepo(session, models.Appointment)
+    client_repo = PostgresRepo(session, models.Client)
+    svc_repo = PostgresRepo(session, models.Service)
 
-    user = user_service.read_by("id", appt_in.user_id)
+    user = user_repo.read_by("id", appt_request.user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Artist Not Found")
 
-    existing_in_timeslot = appt_service.read_by("start", appt_in.start)
+    existing_in_timeslot = appt_repo.read_by("start", appt_request.start)
     if existing_in_timeslot:
         raise HTTPException(status_code=409, detail="Appointment time already booked.")
 
-    existing_client = client_service.read_by("email", client_in.email)
-    client = client_service.create(client_in.model_dump())
-    try:
-        if existing_client:
-            client = existing_client
-        else:
-            client = client_service.create(client_in.model_dump())
-        appt_in = appt_in.model_copy(update={"client_id": client.id})
-    except ForeignKeyViolation:
-        raise HTTPException(status_code=404, detail="Artist Not Found")
+    service = svc_repo.read_by("id", appt_request.service_id)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service Not Found")
 
-    appointment = appt_service.create(appt_in.model_dump())
+    existing_client = client_repo.read_by("email", appt_request.email)
+    if existing_client:
+        client = existing_client
+    else:
+        client_create = schemas.ClientCreate(**appt_request.model_dump())
+        client = client_repo.create(client_create.model_dump())
 
-    if client:
-        return client
-    if appointment:
-        return appointment
+    appt_request.client_id = client.id
+    appt_create = schemas.AppointmentCreate(**appt_request.model_dump())
+    appointment = appt_repo.create(appt_create.model_dump())
+
+    return appt_request

@@ -44,17 +44,14 @@ def get_service(
 
 @router.post("/", response_model=schemas.ServiceOut)
 def create_service(
-    session: SessionDep, current_user: CurrentUser, svc_in: schemas.ServiceCreate
+    session: SessionDep, current_user: CurrentUser, svc_in: schemas.ServiceRegister
 ) -> Any:
     repo = PostgresRepo(session, models.Service)
 
-    existing_in_timeslot = repo.read_by("start", svc_in.start)
-    if existing_in_timeslot:
-        raise HTTPException(status_code=409, detail="Service time already booked.")
-
-    svc_in.user_id = current_user.id
-    repo = PostgresRepo(session, models.Service)
-    service = repo.create(svc_in.model_dump())
+    service_create = schemas.ServiceCreate(
+        **svc_in.model_dump(), user_id=current_user.id
+    )
+    service = repo.create(service_create.model_dump())
     return service
 
 

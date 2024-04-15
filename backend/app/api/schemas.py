@@ -64,23 +64,30 @@ class AppointmentBase(BaseModel):
     confirmed: bool = False
     canceled: bool = False  # TODO: validate that these are mutually exclusive
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class Appointment(AppointmentBase):
+    id: uuid.UUID
     user_id: uuid.UUID
-    client_id: uuid.UUID | None = None
+    client_id: uuid.UUID
+    service_id: uuid.UUID
 
 
 class AppointmentCreate(AppointmentBase):
-    pass
+    user_id: uuid.UUID
+    client_id: uuid.UUID
+    service_id: uuid.UUID
 
 
 class AppointmentRegister(BaseModel):
     user_id: uuid.UUID
     client_id: uuid.UUID | None = None
+    service_id: uuid.UUID
     start: datetime
     end: datetime
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class AppointmentUpdate(BaseModel):
@@ -104,6 +111,23 @@ class AvailabilityBase(BaseModel):
     pass
 
 
+class ClientAppointmentRequest(BaseModel):
+    user_id: uuid.UUID
+    client_id: uuid.UUID | None = None
+    service_id: uuid.UUID
+    start: datetime
+    end: datetime
+
+    email: str
+    first_name: str
+    last_name: str
+    pronouns: str
+    birthday: datetime
+    preferred_contact: str
+    phone_number: str
+    # Maybe we wanna send back user details and not IDs
+
+
 class Availability(AvailabilityBase):
     id: uuid.UUID
     date: datetime
@@ -123,12 +147,12 @@ class ClientBase(BaseModel):
     first_name: str
     last_name: str
     pronouns: str
-    over_18: bool
+    birthday: datetime
     preferred_contact: str
     phone_number: str
     user_id: uuid.UUID
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class Client(ClientBase):
@@ -144,10 +168,22 @@ class ClientRegister(BaseModel):
     first_name: str
     last_name: str
     pronouns: str
-    over_18: bool
+    birthday: datetime
     preferred_contact: str
     phone_number: str
     user_id: uuid.UUID
+
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
+
+
+class ClientUpdate(BaseModel):
+    email: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    pronouns: str | None = None
+    birthday: datetime | None = None
+    preferred_contact: str | None = None
+    phone_number: str | None = None
 
 
 class ClientOut(ClientBase):
@@ -165,19 +201,28 @@ class ServiceBase(BaseModel):
     max_per_day: int
     start: datetime
     end: datetime
-    user_id: uuid.UUID
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class Service(ServiceBase):
     id: uuid.UUID
+    user_id: uuid.UUID
 
     schedule: List["DailySchedule"]
 
 
-class ServiceCreate(Service):
-    pass
+class ServiceCreate(ServiceBase):
+    user_id: uuid.UUID
+
+
+class ServiceRegister(BaseModel):
+    name: str
+    active: bool
+    duration: int
+    max_per_day: int
+    start: datetime
+    end: datetime
 
 
 class ServiceUpdate(BaseModel):

@@ -23,7 +23,6 @@ class User(Base):
     hashed_password: Mapped[str]
     full_name: Mapped[Optional[str]]
     shop_name: Mapped[str] = mapped_column(unique=True)
-    timezone: Mapped[str]
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -44,8 +43,8 @@ class User(Base):
 class Appointment(Base):
     __tablename__ = "appointment"
 
-    start: Mapped[datetime] = mapped_column(DateTime)
-    end: Mapped[datetime] = mapped_column(DateTime)
+    start: Mapped[datetime] = mapped_column(DateTime, index=True)
+    end: Mapped[datetime] = mapped_column(DateTime, index=True)
     confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
     canceled: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -58,6 +57,9 @@ class Appointment(Base):
 
     client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("client.id"))
     client: Mapped["Client"] = relationship(back_populates="appointments")
+
+    service_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("service.id"))
+    service: Mapped["Service"] = relationship(back_populates="appointments")
 
 
 class Availability(Base):
@@ -88,7 +90,7 @@ class Client(Base):
     first_name: Mapped[str]
     last_name: Mapped[str]
     pronouns: Mapped[Optional[str]]
-    over_18: Mapped[bool] = mapped_column(Boolean)
+    birthday: Mapped[datetime] = mapped_column(DateTime)
     preferred_contact: Mapped[str]
     phone_number: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(
@@ -115,6 +117,9 @@ class Service(Base):
     end: Mapped[datetime]
 
     daily_schedules: Mapped[List["DailySchedule"]] = relationship(
+        back_populates="service", cascade="all, delete-orphan"
+    )
+    appointments: Mapped[List["Appointment"]] = relationship(
         back_populates="service", cascade="all, delete-orphan"
     )
 

@@ -21,7 +21,6 @@ services:
       - "8888:80"
     volumes:
       - ./backend/:/app
-    # command: sleep infinity  # Infinite loop to keep container alive doing nothing
     depends_on:
       - db
     env_file:
@@ -52,6 +51,7 @@ services:
         INSTALL_DEV: ${INSTALL_DEV-true}
     platform: linux/amd64 # Patch for M1 Mac
     command: /start-reload.sh
+    # command: sleep infinity
     stdin_open: true
     tty: true
 
