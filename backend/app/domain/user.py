@@ -6,10 +6,10 @@ from typing import Any, List, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy import select, inspect
 
-from app.api import schemas
-from app.api import models
+from app import schemas
+from app import models
 from app.core.security import verify_password, get_password_hash
-from app.api.repositories.postgres import PostgresRepo
+from app.repositories.postgres import PostgresRepo
 
 
 def authenticate(session: Session, email: str, password: str) -> models.User | None:

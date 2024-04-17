@@ -7,10 +7,10 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import select, update, delete
 from psycopg.errors import ForeignKeyViolation
 
-from app.api import schemas
-from app.api import models
+from app import schemas
+from app import models
 from app.api.deps import CurrentUser, SessionDep
-from app.api.repositories.postgres import PostgresRepo
+from app.repositories.postgres import PostgresRepo
 
 
 router = APIRouter()

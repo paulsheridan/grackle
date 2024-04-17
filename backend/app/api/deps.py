@@ -10,8 +10,8 @@ from pydantic import ValidationError
 
 from app.core import security
 from app.core.config import settings
-from app.api.schemas import TokenPayload
-from app.api.models import User
+from app.schemas import TokenPayload
+from app.models import User
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"

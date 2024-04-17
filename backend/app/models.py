@@ -106,6 +106,17 @@ class Client(Base):
     )
 
 
+class DailySchedule(Base):
+    __tablename__ = "daily_schedule"
+
+    weekday: Mapped[int]
+    open: Mapped[time]
+    close: Mapped[time]
+
+    service_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("service.id"))
+    service: Mapped["Service"] = relationship(back_populates="daily_schedules")
+
+
 class Service(Base):
     __tablename__ = "service"
 
@@ -126,13 +137,15 @@ class Service(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="services")
 
+    def get_day_schedule(self, to_find: int) -> Optional[DailySchedule]:
+        low, high = 0, len(self.daily_schedules) - 1
 
-class DailySchedule(Base):
-    __tablename__ = "daily_schedule"
-
-    weekday: Mapped[int]
-    open: Mapped[time]
-    close: Mapped[time]
-
-    service_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("service.id"))
-    service: Mapped["Service"] = relationship(back_populates="daily_schedules")
+        while low <= high:
+            mid = (high + low) // 2
+            if self.daily_schedules[mid].weekday < to_find:
+                low = mid + 1
+            elif self.daily_schedules[mid].weekday > to_find:
+                high = mid - 1
+            else:
+                return self.daily_schedules[mid]
+        return None

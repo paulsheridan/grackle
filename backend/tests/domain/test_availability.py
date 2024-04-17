@@ -4,12 +4,14 @@ import uuid
 import json
 
 from freezegun import freeze_time
-from domain.service import get_service, Service
-from domain.appointment import Appointment
-from domain.availability import (
-    get_availability,
-    determine_date_range,
-    calc_day_availability,
+from app.schemas import Service
+
+# from app.repositories.postgres import PostgresRepo
+from app import models, schemas
+from app.domain.availability import (
+    create_availability,
+    calculate_service_date_range,
+    availability_per_day,
 )
 
 
@@ -126,7 +128,7 @@ def test_appointments_a():
             "canceled": False,
         },
     ]
-    return [Appointment.model_validate(item) for item in json_appts]
+    return [schemas.Appointment.model_validate(item) for item in json_appts]
 
 
 @pytest.fixture
@@ -151,27 +153,20 @@ def test_appointments_april_2024():
                     "canceled": False,
                 }
             )
-            appts.append(Appointment.model_validate_json(json_appt))
+            appts.append(schemas.Appointment.model_validate_json(json_appt))
     return appts
 
 
 def test_get_date_window_returns_correct_date_passed(test_service_long):
     service = test_service_long
-    earliest, latest = determine_date_range(service, "2024-06")
+    earliest, latest = calculate_service_date_range(service, 2024, 6)
     assert earliest == datetime.date(2024, 6, 1)
     assert latest == datetime.date(2024, 6, 30)
 
 
-def test_get_date_window_returns_no_date_passed(test_service_long):
-    service = test_service_long
-    earliest, latest = determine_date_range(service)
-    assert earliest == datetime.date(2024, 4, 1)
-    assert latest == datetime.date(2024, 4, 30)
-
-
 def test_get_date_window_returns_correct_start_end_within_month(test_service_short):
     service = test_service_short
-    earliest, latest = determine_date_range(service)
+    earliest, latest = calculate_service_date_range(service)
     assert earliest == datetime.date(2024, 5, 12)
     assert latest == datetime.date(2024, 5, 21)
 
@@ -179,24 +174,24 @@ def test_get_date_window_returns_correct_start_end_within_month(test_service_sho
 def test_get_date_window_after_service_start_date_passed(test_service_long):
     service = test_service_long
     with pytest.raises(IndexError):
-        determine_date_range(service, "2025-06")
+        calculate_service_date_range(service, 2025, 6)
 
 
 def test_get_date_window_before_service_start_date(test_service_long):
     service = test_service_long
     with pytest.raises(IndexError):
-        determine_date_range(service, "2023-06")
+        calculate_service_date_range(service, 2023, 6)
 
 
 def test_get_date_window_just_before_service_start_date(test_service_long):
     service = test_service_long
     with pytest.raises(IndexError):
-        determine_date_range(service, "2024-03")
+        calculate_service_date_range(service, 2024, 3)
 
 
 def test_get_date_window_returns_no_date_passed(test_service_long):
     service = test_service_long
-    earliest, latest = determine_date_range(service)
+    earliest, latest = calculate_service_date_range(service)
     assert earliest == datetime.date(2024, 4, 1)
     assert latest == datetime.date(2024, 4, 30)
 
@@ -221,8 +216,8 @@ def test_calc_day_availability_with_only_early_late_appts(test_service_short_hrs
             "canceled": False,
         },
     ]
-    test_appts = [Appointment.model_validate(item) for item in json_appts]
-    test_avail = calc_day_availability(service, test_appts, datetime.date(2024, 4, 3))
+    test_appts = [schemas.Appointment.model_validate(item) for item in json_appts]
+    test_avail = availability_per_day(service, test_appts, datetime.date(2024, 4, 3))
     assert test_avail.model_dump() == {
         "date": datetime.datetime(2024, 4, 3, 0, 0),
         "windows": [
@@ -282,8 +277,8 @@ def test_calc_day_availability_with_existing_appts(test_service_short_hrs):
             "canceled": False,
         },
     ]
-    test_appts = [Appointment.model_validate(item) for item in json_appts]
-    test_avail = calc_day_availability(service, test_appts, datetime.date(2024, 4, 8))
+    test_appts = [schemas.Appointment.model_validate(item) for item in json_appts]
+    test_avail = availability_per_day(service, test_appts, datetime.date(2024, 4, 8))
     assert test_avail.model_dump() == {
         "date": datetime.datetime(2024, 4, 8, 0, 0),
         "windows": [
@@ -312,7 +307,7 @@ def test_calc_day_availability_with_full_schedule(
 ):
     service = test_service_short_hrs
     test_appts = test_appointments_a
-    test_avail = calc_day_availability(service, test_appts, datetime.date(2024, 4, 8))
+    test_avail = availability_per_day(service, test_appts, datetime.date(2024, 4, 8))
     assert test_avail.model_dump() == {
         "date": datetime.datetime(2024, 4, 8, 0, 0),
         "windows": [
@@ -326,7 +321,7 @@ def test_calc_day_availability_with_full_schedule(
 
 def test_calc_day_availability_no_current_appointments(test_service_long):
     service = test_service_long
-    test_avail = calc_day_availability(service, [], datetime.date(2024, 4, 3))
+    test_avail = availability_per_day(service, [], datetime.date(2024, 4, 3))
     assert test_avail.model_dump() == {
         "date": datetime.datetime(2024, 4, 3, 0, 0),
         "windows": [
@@ -400,7 +395,7 @@ def test_get_availability_returns_entire_month(
         "domain.availability.list_appointments",
         return_value=test_appointments_april_2024,
     )
-    available_times = get_availability(
+    available_times = create_availability(
         user_id=uuid.uuid4(), service_id=service.service_id, month="2024-04"
     )
     days_in_office = [0, 2, 4, 5]
@@ -420,8 +415,8 @@ def test_get_availability_raises_index_error_outside_service_time(
         return_value=test_appointments_april_2024,
     )
     with pytest.raises(IndexError):
-        get_availability(
-            user_id=uuid.uuid4(), service_id=service.service_id, month="2024-04"
+        create_availability(
+            user_id=uuid.uuid4(), service_id=service.service_id, year=2024, month=4
         )
 
 
@@ -435,7 +430,7 @@ def test_get_availability_returns_correct_office_days(
         "domain.availability.list_appointments",
         return_value=test_appointments_april_2024,
     )
-    available_times = get_availability(
+    available_times = create_availability(
         user_id=uuid.uuid4(), service_id=service.service_id, month="2024-04"
     )
     days_in_office = [0, 2, 3, 4, 5]

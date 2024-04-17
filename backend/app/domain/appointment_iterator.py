@@ -1,8 +1,8 @@
 from collections.abc import Iterable, Iterator
 from typing import Any, List
 
-from app.api import schemas
-from app.api import models
+from app import schemas
+from app import models
 
 
 class AppointmentsCollection(Iterable):

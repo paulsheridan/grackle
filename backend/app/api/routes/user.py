@@ -8,12 +8,12 @@ from app.api.deps import (
     SessionDep,
     get_current_active_superuser,
 )
-from app.api import schemas
-from app.api import models
-from app.api.domain import user as user_domain
+from app import schemas
+from app import models
+from app.domain import user as user_domain
 from app.core.config import settings
 from app.core.security import verify_password, get_password_hash
-from app.api.repositories.postgres import PostgresRepo
+from app.repositories.postgres import PostgresRepo
 
 
 router = APIRouter()

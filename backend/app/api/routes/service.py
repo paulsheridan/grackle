@@ -7,10 +7,14 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import select, update, delete
 from psycopg.errors import ForeignKeyViolation
 
-from app.api import schemas
-from app.api import models
+from app import schemas, models
 from app.api.deps import CurrentUser, SessionDep
-from app.api.repositories.postgres import PostgresRepo
+from app.repositories.postgres import PostgresRepo
+from app.domain.availability import (
+    availability_per_day,
+    calculate_service_date_range,
+    create_availability,
+)
 
 
 router = APIRouter()
@@ -89,3 +93,24 @@ def delete_service(
 
     repo.delete(svc_id)
     return schemas.Message(message="Service deleted successfully")
+
+
+@router.get("/{svc_id}/availability")
+def get_service_availability(
+    session: SessionDep,
+    svc_id: uuid.UUID,
+    year: int | None = None,
+    month: int | None = None,
+):
+    svc_repo = PostgresRepo(session, models.Service)
+    service = svc_repo.read_by("id", svc_id)
+
+    earliest, latest = calculate_service_date_range(service, year, month)
+
+    appts_repo = PostgresRepo(session, models.Appointment)
+    current_appts = appts_repo.list_between_dates(
+        "user_id", service.user_id, earliest, latest
+    )
+
+    availability = create_availability(earliest, latest, service, current_appts)
+    return availability

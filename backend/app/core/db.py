@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, select
 
 from app.core.config import settings
-from app.api.domain.user import create_user
-from app.api.models import User
-from app.api.schemas import UserCreate
+from app.domain.user import create_user
+from app.models import User
+from app.schemas import UserCreate
 
 
 def init_db(session: Session) -> None:

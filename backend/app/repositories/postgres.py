@@ -1,12 +1,12 @@
 import uuid
 
 from typing import Type, Sequence, Any
-from datetime import datetime
+from datetime import datetime, date
 
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, insert
 
 from app.api.deps import SessionDep
-from app.api.models import Base
+from app.models import Base
 
 
 class PostgresRepo:
@@ -24,7 +24,7 @@ class PostgresRepo:
         filter_val: Any = None,
         skip: int = 0,
         limit: int = 100,
-    ) -> Sequence[Base]:
+    ) -> Sequence[Any]:
         stmt = select(self.model).offset(skip).limit(limit)
         if filter_attr:
             requested_attr = getattr(self.model, filter_attr)
@@ -35,14 +35,13 @@ class PostgresRepo:
         stmt = select(self.model).where(self.model.id == obj_id)
         return self.session.scalars(stmt).first()
 
-    def create(self, data_in: dict) -> Base:
+    def create(self, data_in: dict) -> Any:
         new_obj = self.model(**data_in)
         self.session.add(new_obj)
         self.session.commit()
-        self.session.refresh(new_obj)
         return new_obj
 
-    def update(self, model_id: uuid.UUID, data_in: dict) -> Base | None:
+    def update(self, model_id: uuid.UUID, data_in: dict) -> Any:
         stmt = (
             update(self.model)
             .where(self.model.id == model_id)
@@ -59,20 +58,22 @@ class PostgresRepo:
         self,
         filter_attr: str | None,
         filter_val: Any,
-        start: datetime,
-        end: datetime,
-        skip: int,
-        limit: int,
-    ) -> Sequence[Base]:
+        start: datetime | date,
+        end: datetime | date,
+        skip: int | None = None,
+        limit: int | None = None,
+    ) -> Sequence[Any]:
         stmt = select(self.model).where(
-            self.model.start.between(start, end).offset(skip).limit(limit)  # type: ignore
+            self.model.start.between(start, end)  # type: ignore
         )
+        if skip and limit:
+            stmt = stmt.offset(skip).limit(limit)
         if filter_attr:
             requested_attr = getattr(self.model, filter_attr)
             stmt = stmt.filter(requested_attr == filter_val)
         return self.session.scalars(stmt).all()
 
-    def read_by(self, filter_attr: str, filter_val: Any) -> Base | None:
+    def read_by(self, filter_attr: str, filter_val: Any) -> Any:
         requested_attr = getattr(self.model, filter_attr)
         stmt = select(self.model).where(requested_attr == filter_val)
         return self.session.scalars(stmt).first()
