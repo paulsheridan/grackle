@@ -55,8 +55,14 @@ def create_service(
     service_create = schemas.ServiceCreate(
         **svc_in.model_dump(), user_id=current_user.id
     )
-    print(service_create.model_dump())
     service = repo.create(service_create.model_dump())
+    repo = PostgresRepo(session, models.WorkingHours)
+    hrs = []
+    for hours in svc_in.working_hours:
+        hours.service_id = service.id
+        hrs.append(hours.model_dump())
+    working_hours = repo.create_many(hrs)
+
     return service
 
 
@@ -104,8 +110,7 @@ def get_service_availability(
     month: int | None = None,
 ):
     svc_repo = PostgresRepo(session, models.Service)
-    service = svc_repo.list_related("id", svc_id, "daily_schedules")
-    print(service.daily_schedules)
+    service = svc_repo.read_by("id", svc_id)
 
     earliest, latest = calculate_service_date_range(service, year, month)
 

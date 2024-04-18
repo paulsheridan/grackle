@@ -54,7 +54,7 @@ def create_availability(
         today_slots = {"date": day, "windows": []}
         if day < earliest or day > latest:
             continue
-        office_hours = service.get_day_schedule(day.weekday())
+        office_hours = service.get_working_hours(day.weekday())
         print(f"FOUND OFFICE HOURS: {office_hours}")
         if office_hours:
             # TODO: Is there a way to make this a pointer again? That would limit the time complexity
@@ -72,7 +72,7 @@ def availability_per_day(
     day: date,
     svc_duration_mins: int,
     appointments: list[models.Appointment],
-    office_hours: models.DailySchedule,
+    office_hours: models.WorkingHours,
 ):
     appt_index = 0
     today_slots: dict = {"date": day, "windows": []}

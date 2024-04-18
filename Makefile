@@ -22,10 +22,10 @@ build:
 bash:
 	docker compose exec backend bash
 
-.PHONY: db-migrate
-db-migrate:
+.PHONY: migrate
+migrate:
 	docker exec -it booking-htmx-backend-1 alembic revision --autogenerate
 
-.PHONY: db-upgrade
-db-upgrade:
+.PHONY: upgrade
+upgrade:
 	alembic upgrade head

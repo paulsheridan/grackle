@@ -1,10 +1,9 @@
 import uuid
 
-from typing import Type, Sequence, Any
+from typing import Type, Sequence, Any, List
 from datetime import datetime, date
 
 from sqlalchemy import select, update, delete, insert
-from sqlalchemy.orm import selectinload
 
 from app.api.deps import SessionDep
 from app.models import Base
@@ -38,11 +37,15 @@ class PostgresRepo:
 
     def create(self, data_in: dict) -> Any:
         new_obj = self.model(**data_in)
-        print(new_obj)
-        print(new_obj.daily_schedules)
         self.session.add(new_obj)
         self.session.commit()
         return new_obj
+
+    def create_many(self, data_in: List[dict]) -> Any:
+        models = [self.model(**item) for item in data_in]
+        self.session.add_all(models)
+        self.session.commit()
+        return models
 
     def update(self, model_id: uuid.UUID, data_in: dict) -> Any:
         stmt = (
@@ -79,16 +82,4 @@ class PostgresRepo:
     def read_by(self, filter_attr: str, filter_val: Any) -> Any:
         requested_attr = getattr(self.model, filter_attr)
         stmt = select(self.model).where(requested_attr == filter_val)
-        return self.session.scalars(stmt).first()
-
-    def list_related(self, filter_attr: str, filter_val: Any, related: Any) -> Any:
-        related = getattr(self.model, related)
-        requested_attr = getattr(self.model, filter_attr)
-        print(related)
-        print(requested_attr)
-        stmt = (
-            select(self.model)
-            .options(selectinload(related))
-            .where(requested_attr == filter_val)
-        )
         return self.session.scalars(stmt).first()

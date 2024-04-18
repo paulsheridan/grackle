@@ -4,6 +4,7 @@ from datetime import datetime, time, timezone
 
 from sqlalchemy import ForeignKey, DateTime, Uuid
 from sqlalchemy.types import Boolean, Integer, String
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.sql import func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -106,15 +107,15 @@ class Client(Base):
     )
 
 
-class DailySchedule(Base):
-    __tablename__ = "daily_schedule"
+class WorkingHours(Base):
+    __tablename__ = "working_hours"
 
     weekday: Mapped[int]
     open: Mapped[time]
     close: Mapped[time]
 
     service_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("service.id"))
-    service: Mapped["Service"] = relationship(back_populates="daily_schedules")
+    service: Mapped["Service"] = relationship(back_populates="working_hours")
 
 
 class Service(Base):
@@ -127,9 +128,10 @@ class Service(Base):
     start: Mapped[datetime]
     end: Mapped[datetime]
 
-    daily_schedules: Mapped[List["DailySchedule"]] = relationship(
+    working_hours: Mapped[List["WorkingHours"]] = relationship(
         back_populates="service", cascade="all, delete-orphan"
     )
+
     appointments: Mapped[List["Appointment"]] = relationship(
         back_populates="service", cascade="all, delete-orphan"
     )
@@ -137,15 +139,15 @@ class Service(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="services")
 
-    def get_day_schedule(self, to_find: int) -> Optional[DailySchedule]:
-        low, high = 0, len(self.daily_schedules) - 1
+    def get_working_hours(self, to_find: int) -> Optional[WorkingHours]:
+        low, high = 0, len(self.working_hours) - 1
 
         while low <= high:
             mid = (high + low) // 2
-            if self.daily_schedules[mid].weekday < to_find:
+            if self.working_hours[mid].weekday < to_find:
                 low = mid + 1
-            elif self.daily_schedules[mid].weekday > to_find:
+            elif self.working_hours[mid].weekday > to_find:
                 high = mid - 1
             else:
-                return self.daily_schedules[mid]
+                return self.working_hours[mid]
         return None

@@ -209,13 +209,9 @@ class Service(ServiceBase):
     id: uuid.UUID
     user_id: uuid.UUID
 
-    schedule: List["DailySchedule"]
-
 
 class ServiceCreate(ServiceBase):
     user_id: uuid.UUID
-
-    daily_schedules: List["DailyScheduleCreate"]
 
 
 class ServiceRegister(BaseModel):
@@ -226,7 +222,7 @@ class ServiceRegister(BaseModel):
     start: datetime
     end: datetime
 
-    daily_schedules: List["DailyScheduleCreate"]
+    working_hours: Sequence["WorkingHours"]
 
 
 class ServiceUpdate(BaseModel):
@@ -241,19 +237,21 @@ class ServiceUpdate(BaseModel):
 class ServiceOut(ServiceBase):
     id: uuid.UUID
 
+    working_hours: Sequence["WorkingHours"]
+
 
 class ServicesOut(ServiceOut):
     data: list[UserOut]
 
 
-class DailySchedule(BaseModel):
+class WorkingHours(BaseModel):
     weekday: int
     open: time
     close: time
-    service_id: uuid.UUID
+    service_id: uuid.UUID | None = None
 
 
-class DailyScheduleCreate(BaseModel):
+class WorkingHoursCreate(BaseModel):
     weekday: int
     open: time
     close: time
