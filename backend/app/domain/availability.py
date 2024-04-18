@@ -11,9 +11,9 @@ from app.repositories.postgres import PostgresRepo
 
 
 def calculate_service_date_range(
-    self, year: int | None = None, month: int | None = None
+    service: models.Service, year: int | None = None, month: int | None = None
 ) -> tuple[date, date]:
-    earliest: date = max(date.today(), self.service.start.date())
+    earliest: date = max(date.today(), service.start.date())
     if not month or not year:
         latest: date = min(
             date(
@@ -21,21 +21,21 @@ def calculate_service_date_range(
                 earliest.month,
                 calendar.monthrange(earliest.year, earliest.month)[-1],
             ),
-            self.service.end.date(),
+            service.end.date(),
         )
         return earliest, latest
 
     if (
         month < earliest.month
         or year < earliest.year
-        or month > self.service.end.month
-        or year > self.service.end.year
+        or month > service.end.month
+        or year > service.end.year
     ):
         raise IndexError
     earliest = max(earliest, date(year, month, 1))
     latest = min(
         date(year, month, calendar.monthrange(year, month)[-1]),
-        self.service.end.date(),
+        service.end.date(),
     )
     return earliest, latest
 
@@ -47,25 +47,25 @@ def create_availability(
     current_appts: Sequence[models.Appointment],
 ) -> list[schemas.Availability]:
 
-    available_times = []
+    output_calendar = []
 
     cal = calendar.Calendar()
     for day in cal.itermonthdates(earliest.year, earliest.month):
+        today_slots = {"date": day, "windows": []}
         if day < earliest or day > latest:
-            # TODO: Do more here than just continue. Create empty so that the calendar has something to render
             continue
-
         office_hours = service.get_day_schedule(day.weekday())
+        print(f"FOUND OFFICE HOURS: {office_hours}")
         if office_hours:
             # TODO: Is there a way to make this a pointer again? That would limit the time complexity
             today_appts = [appt for appt in current_appts if appt.start.date() == day]
             today_slots = availability_per_day(
                 day, service.duration, today_appts, office_hours
             )
-            if today_slots and len(today_slots.windows) > 0:
-                available_times.append(today_slots)
 
-    return available_times
+        output_calendar.append(today_slots)
+
+    return output_calendar
 
 
 def availability_per_day(

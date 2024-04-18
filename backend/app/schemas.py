@@ -215,6 +215,8 @@ class Service(ServiceBase):
 class ServiceCreate(ServiceBase):
     user_id: uuid.UUID
 
+    daily_schedules: List["DailyScheduleCreate"]
+
 
 class ServiceRegister(BaseModel):
     name: str
@@ -223,6 +225,8 @@ class ServiceRegister(BaseModel):
     max_per_day: int
     start: datetime
     end: datetime
+
+    daily_schedules: List["DailyScheduleCreate"]
 
 
 class ServiceUpdate(BaseModel):
@@ -247,6 +251,12 @@ class DailySchedule(BaseModel):
     open: time
     close: time
     service_id: uuid.UUID
+
+
+class DailyScheduleCreate(BaseModel):
+    weekday: int
+    open: time
+    close: time
 
 
 class Token(BaseModel):
