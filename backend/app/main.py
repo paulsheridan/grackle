@@ -1,11 +1,15 @@
 # import sentry_sdk
 
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.main import api_router
+from app.users.routes import users_router
+from app.login.routes import login_router
+from app.appointments.routes import appointments_router
+from app.services.routes import services_router
+from app.clients.routes import clients_router
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -32,5 +36,15 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+api_router = APIRouter()
+
+api_router.include_router(users_router, prefix="/users", tags=["users"])
+api_router.include_router(login_router, prefix="/login", tags=["login"])
+api_router.include_router(
+    appointments_router, prefix="/appointments", tags=["appointments"]
+)
+api_router.include_router(services_router, prefix="/services", tags=["services"])
+api_router.include_router(clients_router, prefix="/clients", tags=["clients"])
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

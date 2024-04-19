@@ -13,10 +13,10 @@ from app.api.deps import CurrentUser, SessionDep
 from app.repositories.postgres import PostgresRepo
 
 
-router = APIRouter()
+appointments_router = APIRouter()
 
 
-@router.get("/", response_model=schemas.AppointmentsOut)
+@appointments_router.get("/", response_model=schemas.AppointmentsOut)
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
@@ -35,7 +35,7 @@ def list_appointments(
     return schemas.AppointmentsOut(data=appointments)  # type: ignore
 
 
-@router.get("/{appt_id}", response_model=schemas.AppointmentOut)
+@appointments_router.get("/{appt_id}", response_model=schemas.AppointmentOut)
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
@@ -49,7 +49,7 @@ def get_appointment(
     return appointment
 
 
-@router.post("/", response_model=schemas.AppointmentOut)
+@appointments_router.post("/", response_model=schemas.AppointmentOut)
 def create_appointment(
     session: SessionDep, current_user: CurrentUser, appt_in: schemas.AppointmentRegister
 ) -> Any:
@@ -66,7 +66,7 @@ def create_appointment(
     return appointment
 
 
-@router.patch("/{appt_id}", response_model=schemas.AppointmentOut)
+@appointments_router.patch("/{appt_id}", response_model=schemas.AppointmentOut)
 def update_appointment(
     session: SessionDep,
     current_user: CurrentUser,
@@ -86,7 +86,7 @@ def update_appointment(
     return updated
 
 
-@router.delete("/{appt_id}")
+@appointments_router.delete("/{appt_id}")
 def delete_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> schemas.Message:
@@ -102,7 +102,7 @@ def delete_appointment(
     return schemas.Message(message="Appointment deleted successfully")
 
 
-@router.post("/request", response_model=schemas.ClientAppointmentRequest)
+@appointments_router.post("/request", response_model=schemas.ClientAppointmentRequest)
 def request_appointment(
     session: SessionDep, appt_request: schemas.ClientAppointmentRequest
 ):

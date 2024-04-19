@@ -41,11 +41,21 @@ class PostgresRepo:
         self.session.commit()
         return new_obj
 
-    def create_many(self, data_in: List[dict]) -> Any:
-        models = [self.model(**item) for item in data_in]
-        self.session.add_all(models)
+    def create_joined(
+        self,
+        child_model: Any,
+        parent_data: dict,
+        child_data: Sequence[dict[Any, Any]],
+        attr_name: str,
+    ) -> Any:
+        child_attr = getattr(self.model, attr_name)
+        parent = self.model(**parent_data)
+        child_models = [child_model(**item) for item in child_data]
+        child_attr = child_models
+
+        self.session.add(parent)
         self.session.commit()
-        return models
+        return parent
 
     def update(self, model_id: uuid.UUID, data_in: dict) -> Any:
         stmt = (
@@ -82,4 +92,11 @@ class PostgresRepo:
     def read_by(self, filter_attr: str, filter_val: Any) -> Any:
         requested_attr = getattr(self.model, filter_attr)
         stmt = select(self.model).where(requested_attr == filter_val)
+        return self.session.scalars(stmt).first()
+
+    def read_with_join(self, joined: str, filter_attr: str, filter_val: Any) -> Any:
+        requested_attr = getattr(self.model, filter_attr)
+        joined_attr = getattr(self.model, joined)
+        print(joined_attr)
+        stmt = select(self.model).join(joined_attr)
         return self.session.scalars(stmt).first()

@@ -10,17 +10,17 @@ from psycopg.errors import ForeignKeyViolation
 from app import schemas, models
 from app.api.deps import CurrentUser, SessionDep
 from app.repositories.postgres import PostgresRepo
-from app.domain.availability import (
+from app.services.domain import (
     availability_per_day,
     calculate_service_date_range,
     create_availability,
 )
 
 
-router = APIRouter()
+services_router = APIRouter()
 
 
-@router.get("/", response_model=schemas.ServicesOut)
+@services_router.get("/", response_model=schemas.ServicesOut)
 def list_services(
     session: SessionDep,
     current_user: CurrentUser,
@@ -32,7 +32,7 @@ def list_services(
     return schemas.ServicesOut(data=services)  # type: ignore
 
 
-@router.get("/{svc_id}", response_model=schemas.ServiceOut)
+@services_router.get("/{svc_id}", response_model=schemas.ServiceOut)
 def get_service(
     session: SessionDep, current_user: CurrentUser, svc_id: uuid.UUID
 ) -> Any:
@@ -46,7 +46,7 @@ def get_service(
     return service
 
 
-@router.post("/", response_model=schemas.ServiceOut)
+@services_router.post("/", response_model=schemas.ServiceOut)
 def create_service(
     session: SessionDep, current_user: CurrentUser, svc_in: schemas.ServiceRegister
 ) -> Any:
@@ -55,18 +55,18 @@ def create_service(
     service_create = schemas.ServiceCreate(
         **svc_in.model_dump(), user_id=current_user.id
     )
-    service = repo.create(service_create.model_dump())
+    service = repo.create_joined(
+        models.WorkingHours,
+        service_create.model_dump(),
+        svc_in.working_hours,
+        "working_hours",
+    )
     repo = PostgresRepo(session, models.WorkingHours)
-    hrs = []
-    for hours in svc_in.working_hours:
-        hours.service_id = service.id
-        hrs.append(hours.model_dump())
-    working_hours = repo.create_many(hrs)
 
     return service
 
 
-@router.patch("/{svc_id}", response_model=schemas.ServiceOut)
+@services_router.patch("/{svc_id}", response_model=schemas.ServiceOut)
 def update_service(
     session: SessionDep,
     current_user: CurrentUser,
@@ -86,7 +86,7 @@ def update_service(
     return updated
 
 
-@router.delete("/{svc_id}")
+@services_router.delete("/{svc_id}")
 def delete_service(
     session: SessionDep, current_user: CurrentUser, svc_id: uuid.UUID
 ) -> schemas.Message:
@@ -102,7 +102,7 @@ def delete_service(
     return schemas.Message(message="Service deleted successfully")
 
 
-@router.get("/{svc_id}/availability")
+@services_router.get("/{svc_id}/availability")
 def get_service_availability(
     session: SessionDep,
     svc_id: uuid.UUID,
@@ -110,7 +110,8 @@ def get_service_availability(
     month: int | None = None,
 ):
     svc_repo = PostgresRepo(session, models.Service)
-    service = svc_repo.read_by("id", svc_id)
+    service = svc_repo.read_with_join("working_hours", "id", svc_id)
+    print(service.__dict__)
 
     earliest, latest = calculate_service_date_range(service, year, month)
 

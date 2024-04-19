@@ -13,10 +13,10 @@ from app.api.deps import CurrentUser, SessionDep
 from app.repositories.postgres import PostgresRepo
 
 
-router = APIRouter()
+clients_router = APIRouter()
 
 
-@router.get("/", response_model=schemas.ClientsOut)
+@clients_router.get("/", response_model=schemas.ClientsOut)
 def list_clients(
     session: SessionDep,
     current_user: CurrentUser,
@@ -28,7 +28,7 @@ def list_clients(
     return schemas.ClientsOut(data=clients)  # type: ignore
 
 
-@router.get("/{client_id}", response_model=schemas.ClientOut)
+@clients_router.get("/{client_id}", response_model=schemas.ClientOut)
 def get_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Any:
@@ -42,7 +42,7 @@ def get_client(
     return client
 
 
-@router.post("/", response_model=schemas.ClientOut)
+@clients_router.post("/", response_model=schemas.ClientOut)
 def create_client(
     session: SessionDep, current_user: CurrentUser, client_in: schemas.ClientRegister
 ) -> Any:
@@ -55,7 +55,7 @@ def create_client(
     return client
 
 
-@router.patch("/{client_id}", response_model=schemas.ClientOut)
+@clients_router.patch("/{client_id}", response_model=schemas.ClientOut)
 def update_client(
     session: SessionDep,
     current_user: CurrentUser,
@@ -75,7 +75,7 @@ def update_client(
     return updated
 
 
-@router.delete("/{client_id}")
+@clients_router.delete("/{client_id}")
 def delete_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> schemas.Message:
