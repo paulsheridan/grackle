@@ -8,8 +8,17 @@ from app.api.deps import (
     SessionDep,
     get_current_active_superuser,
 )
-from app import schemas
-from app import models
+from app.clients.models import Client
+from app.users.models import (
+    User,
+    UsersOut,
+    UserOut,
+    UserCreate,
+    UserUpdate,
+    UpdatePassword,
+)
+from app.appointments.models import Appointment
+from app.core.models import Message
 from app.users import domain
 from app.core.config import settings
 from app.core.security import verify_password, get_password_hash
@@ -22,21 +31,21 @@ users_router = APIRouter()
 @users_router.get(
     "/",
     dependencies=[Depends(get_current_active_superuser)],
-    response_model=schemas.UsersOut,
+    response_model=UsersOut,
 )
 def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
-    db_service = PostgresRepo(session, models.User)
+    db_service = PostgresRepo(session, User)
     users = db_service.list()
-    users = session.scalars(select(models.User)).all()
-    return schemas.UsersOut(data=users)  # types: ignore
+    users = session.scalars(select(User)).all()
+    return UsersOut(data=users)  # types: ignore
 
 
 @users_router.post(
     "/",
     dependencies=[Depends(get_current_active_superuser)],
-    response_model=schemas.UserOut,
+    response_model=UserOut,
 )
-def create_user(*, session: SessionDep, user_in: schemas.UserCreate) -> Any:
+def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     user = domain.get_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(
@@ -56,11 +65,11 @@ def create_user(*, session: SessionDep, user_in: schemas.UserCreate) -> Any:
     return user
 
 
-@users_router.patch("/me", response_model=schemas.UserOut)
+@users_router.patch("/me", response_model=UserOut)
 def update_user_me(
-    *, session: SessionDep, user_in: schemas.UserUpdate, current_user: CurrentUser
+    *, session: SessionDep, user_in: UserUpdate, current_user: CurrentUser
 ) -> Any:
-    db_service = PostgresRepo(session, models.User)
+    db_service = PostgresRepo(session, User)
     if user_in.email:
         existing_user = domain.get_user_by_email(session, user_in.email)
         if existing_user and existing_user.id != current_user.id:
@@ -72,11 +81,11 @@ def update_user_me(
     return updated
 
 
-@users_router.patch("/me/password", response_model=schemas.Message)
+@users_router.patch("/me/password", response_model=Message)
 def update_password_me(
-    *, session: SessionDep, body: schemas.UpdatePassword, current_user: CurrentUser
+    *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser
 ) -> Any:
-    db_service = PostgresRepo(session, models.User)
+    db_service = PostgresRepo(session, User)
     if not verify_password(body.current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect password")
     if body.current_password == body.new_password:
@@ -86,39 +95,39 @@ def update_password_me(
     hashed_password = get_password_hash(body.new_password)
     pw_dict = {"hashed_password": hashed_password}
     db_service.update(current_user.id, pw_dict)
-    return schemas.Message(message="Password updated successfully")
+    return Message(message="Password updated successfully")
 
 
-@users_router.get("/me", response_model=schemas.UserOut)
+@users_router.get("/me", response_model=UserOut)
 def read_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     return current_user
 
 
-@users_router.post("/signup", response_model=schemas.UserOut)
-def register_user(session: SessionDep, user_in: schemas.UserRegister) -> Any:
+@users_router.post("/signup", response_model=UserOut)
+def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    db_service = PostgresRepo(session, models.User)
+    db_service = PostgresRepo(session, User)
     user = db_service.read_by("email", user_in.email)
     if user:
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system",
         )
-    user_create = schemas.UserCreate.model_validate(user_in)
+    user_create = UserCreate.model_validate(user_in)
     user = domain.create_user(session=session, user_create=user_create)
 
     return user
 
 
-@users_router.get("/{user_id}", response_model=schemas.UserOut)
+@users_router.get("/{user_id}", response_model=UserOut)
 def read_user_by_id(
     user_id: int, session: SessionDep, current_user: CurrentUser
 ) -> Any:
-    user = session.get(models.User, user_id)
+    user = session.get(User, user_id)
     if user == current_user:
         return user
     if not current_user.is_superuser:

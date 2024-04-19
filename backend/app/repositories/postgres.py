@@ -5,7 +5,7 @@ from datetime import datetime, date
 
 from sqlalchemy import select, update, delete, insert
 
-from app.api.deps import SessionDep
+from app.deps import SessionDep
 from app.models import Base
 
 

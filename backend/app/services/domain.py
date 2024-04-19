@@ -6,12 +6,16 @@ from typing import Optional, List, Sequence
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app import models, schemas
+from app.clients.models import Client
+from app.services.models import Service, WorkingHours, Availability
+from app.users.models import User
+from app.appointments.models import Appointment
+from app.core.models import Message
 from app.repositories.postgres import PostgresRepo
 
 
 def calculate_service_date_range(
-    service: models.Service, year: int | None = None, month: int | None = None
+    service: Service, year: int | None = None, month: int | None = None
 ) -> tuple[date, date]:
     earliest: date = max(date.today(), service.start.date())
     if not month or not year:
@@ -43,9 +47,9 @@ def calculate_service_date_range(
 def create_availability(
     earliest: date,
     latest: date,
-    service: models.Service,
-    current_appts: Sequence[models.Appointment],
-) -> list[schemas.Availability]:
+    service: Service,
+    current_appts: Sequence[Appointment],
+) -> list[Availability]:
 
     output_calendar = []
 
@@ -71,8 +75,8 @@ def create_availability(
 def availability_per_day(
     day: date,
     svc_duration_mins: int,
-    appointments: list[models.Appointment],
-    office_hours: models.WorkingHours,
+    appointments: list[Appointment],
+    office_hours: WorkingHours,
 ):
     appt_index = 0
     today_slots: dict = {"date": day, "windows": []}
@@ -103,4 +107,4 @@ def availability_per_day(
         window_end = (
             window_start + timedelta(minutes=svc_duration_mins) - timedelta(minutes=1)
         )
-    return models.Availability(**today_slots)
+    return Availability(**today_slots)

@@ -6,11 +6,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.users.domain import authenticate, get_user_by_email
-from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
+from app.deps import CurrentUser, SessionDep, get_current_active_superuser
 from app.core import security
 from app.core.config import settings
 from app.core.security import get_password_hash
-from app.schemas import Message, NewPassword, Token, UserOut
+from app.users.models import UserOut
+from app.login.models import NewPassword, Token
+from app.core.models import Message
 from app.utils import (
     generate_password_reset_token,
     generate_reset_password_email,

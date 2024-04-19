@@ -1,9 +1,10 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, select
+from sqlmodel import Session, create_engine, select
 
 from app.core.config import settings
 from app.users.domain import create_user
 from app.users.models import User, UserCreate
+
+engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
 
 
 def init_db(session: Session) -> None:

@@ -92,3 +92,13 @@ class ServiceOut(ServiceBase):
 
 class ServicesOut(SQLModel):
     data: list[ServiceOut]
+
+
+class Availability(SQLModel):
+    artist_id: uuid.UUID
+    date: datetime
+    windows: dict[str, datetime]
+
+
+class Availabilities(SQLModel):
+    data: list[Availability]

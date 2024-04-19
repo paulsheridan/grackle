@@ -4,19 +4,31 @@ from typing import Any, Union, Sequence
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
-from sqlalchemy import select, update, delete
+from sqlmodel import func, select
 from psycopg.errors import ForeignKeyViolation
 
-from app import schemas
-from app import models
-from app.api.deps import CurrentUser, SessionDep
+from app.appointments.models import (
+    Appointment,
+    AppointmentOut,
+    AppointmentsOut,
+    AppointmentRegister,
+    AppointmentCreate,
+    AppointmentUpdate,
+    ClientAppointmentRequest,
+)
+from app.clients.models import Client, ClientCreate
+from app.users.models import User
+from app.services.models import Service
+from app.core.models import Message
+
+from app.deps import CurrentUser, SessionDep
 from app.repositories.postgres import PostgresRepo
 
 
 appointments_router = APIRouter()
 
 
-@appointments_router.get("/", response_model=schemas.AppointmentsOut)
+@appointments_router.get("/", response_model=AppointmentsOut)
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
@@ -24,22 +36,22 @@ def list_appointments(
     end: datetime | None = None,
     skip: int = 0,
     limit: int = 100,
-) -> schemas.AppointmentsOut:
-    repo = PostgresRepo(session, models.Appointment)
+) -> AppointmentsOut:
+    repo = PostgresRepo(session, Appointment)
     if not start or not end:
         appointments = repo.list("user_id", current_user.id, skip, limit)
     else:
         appointments = repo.list_between_dates(
             "user_id", current_user.id, start, end, skip, limit
         )
-    return schemas.AppointmentsOut(data=appointments)  # type: ignore
+    return AppointmentsOut(data=appointments)
 
 
-@appointments_router.get("/{appt_id}", response_model=schemas.AppointmentOut)
+@appointments_router.get("/{appt_id}", response_model=AppointmentOut)
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
-    repo = PostgresRepo(session, models.Appointment)
+    repo = PostgresRepo(session, Appointment)
     appointment = repo.read(appt_id)
 
     if not appointment:
@@ -49,31 +61,29 @@ def get_appointment(
     return appointment
 
 
-@appointments_router.post("/", response_model=schemas.AppointmentOut)
+@appointments_router.post("/", response_model=AppointmentOut)
 def create_appointment(
-    session: SessionDep, current_user: CurrentUser, appt_in: schemas.AppointmentRegister
+    session: SessionDep, current_user: CurrentUser, appt_in: AppointmentRegister
 ) -> Any:
-    repo = PostgresRepo(session, models.Appointment)
+    repo = PostgresRepo(session, Appointment)
 
     existing_in_timeslot = repo.read_by("start", appt_in.start)
     if existing_in_timeslot:
         raise HTTPException(status_code=409, detail="Appointment time already booked.")
 
-    appt_create = schemas.AppointmentCreate(
-        **appt_in.model_dump(), user_id=current_user.id
-    )
+    appt_create = AppointmentCreate(**appt_in.model_dump(), user_id=current_user.id)
     appointment = repo.create(appt_create.model_dump())
     return appointment
 
 
-@appointments_router.patch("/{appt_id}", response_model=schemas.AppointmentOut)
+@appointments_router.patch("/{appt_id}", response_model=AppointmentOut)
 def update_appointment(
     session: SessionDep,
     current_user: CurrentUser,
     appt_id: uuid.UUID,
-    appointment_in: schemas.AppointmentUpdate,
+    appointment_in: AppointmentUpdate,
 ) -> Any:
-    repo = PostgresRepo(session, models.Appointment)
+    repo = PostgresRepo(session, Appointment)
     appointment = repo.read(appt_id)
 
     if not appointment:
@@ -89,8 +99,8 @@ def update_appointment(
 @appointments_router.delete("/{appt_id}")
 def delete_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
-) -> schemas.Message:
-    repo = PostgresRepo(session, models.Appointment)
+) -> Message:
+    repo = PostgresRepo(session, Appointment)
     appointment = repo.read(appt_id)
 
     if not appointment:
@@ -99,17 +109,15 @@ def delete_appointment(
         raise HTTPException(status_code=400, detail="Not authorized")
 
     repo.delete(appt_id)
-    return schemas.Message(message="Appointment deleted successfully")
+    return Message(message="Appointment deleted successfully")
 
 
-@appointments_router.post("/request", response_model=schemas.ClientAppointmentRequest)
-def request_appointment(
-    session: SessionDep, appt_request: schemas.ClientAppointmentRequest
-):
-    user_repo = PostgresRepo(session, models.User)
-    appt_repo = PostgresRepo(session, models.Appointment)
-    client_repo = PostgresRepo(session, models.Client)
-    svc_repo = PostgresRepo(session, models.Service)
+@appointments_router.post("/request", response_model=ClientAppointmentRequest)
+def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequest):
+    user_repo = PostgresRepo(session, User)
+    appt_repo = PostgresRepo(session, Appointment)
+    client_repo = PostgresRepo(session, Client)
+    svc_repo = PostgresRepo(session, Service)
 
     user = user_repo.read_by("id", appt_request.user_id)
     if not user:
@@ -127,11 +135,11 @@ def request_appointment(
     if existing_client:
         client = existing_client
     else:
-        client_create = schemas.ClientCreate(**appt_request.model_dump())
+        client_create = ClientCreate(**appt_request.model_dump())
         client = client_repo.create(client_create.model_dump())
 
     appt_request.client_id = client.id
-    appt_create = schemas.AppointmentCreate(**appt_request.model_dump())
+    appt_create = AppointmentCreate(**appt_request.model_dump())
     appointment = appt_repo.create(appt_create.model_dump())
 
     return appt_request

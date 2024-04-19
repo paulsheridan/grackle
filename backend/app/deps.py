@@ -4,29 +4,23 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import create_engine
 from pydantic import ValidationError
+from sqlalchemy import Session
 
 from app.core import security
 from app.core.config import settings
-from app.schemas import TokenPayload
-from app.models import User
+from app.core.db import engine
+from app.login.models import TokenPayload
+from app.users.models import User
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
 
-engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+def get_db() -> Generator[Session, None, None]:
+    with Session(engine) as session:
+        yield session
 
 
 SessionDep = Annotated[Session, Depends(get_db)]
@@ -45,8 +39,10 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
             detail="Could not validate credentials",
         )
     user = session.get(User, token_data.sub)
-    if not user or not user.is_active:
-        raise HTTPException(status_code=404, detail="Unauthorized")
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
     return user
 
 
@@ -59,6 +55,3 @@ def get_current_active_superuser(current_user: CurrentUser) -> User:
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
-
-
-# SuperUser = Annotated[User, Depends(get_current_active_superuser)]
