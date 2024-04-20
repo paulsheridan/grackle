@@ -1,10 +1,13 @@
 import uuid
 
+from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone
-from app.users.models import User
-from app.clients.models import Client
-from app.services.models import Service
+
+if TYPE_CHECKING:
+    from app.clients.models import Client
+    from app.services.models import Service
+    from app.users.models import User
 
 
 class AppointmentBase(SQLModel):
@@ -15,27 +18,25 @@ class AppointmentBase(SQLModel):
 
 
 class Appointment(AppointmentBase, table=True):
-    id: uuid.UUID | None = Field(
-        default=uuid.uuid4, primary_key=True, index=True, nullable=False
+    id: uuid.UUID = Field(
+        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
     )
 
     created_at: datetime = Field(datetime.now(timezone.utc), nullable=False)
     last_edited: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    user_id: uuid.UUID | None = Field(
-        default=None, foreign_key="user.id", nullable=False
-    )
-    user: User | None = Relationship(back_populates="appointments")
+    user_id: uuid.UUID = Field(default=None, foreign_key="user.id", nullable=False)
+    user: "User" = Relationship(back_populates="appointments")
 
-    client_id: uuid.UUID | None = Field(
+    client_id: Optional[uuid.UUID] = Field(
         default=None, foreign_key="client.id", nullable=False
     )
-    client: Client | None = Relationship(back_populates="appointments")
+    client: Optional["Client"] = Relationship(back_populates="appointments")
 
-    service_id: uuid.UUID | None = Field(
+    service_id: uuid.UUID = Field(
         default=None, foreign_key="service.id", nullable=False
     )
-    service: Service | None = Relationship(back_populates="appointments")
+    service: "Service" = Relationship(back_populates="appointments")
 
 
 class AppointmentCreate(AppointmentBase):

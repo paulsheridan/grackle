@@ -5,13 +5,13 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import ValidationError
-from sqlalchemy import Session
+from sqlmodel import Session
 
 from app.core import security
 from app.core.config import settings
 from app.core.db import engine
-from app.login.models import TokenPayload
 from app.users.models import User
+from app.login.models import TokenPayload
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"

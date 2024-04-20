@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-import emails  # type: ignore
+import emails
 from jinja2 import Template
 from jose import JWTError, jwt
 

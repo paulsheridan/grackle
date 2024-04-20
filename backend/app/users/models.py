@@ -1,15 +1,18 @@
 import uuid
 
+from typing import TYPE_CHECKING, Optional
+
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone
 
+# if TYPE_CHECKING:
 from app.appointments.models import Appointment
 from app.clients.models import Client
 from app.services.models import Service
 
 
 class UserBase(SQLModel):
-    email: str
+    email: str = Field(index=True)
     username: str
     full_name: str | None = None
     shop_name: str
@@ -18,8 +21,8 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
-    id: uuid.UUID | None = Field(
-        default=uuid.uuid4, primary_key=True, index=True, nullable=False
+    id: Optional[uuid.UUID] = Field(
+        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
     )
     hashed_password: str
     created_at: datetime = Field(datetime.now(timezone.utc), nullable=False)
@@ -53,9 +56,9 @@ class UpdatePassword(SQLModel):
     new_password: str
 
 
-class UserOut(UserBase):
+class UserPublic(UserBase):
     id: uuid.UUID
 
 
-class UsersOut(SQLModel):
-    data: list[UserOut]
+class UsersPublic(SQLModel):
+    data: list[UserPublic]

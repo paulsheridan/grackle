@@ -2,18 +2,18 @@ import uuid
 
 from typing import Type, Sequence, Any, List
 from datetime import datetime, date
+from sqlmodel import select, update, delete, insert
+from typing import TYPE_CHECKING
 
-from sqlalchemy import select, update, delete, insert
-
-from app.deps import SessionDep
-from app.models import Base
+if TYPE_CHECKING:
+    from app.deps import SessionDep
 
 
 class PostgresRepo:
     def __init__(
         self,
-        session: SessionDep,
-        model: Type[Base],
+        session: "SessionDep",
+        model: Type[Any],
     ):
         self.session = session
         self.model = model
@@ -29,11 +29,11 @@ class PostgresRepo:
         if filter_attr:
             requested_attr = getattr(self.model, filter_attr)
             stmt = stmt.filter(requested_attr == filter_val)
-        return self.session.scalars(stmt).all()
+        return self.session.exec(stmt).all()
 
-    def read(self, obj_id: uuid.UUID) -> Base | None:
+    def read(self, obj_id: uuid.UUID) -> Any | None:
         stmt = select(self.model).where(self.model.id == obj_id)
-        return self.session.scalars(stmt).first()
+        return self.session.exec(stmt).first()
 
     def create(self, data_in: dict) -> Any:
         new_obj = self.model(**data_in)
@@ -64,11 +64,11 @@ class PostgresRepo:
             .values(data_in)
             .returning(self.model)
         )
-        return self.session.scalar(stmt)
+        return self.session.exec(stmt)
 
     def delete(self, model_id: uuid.UUID) -> None:
         stmt = delete(self.model).where(self.model.id == model_id)
-        return self.session.scalar(stmt)
+        return self.session.exec(stmt)
 
     def list_between_dates(
         self,
@@ -87,16 +87,16 @@ class PostgresRepo:
         if filter_attr:
             requested_attr = getattr(self.model, filter_attr)
             stmt = stmt.filter(requested_attr == filter_val)
-        return self.session.scalars(stmt).all()
+        return self.session.exec(stmt).all()
 
     def read_by(self, filter_attr: str, filter_val: Any) -> Any:
         requested_attr = getattr(self.model, filter_attr)
         stmt = select(self.model).where(requested_attr == filter_val)
-        return self.session.scalars(stmt).first()
+        return self.session.exec(stmt).first()
 
     def read_with_join(self, joined: str, filter_attr: str, filter_val: Any) -> Any:
         requested_attr = getattr(self.model, filter_attr)
         joined_attr = getattr(self.model, joined)
         print(joined_attr)
         stmt = select(self.model).join(joined_attr)
-        return self.session.scalars(stmt).first()
+        return self.session.exec(stmt).first()

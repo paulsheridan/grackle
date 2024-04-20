@@ -1,9 +1,8 @@
 from typing import Type, Sequence, Any
-
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlmodel import Session, select, func
 
-from app.api.deps import (
+from app.deps import (
     CurrentUser,
     SessionDep,
     get_current_active_superuser,
@@ -11,39 +10,41 @@ from app.api.deps import (
 from app.clients.models import Client
 from app.users.models import (
     User,
-    UsersOut,
-    UserOut,
+    UsersPublic,
+    UserPublic,
     UserCreate,
     UserUpdate,
     UpdatePassword,
+    UserRegister,
 )
 from app.appointments.models import Appointment
 from app.core.models import Message
 from app.users import domain
 from app.core.config import settings
 from app.core.security import verify_password, get_password_hash
-from app.repositories.postgres import PostgresRepo
+
+# from app.repositories.postgres import PostgresRepo
+from app.utils import generate_new_account_email, send_email
 
 
-users_router = APIRouter()
+router = APIRouter()
 
 
-@users_router.get(
+@router.get(
     "/",
     dependencies=[Depends(get_current_active_superuser)],
-    response_model=UsersOut,
+    response_model=UsersPublic,
 )
 def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     db_service = PostgresRepo(session, User)
     users = db_service.list()
-    users = session.scalars(select(User)).all()
-    return UsersOut(data=users)  # types: ignore
+    return UsersPublic(data=users)
 
 
-@users_router.post(
+@router.post(
     "/",
     dependencies=[Depends(get_current_active_superuser)],
-    response_model=UserOut,
+    response_model=UserPublic,
 )
 def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     user = domain.get_user_by_email(session=session, email=user_in.email)
@@ -65,7 +66,7 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
     return user
 
 
-@users_router.patch("/me", response_model=UserOut)
+@router.patch("/me", response_model=UserPublic)
 def update_user_me(
     *, session: SessionDep, user_in: UserUpdate, current_user: CurrentUser
 ) -> Any:
@@ -81,7 +82,7 @@ def update_user_me(
     return updated
 
 
-@users_router.patch("/me/password", response_model=Message)
+@router.patch("/me/password", response_model=Message)
 def update_password_me(
     *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser
 ) -> Any:
@@ -98,12 +99,12 @@ def update_password_me(
     return Message(message="Password updated successfully")
 
 
-@users_router.get("/me", response_model=UserOut)
+@router.get("/me", response_model=UserPublic)
 def read_user_me(session: SessionDep, current_user: CurrentUser) -> Any:
     return current_user
 
 
-@users_router.post("/signup", response_model=UserOut)
+@router.post("/signup", response_model=UserPublic)
 def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
@@ -123,7 +124,7 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
     return user
 
 
-@users_router.get("/{user_id}", response_model=UserOut)
+@router.get("/{user_id}", response_model=UserPublic)
 def read_user_by_id(
     user_id: int, session: SessionDep, current_user: CurrentUser
 ) -> Any:

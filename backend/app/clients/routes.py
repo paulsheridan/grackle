@@ -15,15 +15,18 @@ from app.clients.models import (
     ClientOut,
     ClientUpdate,
 )
+
+from app.deps import SessionDep
+
 from app.core.models import Message
-from app.deps import CurrentUser, SessionDep
+from app.deps import CurrentUser
 from app.repositories.postgres import PostgresRepo
 
 
-clients_router = APIRouter()
+router = APIRouter()
 
 
-@clients_router.get("/", response_model=ClientsOut)
+@router.get("/", response_model=ClientsOut)
 def list_clients(
     session: SessionDep,
     current_user: CurrentUser,
@@ -35,7 +38,7 @@ def list_clients(
     return ClientsOut(data=clients)  # type: ignore
 
 
-@clients_router.get("/{client_id}", response_model=ClientOut)
+@router.get("/{client_id}", response_model=ClientOut)
 def get_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Any:
@@ -49,7 +52,7 @@ def get_client(
     return client
 
 
-@clients_router.post("/", response_model=ClientOut)
+@router.post("/", response_model=ClientOut)
 def create_client(
     session: SessionDep, current_user: CurrentUser, client_in: ClientRegister
 ) -> Any:
@@ -60,7 +63,7 @@ def create_client(
     return client
 
 
-@clients_router.patch("/{client_id}", response_model=ClientOut)
+@router.patch("/{client_id}", response_model=ClientOut)
 def update_client(
     session: SessionDep,
     current_user: CurrentUser,
@@ -80,7 +83,7 @@ def update_client(
     return updated
 
 
-@clients_router.delete("/{client_id}")
+@router.delete("/{client_id}")
 def delete_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Message:

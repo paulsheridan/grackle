@@ -5,19 +5,19 @@ from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.users.routes import users_router
-from app.login.routes import login_router
-from app.appointments.routes import appointments_router
-from app.services.routes import services_router
-from app.clients.routes import clients_router
+from app.users.routes import router as users_router
+from app.login.routes import router as login_router
+from app.appointments.routes import router as appointments_router
+from app.services.routes import router as services_router
+from app.clients.routes import router as clients_router
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
 
-# if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
-#     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
+    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

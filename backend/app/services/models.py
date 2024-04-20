@@ -1,22 +1,26 @@
 import uuid
 
+from typing import TYPE_CHECKING, Optional
+
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone, time
 
-from app.appointments.models import Appointment
-from app.clients.models import Client
-from app.services.models import Service
-from app.users.models import User
+if TYPE_CHECKING:
+    from app.appointments.models import Appointment
+    from app.users.models import User
 
 
-class WorkingHours(SQLModel):
-    weekday: int
+class WorkingHours(SQLModel, table=True):
+    id: Optional[uuid.UUID] = Field(
+        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
+    )
+    weekday: int = Field(index=True)
     open: time
     close: time
     service_id: uuid.UUID | None = Field(
         default=None, foreign_key="service.id", nullable=False
     )
-    service: Service | None = Relationship(back_populates="working_hours")
+    service: "Service" = Relationship(back_populates="workinghours")
 
 
 class WorkingHoursCreate(SQLModel):
@@ -35,28 +39,28 @@ class ServiceBase(SQLModel):
 
 
 class Service(ServiceBase, table=True):
-    id: uuid.UUID | None = Field(
-        default=uuid.uuid4, primary_key=True, index=True, nullable=False
+    id: Optional[uuid.UUID] = Field(
+        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
     )
 
     user_id: uuid.UUID | None = Field(
         default=None, foreign_key="user.id", nullable=False
     )
-    user: User | None = Relationship(back_populates="services")
+    user: "User" = Relationship(back_populates="services")
     appointments: list["Appointment"] = Relationship(back_populates="service")
-    working_hours: list["WorkingHours"] = Relationship(back_populates="service")
+    workinghours: list["WorkingHours"] = Relationship(back_populates="service")
 
-    def get_working_hours(self, to_find: int) -> WorkingHours | None:
-        low, high = 0, len(self.working_hours) - 1
+    def get_workinghours(self, to_find: int) -> WorkingHours | None:
+        low, high = 0, len(self.workinghours) - 1
 
         while low <= high:
             mid = (high + low) // 2
-            if self.working_hours[mid].weekday < to_find:
+            if self.workinghours[mid].weekday < to_find:
                 low = mid + 1
-            elif self.working_hours[mid].weekday > to_find:
+            elif self.workinghours[mid].weekday > to_find:
                 high = mid - 1
             else:
-                return self.working_hours[mid]
+                return self.workinghours[mid]
         return None
 
 
@@ -72,7 +76,7 @@ class ServiceRegister(SQLModel):
     start: datetime
     end: datetime
 
-    working_hours: list["WorkingHours"]
+    workinghours: list["WorkingHours"]
 
 
 class ServiceUpdate(SQLModel):
@@ -87,7 +91,7 @@ class ServiceUpdate(SQLModel):
 class ServiceOut(ServiceBase):
     id: uuid.UUID
 
-    working_hours: list["WorkingHours"]
+    workinghours: list["WorkingHours"]
 
 
 class ServicesOut(SQLModel):

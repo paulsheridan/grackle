@@ -19,16 +19,17 @@ from app.appointments.models import (
 from app.clients.models import Client, ClientCreate
 from app.users.models import User
 from app.services.models import Service
+
 from app.core.models import Message
-
-from app.deps import CurrentUser, SessionDep
+from app.deps import CurrentUser
 from app.repositories.postgres import PostgresRepo
+from app.deps import SessionDep
 
 
-appointments_router = APIRouter()
+router = APIRouter()
 
 
-@appointments_router.get("/", response_model=AppointmentsOut)
+@router.get("/", response_model=AppointmentsOut)
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
@@ -47,7 +48,7 @@ def list_appointments(
     return AppointmentsOut(data=appointments)
 
 
-@appointments_router.get("/{appt_id}", response_model=AppointmentOut)
+@router.get("/{appt_id}", response_model=AppointmentOut)
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
@@ -61,7 +62,7 @@ def get_appointment(
     return appointment
 
 
-@appointments_router.post("/", response_model=AppointmentOut)
+@router.post("/", response_model=AppointmentOut)
 def create_appointment(
     session: SessionDep, current_user: CurrentUser, appt_in: AppointmentRegister
 ) -> Any:
@@ -76,7 +77,7 @@ def create_appointment(
     return appointment
 
 
-@appointments_router.patch("/{appt_id}", response_model=AppointmentOut)
+@router.patch("/{appt_id}", response_model=AppointmentOut)
 def update_appointment(
     session: SessionDep,
     current_user: CurrentUser,
@@ -96,7 +97,7 @@ def update_appointment(
     return updated
 
 
-@appointments_router.delete("/{appt_id}")
+@router.delete("/{appt_id}")
 def delete_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Message:
@@ -112,7 +113,7 @@ def delete_appointment(
     return Message(message="Appointment deleted successfully")
 
 
-@appointments_router.post("/request", response_model=ClientAppointmentRequest)
+@router.post("/request", response_model=ClientAppointmentRequest)
 def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequest):
     user_repo = PostgresRepo(session, User)
     appt_repo = PostgresRepo(session, Appointment)
