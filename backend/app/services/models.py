@@ -1,9 +1,8 @@
 import uuid
 
-from typing import TYPE_CHECKING, Optional
-
+from typing import TYPE_CHECKING, Optional, List
 from sqlmodel import Field, Relationship, SQLModel
-from datetime import datetime, timezone, time
+from datetime import datetime, timezone, time, date
 
 if TYPE_CHECKING:
     from app.appointments.models import Appointment
@@ -102,9 +101,8 @@ class ServicesOut(SQLModel):
 
 
 class Availability(SQLModel):
-    artist_id: uuid.UUID
-    date: datetime
-    windows: dict[str, datetime]
+    date: date
+    windows: List[dict[str, datetime]]
 
 
 class Availabilities(SQLModel):

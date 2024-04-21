@@ -18,6 +18,7 @@ from app.services.models import (
     ServiceCreate,
     ServiceRegister,
     ServiceUpdate,
+    Availabilities,
 )
 from app.users.models import User
 from app.appointments.models import Appointment
@@ -119,9 +120,10 @@ def get_service_availability(
     stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
     service = session.exec(stmt).first()
 
+    if not service:
+        raise HTTPException(status_code=404, detail="Not Found")
+
     earliest, latest = calculate_service_date_range(service, year, month)
-
     current_appts = list_appts_between_dates(session, earliest, latest)
-
     availability = calculate_availability(earliest, latest, service, current_appts)
-    return availability
+    return Availabilities(data=availability)

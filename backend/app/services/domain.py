@@ -59,7 +59,6 @@ def calculate_availability(
         if day < earliest or day > latest:
             continue
         office_hours = service.get_workinghours(day.weekday())
-        print(f"FOUND OFFICE HOURS: {office_hours}")
         if office_hours:
             # TODO: Is there a way to make this a pointer again? That would limit the time complexity
             today_appts = [appt for appt in current_appts if appt.start.date() == day]
@@ -107,4 +106,4 @@ def availability_per_day(
         window_end = (
             window_start + timedelta(minutes=svc_duration_mins) - timedelta(minutes=1)
         )
-    return Availability(**today_slots)
+    return today_slots
