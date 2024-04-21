@@ -7,8 +7,7 @@ from fastapi import APIRouter, HTTPException
 from psycopg.errors import ForeignKeyViolation
 from sqlmodel import select
 
-# from app.repositories.postgres import PostgresRepo
-from app.deps import CurrentUser
+from app.deps import CurrentUser, SessionDep
 from app.clients.models import Client
 from app.services.models import (
     Service,
@@ -23,12 +22,12 @@ from app.services.models import (
 from app.users.models import User
 from app.appointments.models import Appointment
 from app.core.models import Message
+from app.appointments.domain import list_appts_between_dates
 from app.services.domain import (
     availability_per_day,
     calculate_service_date_range,
-    create_availability,
+    calculate_availability,
 )
-from app.deps import SessionDep
 
 
 router = APIRouter()
@@ -41,17 +40,17 @@ def list_services(
     skip: int = 0,
     limit: int = 100,
 ) -> ServicesOut:
-    stmt = select(Service)
+    stmt = select(Service).where(Service.user_id == current_user.id)
     data = session.exec(stmt)
-    return ServicesOut(data=services)  # type: ignore
+    return ServicesOut(data=data)
 
 
 @router.get("/{svc_id}", response_model=ServiceOut)
 def get_service(
     session: SessionDep, current_user: CurrentUser, svc_id: uuid.UUID
 ) -> Any:
-    repo = PostgresRepo(session, Service)
-    service = repo.read(svc_id)
+    stmt = select(Service).join(Client).where(Service.id == svc_id)
+    service = session.exec(stmt)
 
     if not service:
         raise HTTPException(status_code=404, detail="Not found")
@@ -64,18 +63,11 @@ def get_service(
 def create_service(
     session: SessionDep, current_user: CurrentUser, svc_in: ServiceRegister
 ) -> Any:
-    repo = PostgresRepo(session, Service)
-
-    service_create = ServiceCreate(**svc_in.model_dump(), user_id=current_user.id)
-    service = repo.create_joined(
-        WorkingHours,
-        service_create.model_dump(),
-        svc_in.workinghours,
-        "workinghours",
-    )
-    repo = PostgresRepo(session, WorkingHours)
-
-    return service
+    db_item = Service.model_validate(svc_in, update={"user_id": current_user.id})
+    session.add(db_item)
+    session.commit()
+    session.refresh(db_item)
+    return db_item
 
 
 @router.patch("/{svc_id}", response_model=ServiceOut)
@@ -85,32 +77,35 @@ def update_service(
     svc_id: uuid.UUID,
     service_in: ServiceUpdate,
 ) -> Any:
-    repo = PostgresRepo(session, Service)
-    service = repo.read(svc_id)
+    service = session.get(Service, svc_id)
 
     if not service:
         raise HTTPException(status_code=404, detail="Not Found")
     if not current_user.is_superuser and (service.user_id != current_user.id):  # type: ignore
         raise HTTPException(status_code=400, detail="Not authorized")
 
-    update_dict = service_in.model_dump(exclude_none=True)
-    updated = repo.update(svc_id, update_dict)
-    return updated
+    update_dict = service_in.model_dump(exclude_unset=True)
+    service.sqlmodel_update(update_dict)
+    session.add(service)
+    session.commit()
+    session.refresh(service)
+    return service
 
 
 @router.delete("/{svc_id}")
 def delete_service(
     session: SessionDep, current_user: CurrentUser, svc_id: uuid.UUID
 ) -> Message:
-    repo = PostgresRepo(session, Service)
-    service = repo.read(svc_id)
+    service = session.get(Service, svc_id)
 
     if not service:
         raise HTTPException(status_code=404, detail="Not Found")
     if not current_user.is_superuser and (service.user_id != current_user.id):  # type: ignore
         raise HTTPException(status_code=400, detail="Not authorized")
 
-    repo.delete(svc_id)
+    session.delete(service)
+    # TODO: Delete associated time objects
+    session.commit()
     return Message(message="Service deleted successfully")
 
 
@@ -121,16 +116,12 @@ def get_service_availability(
     year: int | None = None,
     month: int | None = None,
 ):
-    svc_repo = PostgresRepo(session, Service)
-    service = svc_repo.read_with_join("workinghours", "id", svc_id)
-    print(service.__dict__)
+    stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
+    service = session.exec(stmt).first()
 
     earliest, latest = calculate_service_date_range(service, year, month)
 
-    appts_repo = PostgresRepo(session, Appointment)
-    current_appts = appts_repo.list_between_dates(
-        "user_id", service.user_id, earliest, latest
-    )
+    current_appts = list_appts_between_dates(session, earliest, latest)
 
-    availability = create_availability(earliest, latest, service, current_appts)
+    availability = calculate_availability(earliest, latest, service, current_appts)
     return availability

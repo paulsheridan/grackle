@@ -22,7 +22,7 @@ class UserBase(SQLModel):
 
 class User(UserBase, table=True):
     id: Optional[uuid.UUID] = Field(
-        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
+        default_factory=uuid.uuid4, primary_key=True, index=True, nullable=False
     )
     hashed_password: str
     created_at: datetime = Field(datetime.now(timezone.utc), nullable=False)

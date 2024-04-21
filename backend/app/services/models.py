@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class WorkingHours(SQLModel, table=True):
     id: Optional[uuid.UUID] = Field(
-        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
+        default_factory=uuid.uuid4, primary_key=True, index=True, nullable=False
     )
     weekday: int = Field(index=True)
     open: time
@@ -20,7 +20,10 @@ class WorkingHours(SQLModel, table=True):
     service_id: uuid.UUID | None = Field(
         default=None, foreign_key="service.id", nullable=False
     )
-    service: "Service" = Relationship(back_populates="workinghours")
+    service: "Service" = Relationship(
+        back_populates="workinghours",
+        sa_relationship_kwargs={"cascade": "delete"},
+    )
 
 
 class WorkingHoursCreate(SQLModel):
@@ -40,7 +43,7 @@ class ServiceBase(SQLModel):
 
 class Service(ServiceBase, table=True):
     id: Optional[uuid.UUID] = Field(
-        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
+        default_factory=uuid.uuid4, primary_key=True, index=True, nullable=False
     )
 
     user_id: uuid.UUID | None = Field(

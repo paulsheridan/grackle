@@ -1,6 +1,6 @@
 from typing import Type, Sequence, Any
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select, func
+from sqlmodel import Session, col, delete, func, select
 
 from app.deps import (
     CurrentUser,
@@ -22,8 +22,6 @@ from app.core.models import Message
 from app.users import domain
 from app.core.config import settings
 from app.core.security import verify_password, get_password_hash
-
-# from app.repositories.postgres import PostgresRepo
 from app.utils import generate_new_account_email, send_email
 
 
@@ -35,9 +33,9 @@ router = APIRouter()
     dependencies=[Depends(get_current_active_superuser)],
     response_model=UsersPublic,
 )
-def read_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
-    db_service = PostgresRepo(session, User)
-    users = db_service.list()
+def get_users(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
+    stmt = select(User).offset(skip).limit(limit)
+    users = session.exec(stmt).all()
     return UsersPublic(data=users)
 
 
@@ -70,23 +68,24 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
 def update_user_me(
     *, session: SessionDep, user_in: UserUpdate, current_user: CurrentUser
 ) -> Any:
-    db_service = PostgresRepo(session, User)
     if user_in.email:
-        existing_user = domain.get_user_by_email(session, user_in.email)
+        existing_user = domain.get_user_by_email(session=session, email=user_in.email)
         if existing_user and existing_user.id != current_user.id:
             raise HTTPException(
                 status_code=409, detail="User with this email already exists"
             )
-    update_dict = user_in.model_dump(exclude_unset=True)
-    updated = db_service.update(current_user.id, update_dict)
-    return updated
+    user_data = user_in.model_dump(exclude_unset=True)
+    current_user.sqlmodel_update(user_data)
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    return current_user
 
 
 @router.patch("/me/password", response_model=Message)
 def update_password_me(
     *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser
 ) -> Any:
-    db_service = PostgresRepo(session, User)
     if not verify_password(body.current_password, current_user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect password")
     if body.current_password == body.new_password:
@@ -94,8 +93,9 @@ def update_password_me(
             status_code=400, detail="New password cannot be the same as the current one"
         )
     hashed_password = get_password_hash(body.new_password)
-    pw_dict = {"hashed_password": hashed_password}
-    db_service.update(current_user.id, pw_dict)
+    current_user.hashed_password = hashed_password
+    session.add(current_user)
+    session.commit()
     return Message(message="Password updated successfully")
 
 
@@ -111,8 +111,7 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
             status_code=403,
             detail="Open user registration is forbidden on this server",
         )
-    db_service = PostgresRepo(session, User)
-    user = db_service.read_by("email", user_in.email)
+    user = domain.get_user_by_email(session=session, email=user_in.email)
     if user:
         raise HTTPException(
             status_code=400,
@@ -120,7 +119,6 @@ def register_user(session: SessionDep, user_in: UserRegister) -> Any:
         )
     user_create = UserCreate.model_validate(user_in)
     user = domain.create_user(session=session, user_create=user_create)
-
     return user
 
 
@@ -137,3 +135,31 @@ def read_user_by_id(
             detail="The user doesn't have enough privileges",
         )
     return user
+
+
+@router.patch(
+    "/{user_id}",
+    dependencies=[Depends(get_current_active_superuser)],
+    response_model=UserPublic,
+)
+def update_user(
+    *,
+    session: SessionDep,
+    user_id: int,
+    user_in: UserUpdate,
+) -> Any:
+    db_user = session.get(User, user_id)
+    if not db_user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this id does not exist in the system",
+        )
+    if user_in.email:
+        existing_user = domain.get_user_by_email(session=session, email=user_in.email)
+        if existing_user and existing_user.id != user_id:
+            raise HTTPException(
+                status_code=409, detail="User with this email already exists"
+            )
+
+    db_user = domain.update_user(session=session, db_user=db_user, user_in=user_in)
+    return db_user

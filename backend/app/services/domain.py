@@ -44,7 +44,7 @@ def calculate_service_date_range(
     return earliest, latest
 
 
-def create_availability(
+def calculate_availability(
     earliest: date,
     latest: date,
     service: Service,

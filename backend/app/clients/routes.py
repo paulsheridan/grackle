@@ -3,9 +3,11 @@ import uuid
 from typing import Any, Union, Sequence
 from datetime import datetime
 
+from sqlmodel import select
 from fastapi import APIRouter, HTTPException
-from sqlalchemy import select, update, delete
 from psycopg.errors import ForeignKeyViolation
+from app.deps import CurrentUser, SessionDep
+from app.clients import domain
 
 from app.clients.models import (
     Client,
@@ -16,11 +18,7 @@ from app.clients.models import (
     ClientUpdate,
 )
 
-from app.deps import SessionDep
-
 from app.core.models import Message
-from app.deps import CurrentUser
-from app.repositories.postgres import PostgresRepo
 
 
 router = APIRouter()
@@ -33,17 +31,17 @@ def list_clients(
     skip: int = 0,
     limit: int = 100,
 ) -> ClientsOut:
-    repo = PostgresRepo(session, Client)
-    clients = repo.list("user_id", current_user.id, skip, limit)
-    return ClientsOut(data=clients)  # type: ignore
+    stmt = select(Client).where(Client.user_id == current_user.id)
+    data = session.exec(stmt)
+    return ClientsOut(data=data)
 
 
 @router.get("/{client_id}", response_model=ClientOut)
 def get_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Any:
-    repo = PostgresRepo(session, Client)
-    client = repo.read(client_id)
+    stmt = select(Client).where(Client.id == client_id)
+    client = session.exec(stmt)
 
     if not client:
         raise HTTPException(status_code=404, detail="Not found")
@@ -56,11 +54,7 @@ def get_client(
 def create_client(
     session: SessionDep, current_user: CurrentUser, client_in: ClientRegister
 ) -> Any:
-    repo = PostgresRepo(session, Client)
-
-    client_create = ClientCreate(**client_in.model_dump(), user_id=current_user.id)
-    client = repo.create(client_create.model_dump())
-    return client
+    return domain.create_client(session, client_in, current_user.id)
 
 
 @router.patch("/{client_id}", response_model=ClientOut)
@@ -70,30 +64,32 @@ def update_client(
     client_id: uuid.UUID,
     client_in: ClientUpdate,
 ) -> Any:
-    repo = PostgresRepo(session, Client)
-    client = repo.read(client_id)
+    client = session.get(Client, client_id)
 
     if not client:
         raise HTTPException(status_code=404, detail="Not Found")
-    if not current_user.is_superuser and (client.user_id != current_user.id):  # type: ignore
+    if not current_user.is_superuser and (client.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not authorized")
 
-    update_dict = client_in.model_dump(exclude_none=True)
-    updated = repo.update(client_id, update_dict)
-    return updated
+    update_dict = client_in.model_dump(exclude_unset=True)
+    client.sqlmodel_update(update_dict)
+    session.add(client)
+    session.commit()
+    session.refresh(client)
+    return client
 
 
 @router.delete("/{client_id}")
 def delete_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Message:
-    repo = PostgresRepo(session, Client)
-    client = repo.read(client_id)
+    client = session.get(Client, client_id)
 
     if not client:
         raise HTTPException(status_code=404, detail="Not Found")
     if not current_user.is_superuser and (client.user_id != current_user.id):  # type: ignore
         raise HTTPException(status_code=400, detail="Not authorized")
 
-    repo.delete(client_id)
+    session.delete(client)
+    session.commit()
     return Message(message="Client deleted successfully")

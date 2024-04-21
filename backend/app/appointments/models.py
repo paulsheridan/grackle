@@ -19,7 +19,7 @@ class AppointmentBase(SQLModel):
 
 class Appointment(AppointmentBase, table=True):
     id: uuid.UUID = Field(
-        default=uuid.uuid4(), primary_key=True, index=True, nullable=False
+        default_factory=uuid.uuid4, primary_key=True, index=True, nullable=False
     )
 
     created_at: datetime = Field(datetime.now(timezone.utc), nullable=False)
