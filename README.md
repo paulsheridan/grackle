@@ -1,4 +1,4 @@
-# Grackle
+# Grackle Tattoo Scheduling
 
 A scheduling and booking application for tattoo artists.
 
