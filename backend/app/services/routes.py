@@ -55,7 +55,7 @@ def get_service(
 
     if not service:
         raise HTTPException(status_code=404, detail="Not found")
-    if not current_user.is_superuser and (service.user_id != current_user.id):  # type: ignore
+    if not current_user.is_superuser and (service.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not authorized")
     return service
 
@@ -82,7 +82,7 @@ def update_service(
 
     if not service:
         raise HTTPException(status_code=404, detail="Not Found")
-    if not current_user.is_superuser and (service.user_id != current_user.id):  # type: ignore
+    if not current_user.is_superuser and (service.user_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not authorized")
 
     update_dict = service_in.model_dump(exclude_unset=True)

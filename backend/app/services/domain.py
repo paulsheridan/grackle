@@ -60,7 +60,6 @@ def calculate_availability(
             continue
         office_hours = service.get_workinghours(day.weekday())
         if office_hours:
-            # TODO: Is there a way to make this a pointer again? That would limit the time complexity
             today_appts = [appt for appt in current_appts if appt.start.date() == day]
             today_slots = availability_per_day(
                 day, service.duration, today_appts, office_hours
