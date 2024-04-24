@@ -45,8 +45,7 @@ def list_appointments(
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
-    stmt = select(Appointment).join(Client).where(Appointment.id == appt_id)
-    appointment = session.exec(stmt)
+    appointment = session.get(Appointment, appt_id)
 
     if not appointment:
         raise HTTPException(status_code=404, detail="Not found")

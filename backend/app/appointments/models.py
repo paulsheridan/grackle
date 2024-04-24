@@ -3,6 +3,8 @@ import uuid
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone
+from sqlalchemy import UniqueConstraint, Column, String, types, ForeignKey
+
 
 if TYPE_CHECKING:
     from app.clients.models import Client
@@ -25,16 +27,18 @@ class Appointment(AppointmentBase, table=True):
     created_at: datetime = Field(datetime.now(timezone.utc), nullable=False)
     last_edited: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    user_id: uuid.UUID = Field(default=None, foreign_key="user.id", nullable=False)
+    user_id: uuid.UUID = Field(
+        sa_column=Column(types.Uuid, ForeignKey("user.id", ondelete="SET NULL"))
+    )
     user: "User" = Relationship(back_populates="appointments")
 
     client_id: Optional[uuid.UUID] = Field(
-        default=None, foreign_key="client.id", nullable=False
+        sa_column=Column(types.Uuid, ForeignKey("client.id", ondelete="SET NULL"))
     )
     client: Optional["Client"] = Relationship(back_populates="appointments")
 
     service_id: uuid.UUID = Field(
-        default=None, foreign_key="service.id", nullable=False
+        sa_column=Column(types.Uuid, ForeignKey("service.id", ondelete="SET NULL"))
     )
     service: "Service" = Relationship(back_populates="appointments")
 
@@ -46,7 +50,6 @@ class AppointmentCreate(AppointmentBase):
 
 
 class AppointmentRegister(SQLModel):
-    user_id: uuid.UUID
     client_id: uuid.UUID
     service_id: uuid.UUID
     start: datetime
@@ -64,6 +67,7 @@ class AppointmentOut(AppointmentBase):
     id: uuid.UUID
     user_id: uuid.UUID
     client_id: uuid.UUID
+    service_id: uuid.UUID
 
 
 class AppointmentsOut(SQLModel):

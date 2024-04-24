@@ -24,3 +24,10 @@ def get_superuser_token_headers(client: TestClient) -> dict[str, str]:
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+def random_phone_number():
+    number = "01"
+    for i in range(8):
+        number += random.choice("1234567890")
+    return number

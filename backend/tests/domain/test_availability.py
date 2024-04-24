@@ -126,6 +126,8 @@ def test_appointments_a():
     appts = [
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 11, 15),
             "end": datetime.datetime(2024, 4, 8, 12, 14),
@@ -134,6 +136,8 @@ def test_appointments_a():
         },
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 13, 00),
             "end": datetime.datetime(2024, 4, 8, 13, 59),
@@ -142,6 +146,8 @@ def test_appointments_a():
         },
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 14, 00),
             "end": datetime.datetime(2024, 4, 8, 16, 14),
@@ -166,6 +172,8 @@ def test_appointments_april_2024():
         for time in hours:
             appt = {
                 "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+                "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+                "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
                 "client_email": "tattoofiend@email.com",
                 "start": datetime.datetime(2024, 4, day, time[0][0], time[0][1]),
                 "end": datetime.datetime(2024, 4, day, time[1][0], time[1][1]),
@@ -222,6 +230,8 @@ def test_calc_day_availability_with_only_early_late_appts(test_service_short_hrs
     appts = [
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 6, 15),
             "end": datetime.datetime(2024, 4, 8, 7, 14),
@@ -230,6 +240,8 @@ def test_calc_day_availability_with_only_early_late_appts(test_service_short_hrs
         },
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 14, 15),
             "end": datetime.datetime(2024, 4, 8, 16, 14),
@@ -298,6 +310,8 @@ def test_calc_day_availability_with_existing_appts(test_service_short_hrs):
     appts = [
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 6, 15),
             "end": datetime.datetime(2024, 4, 8, 7, 14),
@@ -306,6 +320,8 @@ def test_calc_day_availability_with_existing_appts(test_service_short_hrs):
         },
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 12, 00),
             "end": datetime.datetime(2024, 4, 8, 12, 59),
@@ -314,6 +330,8 @@ def test_calc_day_availability_with_existing_appts(test_service_short_hrs):
         },
         {
             "user_id": "2dac127d-13e8-461e-aa6f-eed91d8e2fb5",
+            "service_id": "5fb581b5-2503-4f79-98ca-8e4075623583",
+            "client_id": "edfba852-3877-4d2f-b570-4a557018fedf",
             "client_email": "tattoofiend@email.com",
             "start": datetime.datetime(2024, 4, 8, 14, 15),
             "end": datetime.datetime(2024, 4, 8, 16, 14),

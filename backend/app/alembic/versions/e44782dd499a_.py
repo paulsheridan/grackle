@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 9c1ee1caaeaf
+Revision ID: e44782dd499a
 Revises:
-Create Date: 2024-04-24 16:52:56.530837
+Create Date: 2024-04-24 18:28:07.545082
 
 """
 
@@ -14,7 +14,7 @@ import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
-revision: str = "9c1ee1caaeaf"
+revision: str = "e44782dd499a"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -84,21 +84,12 @@ def upgrade() -> None:
         sa.Column("id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("last_edited", sa.DateTime(), nullable=False),
-        sa.Column("user_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.Column("client_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.Column("service_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["client_id"],
-            ["client.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["service_id"],
-            ["service.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user.id"],
-        ),
+        sa.Column("user_id", sa.Uuid(), nullable=True),
+        sa.Column("client_id", sa.Uuid(), nullable=True),
+        sa.Column("service_id", sa.Uuid(), nullable=True),
+        sa.ForeignKeyConstraint(["client_id"], ["client.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(["service_id"], ["service.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_appointment_id"), "appointment", ["id"], unique=False)
