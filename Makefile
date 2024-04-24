@@ -29,3 +29,7 @@ migrate:
 .PHONY: upgrade
 upgrade:
 	alembic upgrade head
+
+.PHONY: test
+test:
+	bash ./scripts/test.sh

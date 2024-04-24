@@ -2,7 +2,7 @@
     "email": "paul.clientman@email.com",
     "name": "Paul Clientman",
     "pronouns": "he-him",
-    "birthday": datetime.datetime(),
+    "birthday": "1984, 4, 8",
     "preferred_contact": "email",
     "phone_number": "123-456-7890"
 }

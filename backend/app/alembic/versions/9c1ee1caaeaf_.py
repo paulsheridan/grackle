@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 72d406a348e8
+Revision ID: 9c1ee1caaeaf
 Revises:
-Create Date: 2024-04-19 21:32:38.684693
+Create Date: 2024-04-24 16:52:56.530837
 
 """
 
@@ -14,7 +14,7 @@ import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.
-revision: str = "72d406a348e8"
+revision: str = "9c1ee1caaeaf"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,9 +25,9 @@ def upgrade() -> None:
     op.create_table(
         "user",
         sa.Column("email", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column("username", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("username", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column("full_name", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
-        sa.Column("shop_name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("shop_name", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=True),
         sa.Column("is_superuser", sa.Boolean(), nullable=True),
         sa.Column("id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
@@ -46,7 +46,7 @@ def upgrade() -> None:
         sa.Column("first_name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("last_name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("pronouns", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column("birthday", sa.DateTime(), nullable=False),
+        sa.Column("birthday", sa.Date(), nullable=False),
         sa.Column(
             "preferred_contact", sqlmodel.sql.sqltypes.AutoString(), nullable=False
         ),
@@ -67,14 +67,11 @@ def upgrade() -> None:
         sa.Column("active", sa.Boolean(), nullable=False),
         sa.Column("duration", sa.Integer(), nullable=False),
         sa.Column("max_per_day", sa.Integer(), nullable=False),
-        sa.Column("start", sa.DateTime(), nullable=False),
-        sa.Column("end", sa.DateTime(), nullable=False),
+        sa.Column("start", sa.Date(), nullable=False),
+        sa.Column("end", sa.Date(), nullable=False),
         sa.Column("id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.Column("user_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user.id"],
-        ),
+        sa.Column("user_id", sa.Uuid(), nullable=True),
+        sa.ForeignKeyConstraint(["user_id"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_service_id"), "service", ["id"], unique=False)
@@ -111,11 +108,8 @@ def upgrade() -> None:
         sa.Column("weekday", sa.Integer(), nullable=False),
         sa.Column("open", sa.Time(), nullable=False),
         sa.Column("close", sa.Time(), nullable=False),
-        sa.Column("service_id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["service_id"],
-            ["service.id"],
-        ),
+        sa.Column("service_id", sa.Uuid(), nullable=True),
+        sa.ForeignKeyConstraint(["service_id"], ["service.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_workinghours_id"), "workinghours", ["id"], unique=False)

@@ -39,8 +39,8 @@ if settings.BACKEND_CORS_ORIGINS:
 
 api_router = APIRouter()
 
+api_router.include_router(login_router, tags=["login"])
 api_router.include_router(users_router, prefix="/users", tags=["users"])
-api_router.include_router(login_router, prefix="/login", tags=["login"])
 api_router.include_router(
     appointments_router, prefix="/appointments", tags=["appointments"]
 )

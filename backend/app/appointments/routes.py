@@ -60,10 +60,12 @@ def create_appointment(
     session: SessionDep,
     current_user: CurrentUser,
     appt_in: AppointmentRegister,
-    client_id: uuid.UUID,
 ) -> Any:
     db_item = Appointment.model_validate(
-        appt_in, update={"user_id": current_user.id, "client_id": client_id}
+        appt_in,
+        update={
+            "user_id": current_user.id,
+        },
     )
     session.add(db_item)
     session.commit()
@@ -123,7 +125,7 @@ def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequ
 
     service = session.get(Service, appt_request.service_id)
     if not service:
-        raise HTTPException(status_code=404, detail="Service Not Found")
+        raise HTTPException(status_code=404, detail="Not Found")
 
     existing_client = client_domain.get_client_by_email(session, appt_request.email)
     if existing_client:
@@ -134,6 +136,7 @@ def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequ
             session, appt_request, appt_request.user_id
         )
 
+    # There's now an appointment_create domain function to handle this
     appt_request.client_id = client.id
     appointment = Appointment.model_validate(appt_request)
     session.add(appointment)

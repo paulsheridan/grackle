@@ -36,7 +36,9 @@ def test_service_long():
     }
     svc = Service.model_validate(svc_data)
     for hour in svc_data["workinghours"]:
-        svc.workinghours.append(WorkingHours.model_validate(hour))
+        svc.workinghours.append(
+            WorkingHours.model_validate(hour, update={"service_id": svc.id})
+        )
     return svc
 
 
@@ -60,7 +62,9 @@ def test_service_short():
     }
     svc = Service.model_validate(svc_data)
     for hour in svc_data["workinghours"]:
-        svc.workinghours.append(WorkingHours.model_validate(hour))
+        svc.workinghours.append(
+            WorkingHours.model_validate(hour, update={"service_id": svc.id})
+        )
     return svc
 
 
@@ -85,7 +89,9 @@ def test_service_short_april_2024():
     }
     svc = Service.model_validate(svc_data)
     for hour in svc_data["workinghours"]:
-        svc.workinghours.append(WorkingHours.model_validate(hour))
+        svc.workinghours.append(
+            WorkingHours.model_validate(hour, update={"service_id": svc.id})
+        )
     return svc
 
 
@@ -109,7 +115,9 @@ def test_service_short_hrs():
     }
     svc = Service.model_validate(svc_data)
     for hour in svc_data["workinghours"]:
-        svc.workinghours.append(WorkingHours.model_validate(hour))
+        svc.workinghours.append(
+            WorkingHours.model_validate(hour, update={"service_id": svc.id})
+        )
     return svc
 
 

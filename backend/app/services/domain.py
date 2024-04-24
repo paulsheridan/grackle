@@ -7,17 +7,26 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.clients.models import Client
-from app.services.models import Service, WorkingHours, Availability
+from app.services.models import Service, WorkingHours, Availability, ServiceRegister
 from app.users.models import User
 from app.appointments.models import Appointment
 from app.core.models import Message
-from app.repositories.postgres import PostgresRepo
+
+
+def create_service(
+    *, session: Session, svc_in: ServiceRegister, user_id: uuid.UUID
+) -> Service:
+    db_item = Service.model_validate(svc_in, update={"user_id": user_id})
+    session.add(db_item)
+    session.commit()
+    session.refresh(db_item)
+    return db_item
 
 
 def calculate_service_date_range(
     service: Service, year: int | None = None, month: int | None = None
 ) -> tuple[date, date]:
-    earliest: date = max(date.today(), service.start.date())
+    earliest: date = max(date.today(), service.start)
     if not month or not year:
         latest: date = min(
             date(
@@ -25,7 +34,7 @@ def calculate_service_date_range(
                 earliest.month,
                 calendar.monthrange(earliest.year, earliest.month)[-1],
             ),
-            service.end.date(),
+            service.end,
         )
         return earliest, latest
 
@@ -39,7 +48,7 @@ def calculate_service_date_range(
     earliest = max(earliest, date(year, month, 1))
     latest = min(
         date(year, month, calendar.monthrange(year, month)[-1]),
-        service.end.date(),
+        service.end,
     )
     return earliest, latest
 

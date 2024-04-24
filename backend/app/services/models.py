@@ -1,8 +1,10 @@
 import uuid
 
-from typing import TYPE_CHECKING, Optional, List
-from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone, time, date
+from typing import TYPE_CHECKING, Optional, List
+
+from sqlmodel import Field, Relationship, SQLModel
+from sqlalchemy import UniqueConstraint, Column, String, types, ForeignKey
 
 if TYPE_CHECKING:
     from app.appointments.models import Appointment
@@ -17,12 +19,9 @@ class WorkingHours(SQLModel, table=True):
     open: time
     close: time
     service_id: uuid.UUID | None = Field(
-        default=None, foreign_key="service.id", nullable=False
+        sa_column=Column(types.Uuid, ForeignKey("service.id", ondelete="CASCADE"))
     )
-    service: "Service" = Relationship(
-        back_populates="workinghours",
-        sa_relationship_kwargs={"cascade": "delete"},
-    )
+    service: "Service" = Relationship(back_populates="workinghours")
 
 
 class WorkingHoursCreate(SQLModel):
@@ -36,8 +35,8 @@ class ServiceBase(SQLModel):
     active: bool
     duration: int
     max_per_day: int
-    start: datetime
-    end: datetime
+    start: date
+    end: date
 
 
 class Service(ServiceBase, table=True):
@@ -46,11 +45,16 @@ class Service(ServiceBase, table=True):
     )
 
     user_id: uuid.UUID | None = Field(
-        default=None, foreign_key="user.id", nullable=False
+        sa_column=Column(types.Uuid, ForeignKey("user.id", ondelete="CASCADE"))
     )
     user: "User" = Relationship(back_populates="services")
     appointments: list["Appointment"] = Relationship(back_populates="service")
-    workinghours: list["WorkingHours"] = Relationship(back_populates="service")
+    workinghours: list["WorkingHours"] = Relationship(
+        back_populates="service",
+        sa_relationship_kwargs={
+            "cascade": "all, delete",
+        },
+    )
 
     def get_workinghours(self, to_find: int) -> WorkingHours | None:
         low, high = 0, len(self.workinghours) - 1
@@ -75,8 +79,8 @@ class ServiceRegister(SQLModel):
     active: bool
     duration: int
     max_per_day: int
-    start: datetime
-    end: datetime
+    start: date
+    end: date
 
     workinghours: list["WorkingHours"]
 
@@ -86,12 +90,13 @@ class ServiceUpdate(SQLModel):
     active: bool | None = None
     duration: int | None = None
     max_per_day: int | None = None
-    start: datetime | None = None
-    end: datetime | None = None
+    start: date | None = None
+    end: date | None = None
 
 
 class ServiceOut(ServiceBase):
     id: uuid.UUID
+    user_id: uuid.UUID
 
     workinghours: list["WorkingHours"]
 

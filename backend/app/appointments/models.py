@@ -47,7 +47,7 @@ class AppointmentCreate(AppointmentBase):
 
 class AppointmentRegister(SQLModel):
     user_id: uuid.UUID
-    client_id: uuid.UUID | None = None
+    client_id: uuid.UUID
     service_id: uuid.UUID
     start: datetime
     end: datetime

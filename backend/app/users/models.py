@@ -13,9 +13,9 @@ from app.services.models import Service
 
 class UserBase(SQLModel):
     email: str = Field(index=True)
-    username: str
+    username: str | None = None
     full_name: str | None = None
-    shop_name: str
+    shop_name: str | None = None
     is_active: bool | None = Field(default=True)
     is_superuser: bool | None = Field(default=False)
 
@@ -28,9 +28,24 @@ class User(UserBase, table=True):
     created_at: datetime = Field(datetime.now(timezone.utc), nullable=False)
     last_edited: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    appointments: list["Appointment"] = Relationship(back_populates="user")
-    clients: list["Client"] = Relationship(back_populates="user")
-    services: list["Service"] = Relationship(back_populates="user")
+    appointments: list["Appointment"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={
+            "cascade": "all, delete",
+        },
+    )
+    clients: list["Client"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={
+            "cascade": "all, delete",
+        },
+    )
+    services: list["Service"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={
+            "cascade": "all, delete",
+        },
+    )
 
 
 class UserCreate(UserBase):
@@ -44,11 +59,9 @@ class UserRegister(SQLModel):
     shop_name: str
 
 
-class UserUpdate(SQLModel):
-    email: str | None = None
-    username: str | None = None
-    full_name: str | None = None
-    shop_name: str | None = None
+class UserUpdate(UserBase):
+    email: str | None = None  # type: ignore
+    password: str | None = None
 
 
 class UpdatePassword(SQLModel):

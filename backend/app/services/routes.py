@@ -50,9 +50,7 @@ def list_services(
 def get_service(
     session: SessionDep, current_user: CurrentUser, svc_id: uuid.UUID
 ) -> Any:
-    stmt = select(Service).join(Client).where(Service.id == svc_id)
-    service = session.exec(stmt)
-
+    service = session.get(Service, svc_id)
     if not service:
         raise HTTPException(status_code=404, detail="Not found")
     if not current_user.is_superuser and (service.user_id != current_user.id):
