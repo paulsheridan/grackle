@@ -44,7 +44,6 @@ class ClientRegister(SQLModel):
     birthday: datetime
     preferred_contact: str
     phone_number: str
-    user_id: uuid.UUID
 
 
 class ClientUpdate(SQLModel):

@@ -40,8 +40,7 @@ def list_clients(
 def get_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Any:
-    stmt = select(Client).where(Client.id == client_id)
-    client = session.exec(stmt)
+    client = session.get(Client, client_id)
 
     if not client:
         raise HTTPException(status_code=404, detail="Not found")
