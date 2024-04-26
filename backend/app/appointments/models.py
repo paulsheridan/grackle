@@ -63,15 +63,15 @@ class AppointmentUpdate(SQLModel):
     end: datetime | None = None
 
 
-class AppointmentOut(AppointmentBase):
+class AppointmentPublic(AppointmentBase):
     id: uuid.UUID
     user_id: uuid.UUID
     client_id: uuid.UUID
     service_id: uuid.UUID
 
 
-class AppointmentsOut(SQLModel):
-    data: list[AppointmentOut]
+class AppointmentsPublic(SQLModel):
+    data: list[AppointmentPublic]
 
 
 class ClientAppointmentRequest(SQLModel):

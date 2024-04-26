@@ -9,8 +9,8 @@ from psycopg.errors import ForeignKeyViolation
 
 from app.appointments.models import (
     Appointment,
-    AppointmentOut,
-    AppointmentsOut,
+    AppointmentPublic,
+    AppointmentsPublic,
     AppointmentRegister,
     AppointmentCreate,
     AppointmentUpdate,
@@ -29,19 +29,19 @@ from app.clients import domain as client_domain
 router = APIRouter()
 
 
-@router.get("/", response_model=AppointmentsOut)
+@router.get("/", response_model=AppointmentsPublic)
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
-) -> AppointmentsOut:
+) -> AppointmentsPublic:
     stmt = select(Appointment).where(Appointment.user_id == current_user.id)
     data = session.exec(stmt)
-    return AppointmentsOut(data=data)
+    return AppointmentsPublic(data=data)
 
 
-@router.get("/{appt_id}", response_model=AppointmentOut)
+@router.get("/{appt_id}", response_model=AppointmentPublic)
 def get_appointment(
     session: SessionDep, current_user: CurrentUser, appt_id: uuid.UUID
 ) -> Any:
@@ -54,7 +54,7 @@ def get_appointment(
     return appointment
 
 
-@router.post("/", response_model=AppointmentOut)
+@router.post("/", response_model=AppointmentPublic)
 def create_appointment(
     session: SessionDep,
     current_user: CurrentUser,
@@ -72,7 +72,7 @@ def create_appointment(
     return db_item
 
 
-@router.patch("/{appt_id}", response_model=AppointmentOut)
+@router.patch("/{appt_id}", response_model=AppointmentPublic)
 def update_appointment(
     session: SessionDep,
     current_user: CurrentUser,

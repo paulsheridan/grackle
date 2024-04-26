@@ -56,9 +56,9 @@ class ClientUpdate(SQLModel):
     phone_number: str | None = None
 
 
-class ClientOut(ClientBase):
+class ClientPublic(ClientBase):
     id: uuid.UUID
 
 
-class ClientsOut(SQLModel):
-    data: list[ClientOut]
+class ClientsPublic(SQLModel):
+    data: list[ClientPublic]

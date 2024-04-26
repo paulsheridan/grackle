@@ -11,8 +11,8 @@ from app.deps import CurrentUser, SessionDep
 from app.clients.models import Client
 from app.services.models import (
     Service,
-    ServiceOut,
-    ServicesOut,
+    ServicePublic,
+    ServicesPublic,
     WorkingHours,
     WorkingHoursCreate,
     ServiceCreate,
@@ -34,19 +34,19 @@ from app.services.domain import (
 router = APIRouter()
 
 
-@router.get("/", response_model=ServicesOut)
+@router.get("/", response_model=ServicesPublic)
 def list_services(
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
-) -> ServicesOut:
+) -> ServicesPublic:
     stmt = select(Service).where(Service.user_id == current_user.id)
     data = session.exec(stmt)
-    return ServicesOut(data=data)
+    return ServicesPublic(data=data)
 
 
-@router.get("/{svc_id}", response_model=ServiceOut)
+@router.get("/{svc_id}", response_model=ServicePublic)
 def get_service(
     session: SessionDep, current_user: CurrentUser, svc_id: uuid.UUID
 ) -> Any:
@@ -58,7 +58,7 @@ def get_service(
     return service
 
 
-@router.post("/", response_model=ServiceOut)
+@router.post("/", response_model=ServicePublic)
 def create_service(
     session: SessionDep, current_user: CurrentUser, svc_in: ServiceRegister
 ) -> Any:
@@ -69,7 +69,7 @@ def create_service(
     return db_item
 
 
-@router.patch("/{svc_id}", response_model=ServiceOut)
+@router.patch("/{svc_id}", response_model=ServicePublic)
 def update_service(
     session: SessionDep,
     current_user: CurrentUser,

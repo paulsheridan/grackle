@@ -12,9 +12,9 @@ from app.clients import domain
 from app.clients.models import (
     Client,
     ClientCreate,
-    ClientsOut,
+    ClientsPublic,
     ClientRegister,
-    ClientOut,
+    ClientPublic,
     ClientUpdate,
 )
 
@@ -24,19 +24,19 @@ from app.core.models import Message
 router = APIRouter()
 
 
-@router.get("/", response_model=ClientsOut)
+@router.get("/", response_model=ClientsPublic)
 def list_clients(
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
-) -> ClientsOut:
+) -> ClientsPublic:
     stmt = select(Client).where(Client.user_id == current_user.id)
     data = session.exec(stmt)
-    return ClientsOut(data=data)
+    return ClientsPublic(data=data)
 
 
-@router.get("/{client_id}", response_model=ClientOut)
+@router.get("/{client_id}", response_model=ClientPublic)
 def get_client(
     session: SessionDep, current_user: CurrentUser, client_id: uuid.UUID
 ) -> Any:
@@ -49,14 +49,14 @@ def get_client(
     return client
 
 
-@router.post("/", response_model=ClientOut)
+@router.post("/", response_model=ClientPublic)
 def create_client(
     session: SessionDep, current_user: CurrentUser, client_in: ClientRegister
 ) -> Any:
     return domain.create_client(session, client_in, current_user.id)
 
 
-@router.patch("/{client_id}", response_model=ClientOut)
+@router.patch("/{client_id}", response_model=ClientPublic)
 def update_client(
     session: SessionDep,
     current_user: CurrentUser,

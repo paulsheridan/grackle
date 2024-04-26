@@ -94,15 +94,15 @@ class ServiceUpdate(SQLModel):
     end: date | None = None
 
 
-class ServiceOut(ServiceBase):
+class ServicePublic(ServiceBase):
     id: uuid.UUID
     user_id: uuid.UUID
 
     workinghours: list["WorkingHours"]
 
 
-class ServicesOut(SQLModel):
-    data: list[ServiceOut]
+class ServicesPublic(SQLModel):
+    data: list[ServicePublic]
 
 
 class Availability(SQLModel):
