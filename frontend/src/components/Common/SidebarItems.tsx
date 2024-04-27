@@ -9,6 +9,8 @@ const items = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: FiHome, title: "My Schedule", path: "/calendar" },
   { icon: FiBriefcase, title: "Clients", path: "/clients" },
+  { icon: FiBriefcase, title: "Services", path: "/services" },
+  { icon: FiBriefcase, title: "Appointments", path: "/appointments" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
 ];
 

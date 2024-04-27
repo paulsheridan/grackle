@@ -16,56 +16,54 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ClientsService } from "../../client";
+import { ServicesService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
 import Navbar from "../../components/Common/Navbar";
 
-export const Route = createFileRoute("/_layout/clients")({
-  component: Clients,
+export const Route = createFileRoute("/_layout/services")({
+  component: Services,
 });
 
-function ClientsTableBody() {
-  const { data: clients } = useSuspenseQuery({
-    queryKey: ["clients"],
-    queryFn: () => ClientsService.listClients({}),
+function ServicesTableBody() {
+  const { data: services } = useSuspenseQuery({
+    queryKey: ["services"],
+    queryFn: () => ServicesService.listServices({}),
   });
 
   return (
     <Tbody>
-      {clients.data.map((client) => (
-        <Tr key={client.id}>
-          {/* <Td>{client.id}</Td> */}
+      {services.data.map((service) => (
+        <Tr key={service.id}>
+          {/* <Td>{service.id}</Td>
+          <Td>{service.user_id}</Td> */}
+          <Td>{service.name}</Td>
+          <Td>{service.active ? "Active" : "Inactive"}</Td>
+          <Td>{service.duration}</Td>
+          <Td>{service.max_per_day}</Td>
+          <Td>{service.start}</Td>
+          <Td>{service.end}</Td>
           <Td>
-            {client.first_name} {client.last_name}
-          </Td>
-          <Td color={!client.pronouns ? "ui.dim" : "inherit"}>
-            {client.pronouns || "N/A"}
-          </Td>
-          <Td>{client.email}</Td>
-          <Td>{client.phone_number}</Td>
-          <Td>{client.birthday}</Td>
-          <Td>{client.preferred_contact}</Td>
-          <Td>
-            <ActionsMenu type={"Client"} value={client} />
+            <ActionsMenu type={"Service"} value={service} />
           </Td>
         </Tr>
       ))}
     </Tbody>
   );
 }
-function ClientsTable() {
+function ServicesTable() {
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
         <Thead>
           <Tr>
-            {/* <Th>ID</Th> */}
+            {/* <Th>ID</Th>
+            <Th>User ID</Th> */}
             <Th>Name</Th>
-            <Th>Pronouns</Th>
-            <Th>Email</Th>
-            <Th>Phone Number</Th>
-            <Th>Birthday</Th>
-            <Th>Preferred Contact</Th>
+            <Th>Status</Th>
+            <Th>Duration</Th>
+            <Th>Max per Day</Th>
+            <Th>Start</Th>
+            <Th>End</Th>
             <Th>Actions</Th>
           </Tr>
         </Thead>
@@ -95,7 +93,7 @@ function ClientsTable() {
               </Tbody>
             }
           >
-            <ClientsTableBody />
+            <ServicesTableBody />
           </Suspense>
         </ErrorBoundary>
       </Table>
@@ -103,15 +101,15 @@ function ClientsTable() {
   );
 }
 
-function Clients() {
+function Services() {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Clients Management
+        Services Management
       </Heading>
 
-      <Navbar type={"Client"} />
-      <ClientsTable />
+      <Navbar type={"Service"} />
+      <ServicesTable />
     </Container>
   );
 }

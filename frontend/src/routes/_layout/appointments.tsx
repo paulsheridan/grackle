@@ -16,57 +16,54 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ClientsService } from "../../client";
+import { AppointmentsService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
 import Navbar from "../../components/Common/Navbar";
 
-export const Route = createFileRoute("/_layout/clients")({
-  component: Clients,
+export const Route = createFileRoute("/_layout/appointments")({
+  component: Appointments,
 });
 
-function ClientsTableBody() {
-  const { data: clients } = useSuspenseQuery({
-    queryKey: ["clients"],
-    queryFn: () => ClientsService.listClients({}),
+function AppointmentsTableBody() {
+  const { data: appointments } = useSuspenseQuery({
+    queryKey: ["appointments"],
+    queryFn: () => AppointmentsService.listAppointments({}),
   });
 
   return (
     <Tbody>
-      {clients.data.map((client) => (
-        <Tr key={client.id}>
-          {/* <Td>{client.id}</Td> */}
+      {appointments.data.map((appointment) => (
+        <Tr key={appointment.id}>
+          {/* <Td>{appointment.id}</Td>
+          <Td>{appointment.user_id}</Td> */}
+          <Td>{appointment.start}</Td>
+          <Td>{appointment.end}</Td>
+          <Td>{appointment.confirmed ? "Confirmed" : "Not Confirmed"}</Td>
+          <Td>{appointment.canceled ? "Canceled" : "Not Canceled"}</Td>
+          <Td>{appointment.client_id}</Td>
+          <Td>{appointment.service_id}</Td>
           <Td>
-            {client.first_name} {client.last_name}
-          </Td>
-          <Td color={!client.pronouns ? "ui.dim" : "inherit"}>
-            {client.pronouns || "N/A"}
-          </Td>
-          <Td>{client.email}</Td>
-          <Td>{client.phone_number}</Td>
-          <Td>{client.birthday}</Td>
-          <Td>{client.preferred_contact}</Td>
-          <Td>
-            <ActionsMenu type={"Client"} value={client} />
+            <ActionsMenu type={"Appointment"} value={appointment} />
           </Td>
         </Tr>
       ))}
     </Tbody>
   );
 }
-function ClientsTable() {
+function AppointmentsTable() {
   return (
     <TableContainer>
       <Table size={{ base: "sm", md: "md" }}>
         <Thead>
           <Tr>
-            {/* <Th>ID</Th> */}
-            <Th>Name</Th>
-            <Th>Pronouns</Th>
-            <Th>Email</Th>
-            <Th>Phone Number</Th>
-            <Th>Birthday</Th>
-            <Th>Preferred Contact</Th>
-            <Th>Actions</Th>
+            {/* <Th>ID</Th>
+            <Th>User ID</Th> */}
+            <Th>Start</Th>
+            <Th>End</Th>
+            <Th>Confirmed</Th>
+            <Th>Canceled</Th>
+            <Th>Client ID</Th>
+            <Th>Service ID</Th>
           </Tr>
         </Thead>
         <ErrorBoundary
@@ -95,7 +92,7 @@ function ClientsTable() {
               </Tbody>
             }
           >
-            <ClientsTableBody />
+            <AppointmentsTableBody />
           </Suspense>
         </ErrorBoundary>
       </Table>
@@ -103,15 +100,15 @@ function ClientsTable() {
   );
 }
 
-function Clients() {
+function Appointments() {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Clients Management
+        Appointments Management
       </Heading>
 
-      <Navbar type={"Client"} />
-      <ClientsTable />
+      <Navbar type={"Appointment"} />
+      <AppointmentsTable />
     </Container>
   );
 }
