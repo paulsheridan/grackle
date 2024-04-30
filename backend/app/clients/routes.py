@@ -13,7 +13,6 @@ from app.clients.models import (
     Client,
     ClientCreate,
     ClientsPublic,
-    ClientRegister,
     ClientPublic,
     ClientUpdate,
 )
@@ -51,7 +50,7 @@ def get_client(
 
 @router.post("/", response_model=ClientPublic)
 def create_client(
-    session: SessionDep, current_user: CurrentUser, client_in: ClientRegister
+    session: SessionDep, current_user: CurrentUser, client_in: ClientCreate
 ) -> Any:
     return domain.create_client(session, client_in, current_user.id)
 

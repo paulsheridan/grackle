@@ -7,14 +7,14 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.clients.models import Client
-from app.services.models import Service, WorkingHours, Availability, ServiceRegister
+from app.services.models import Service, WorkingHours, Availability, ServiceCreate
 from app.users.models import User
 from app.appointments.models import Appointment
 from app.core.models import Message
 
 
 def create_service(
-    *, session: Session, svc_in: ServiceRegister, user_id: uuid.UUID
+    *, session: Session, svc_in: ServiceCreate, user_id: uuid.UUID
 ) -> Service:
     db_item = Service.model_validate(svc_in, update={"user_id": user_id})
     session.add(db_item)

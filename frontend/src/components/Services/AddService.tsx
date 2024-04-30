@@ -1,5 +1,3 @@
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
   FormControl,
@@ -13,14 +11,15 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Switch,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 import {
-  type ApiError,
-  type ServiceRegister,
   ServicesService,
+  type ApiError,
+  type ServiceCreate,
 } from "../../client";
 import useCustomToast from "../../hooks/useCustomToast";
 
@@ -37,7 +36,7 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ServiceRegister>({
+  } = useForm<ServiceCreate>({
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -47,12 +46,11 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
       max_per_day: 0,
       start: "",
       end: "",
-      workinghours: [],
     },
   });
 
   const mutation = useMutation({
-    mutationFn: (data: ServiceRegister) =>
+    mutationFn: (data: ServiceCreate) =>
       ServicesService.createService({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "Service created successfully.", "success");
@@ -64,11 +62,11 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
       showToast("Something went wrong.", `${errDetail}`, "error");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["Services"] });
+      queryClient.invalidateQueries({ queryKey: ["services"] });
     },
   });
 
-  const onSubmit: SubmitHandler<ServiceRegister> = (data) => {
+  const onSubmit: SubmitHandler<ServiceCreate> = (data) => {
     mutation.mutate(data);
   };
 
@@ -96,12 +94,7 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="active">Active</FormLabel>
-              <Input
-                id="active"
-                {...register("active")}
-                placeholder="Active"
-                type="checkbox"
-              />
+              <Switch id="active" {...register("active")} size="lg" />
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="duration">Duration</FormLabel>
@@ -109,7 +102,7 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
                 id="duration"
                 {...register("duration")}
                 placeholder="Duration"
-                type="number"
+                type="text"
               />
             </FormControl>
             <FormControl mt={4}>
@@ -118,43 +111,32 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
                 id="max_per_day"
                 {...register("max_per_day")}
                 placeholder="Max Per Day"
-                type="number"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="start">Start</FormLabel>
-              <DatePicker
-                id="start"
-                {...register("start")}
-                selected={new Date()}
-                onChange={(date) => {
-                  register("start").onChange(date);
-                }}
-                dateFormat="MM/dd/yyyy"
-                placeholderText="MM/DD/YYYY"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="end">End</FormLabel>
-              <DatePicker
-                id="end"
-                {...register("end")}
-                selected={new Date()}
-                onChange={(date) => {
-                  register("end").onChange(date);
-                }}
-                dateFormat="MM/dd/yyyy"
-                placeholderText="MM/DD/YYYY"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
-              <Input
-                id="workinghours"
-                {...register("phone_number")}
-                placeholder="Phone Number"
                 type="text"
               />
+            </FormControl>
+            <FormControl mt={4} isRequired isInvalid={!!errors.start}>
+              <FormLabel htmlFor="start">Start</FormLabel>
+              <Input
+                id="start"
+                {...register("start", { valueAsDate: true })}
+                placeholder="Start"
+                type="date"
+              />
+              {errors.start && (
+                <FormErrorMessage>{errors.start.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl mt={4} isRequired isInvalid={!!errors.end}>
+              <FormLabel htmlFor="end">End</FormLabel>
+              <Input
+                id="end"
+                {...register("end", { valueAsDate: true })}
+                placeholder="End"
+                type="date"
+              />
+              {errors.end && (
+                <FormErrorMessage>{errors.end.message}</FormErrorMessage>
+              )}
             </FormControl>
           </ModalBody>
           <ModalFooter gap={3}>

@@ -16,7 +16,6 @@ from app.services.models import (
     WorkingHours,
     WorkingHoursCreate,
     ServiceCreate,
-    ServiceRegister,
     ServiceUpdate,
     Availabilities,
 )
@@ -60,7 +59,7 @@ def get_service(
 
 @router.post("/", response_model=ServicePublic)
 def create_service(
-    session: SessionDep, current_user: CurrentUser, svc_in: ServiceRegister
+    session: SessionDep, current_user: CurrentUser, svc_in: ServiceCreate
 ) -> Any:
     db_item = Service.model_validate(svc_in, update={"user_id": current_user.id})
     session.add(db_item)

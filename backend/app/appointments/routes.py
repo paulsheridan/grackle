@@ -11,7 +11,6 @@ from app.appointments.models import (
     Appointment,
     AppointmentPublic,
     AppointmentsPublic,
-    AppointmentRegister,
     AppointmentCreate,
     AppointmentUpdate,
     ClientAppointmentRequest,
@@ -58,7 +57,7 @@ def get_appointment(
 def create_appointment(
     session: SessionDep,
     current_user: CurrentUser,
-    appt_in: AppointmentRegister,
+    appt_in: AppointmentCreate,
 ) -> Any:
     db_item = Appointment.model_validate(
         appt_in,

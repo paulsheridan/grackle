@@ -49,13 +49,6 @@ class AppointmentCreate(AppointmentBase):
     service_id: uuid.UUID
 
 
-class AppointmentRegister(SQLModel):
-    client_id: uuid.UUID
-    service_id: uuid.UUID
-    start: datetime
-    end: datetime
-
-
 class AppointmentUpdate(SQLModel):
     canceled: bool | None = None
     confirmed: bool | None = None

@@ -1,12 +1,10 @@
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
 import {
   Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  InputGroup,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,6 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -48,7 +47,7 @@ const EditClient = ({ client, isOpen, onClose }: EditClientProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: ClientUpdate) =>
-      ClientsService.updateClient({ id: client.id, requestBody: data }),
+      ClientsService.updateClient({ clientId: client.id, requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "Client updated successfully.", "success");
       onClose();
@@ -84,7 +83,7 @@ const EditClient = ({ client, isOpen, onClose }: EditClientProps) => {
           <ModalHeader>Edit Client</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl mt={4}>
+            <FormControl mt={4} isRequired isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">Email</FormLabel>
               <Input
                 id="email"
@@ -92,6 +91,9 @@ const EditClient = ({ client, isOpen, onClose }: EditClientProps) => {
                 placeholder="Email"
                 type="email"
               />
+              {errors.email && (
+                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              )}
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="first_name">First Name</FormLabel>
@@ -120,18 +122,17 @@ const EditClient = ({ client, isOpen, onClose }: EditClientProps) => {
                 type="text"
               />
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl mt={4} isInvalid={!!errors.birthday}>
               <FormLabel htmlFor="birthday">Birthday</FormLabel>
-              <DatePicker
+              <Input
                 id="birthday"
-                {...register("birthday")}
-                selected={new Date(client.birthday)}
-                onChange={(date) => {
-                  register("birthday").onChange(date);
-                }}
-                dateFormat="MM/dd/yyyy"
-                placeholderText="MM/DD/YYYY"
+                {...register("birthday", { valueAsDate: true })}
+                placeholder="Birthday"
+                type="date"
               />
+              {errors.birthday && (
+                <FormErrorMessage>{errors.birthday.message}</FormErrorMessage>
+              )}
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="preferred_contact">
@@ -146,12 +147,15 @@ const EditClient = ({ client, isOpen, onClose }: EditClientProps) => {
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
-              <Input
-                id="phone_number"
-                {...register("phone_number")}
-                placeholder="Phone Number"
-                type="text"
-              />
+              <InputGroup>
+                <InputLeftAddon>+1</InputLeftAddon>
+                <Input
+                  id="phone_number"
+                  {...register("phone_number")}
+                  placeholder="Phone Number"
+                  type="tel"
+                />
+              </InputGroup>
             </FormControl>
           </ModalBody>
           <ModalFooter gap={3}>

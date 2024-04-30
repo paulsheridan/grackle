@@ -13,12 +13,11 @@ import type { ClientPublic, UserPublic, ServicePublic } from "../../client";
 import EditUser from "../Admin/EditUser";
 import EditClient from "../Clients/EditClient";
 import EditService from "../Services/EditService";
-// import EditAppointment from "../Appointments/EditAppointment";
 import Delete from "./DeleteAlert";
 
 interface ActionsMenuProps {
   type: string;
-  value: ClientPublic | UserPublic;
+  value: ClientPublic | UserPublic | ServicePublic;
   disabled?: boolean;
 }
 
@@ -62,15 +61,10 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />
-        ) : type === "Service" ? (
-          <EditService
-            client={value as ServicePublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
-          />
         ) : (
-          <EditAppointment
-            client={value as AppointmentPublic}
+          // ) : type === "Service" ? (
+          <EditService
+            service={value as ServicePublic}
             isOpen={editUserModal.isOpen}
             onClose={editUserModal.onClose}
           />

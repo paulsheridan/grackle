@@ -13,17 +13,17 @@ import type {
   UserRegister,
   UsersPublic,
   UserUpdate,
+  AppointmentCreate,
   AppointmentPublic,
-  AppointmentRegister,
   AppointmentsPublic,
   AppointmentUpdate,
   ClientAppointmentRequest,
+  ServiceCreate,
   ServicePublic,
-  ServiceRegister,
   ServicesPublic,
   ServiceUpdate,
+  ClientCreate,
   ClientPublic,
-  ClientRegister,
   ClientsPublic,
   ClientUpdate,
 } from "./models";
@@ -354,7 +354,7 @@ export type TDataListAppointments = {
   skip?: number;
 };
 export type TDataCreateAppointment = {
-  requestBody: AppointmentRegister;
+  requestBody: AppointmentCreate;
 };
 export type TDataGetAppointment = {
   apptId: string;
@@ -504,7 +504,7 @@ export type TDataListServices = {
   skip?: number;
 };
 export type TDataCreateService = {
-  requestBody: ServiceRegister;
+  requestBody: ServiceCreate;
 };
 export type TDataGetService = {
   svcId: string;
@@ -661,17 +661,17 @@ export type TDataListClients = {
   skip?: number;
 };
 export type TDataCreateClient = {
-  requestBody: ClientRegister;
+  requestBody: ClientCreate;
 };
 export type TDataGetClient = {
-  id: string;
+  clientId: string;
 };
 export type TDataUpdateClient = {
-  id: string;
+  clientId: string;
   requestBody: ClientUpdate;
 };
 export type TDataDeleteClient = {
-  id: string;
+  clientId: string;
 };
 
 export class ClientsService {
@@ -746,12 +746,14 @@ export class ClientsService {
   public static updateClient(
     data: TDataUpdateClient,
   ): CancelablePromise<ClientPublic> {
-    const { id, requestBody } = data;
+    const { clientId, requestBody } = data;
+    console.log(clientId);
+    console.log(requestBody);
     return __request(OpenAPI, {
       method: "PATCH",
       url: "/api/v1/clients/{client_id}",
       path: {
-        client_id: id,
+        client_id: clientId,
       },
       body: requestBody,
       mediaType: "application/json",

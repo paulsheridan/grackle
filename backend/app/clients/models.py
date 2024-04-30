@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone, date
+from pydantic import field_validator
 
 if TYPE_CHECKING:
     from app.users.models import User
@@ -33,17 +34,11 @@ class Client(ClientBase, table=True):
 
 
 class ClientCreate(ClientBase):
-    pass
 
-
-class ClientRegister(SQLModel):
-    email: str
-    first_name: str
-    last_name: str
-    pronouns: str
-    birthday: datetime
-    preferred_contact: str
-    phone_number: str
+    @field_validator("birthday", mode="before")
+    def start_end_must_be_dates_only(cls, d):
+        if "T" in d:
+            return d.split("T")[0]
 
 
 class ClientUpdate(SQLModel):

@@ -1,3 +1,41 @@
+export const $AppointmentCreate = {
+	properties: {
+		start: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		end: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		confirmed: {
+	type: 'boolean',
+	default: false,
+},
+		canceled: {
+	type: 'boolean',
+	default: false,
+},
+		user_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		client_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		service_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+	},
+} as const;
+
 export const $AppointmentPublic = {
 	properties: {
 		start: {
@@ -37,31 +75,6 @@ export const $AppointmentPublic = {
 	type: 'string',
 	isRequired: true,
 	format: 'uuid',
-},
-	},
-} as const;
-
-export const $AppointmentRegister = {
-	properties: {
-		client_id: {
-	type: 'string',
-	isRequired: true,
-	format: 'uuid',
-},
-		service_id: {
-	type: 'string',
-	isRequired: true,
-	format: 'uuid',
-},
-		start: {
-	type: 'string',
-	isRequired: true,
-	format: 'date-time',
-},
-		end: {
-	type: 'string',
-	isRequired: true,
-	format: 'date-time',
 },
 	},
 } as const;
@@ -222,6 +235,40 @@ export const $ClientAppointmentRequest = {
 	},
 } as const;
 
+export const $ClientCreate = {
+	properties: {
+		email: {
+	type: 'string',
+	isRequired: true,
+},
+		first_name: {
+	type: 'string',
+	isRequired: true,
+},
+		last_name: {
+	type: 'string',
+	isRequired: true,
+},
+		pronouns: {
+	type: 'string',
+	isRequired: true,
+},
+		birthday: {
+	type: 'string',
+	isRequired: true,
+	format: 'date',
+},
+		preferred_contact: {
+	type: 'string',
+	isRequired: true,
+},
+		phone_number: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $ClientPublic = {
 	properties: {
 		email: {
@@ -257,40 +304,6 @@ export const $ClientPublic = {
 	type: 'string',
 	isRequired: true,
 	format: 'uuid',
-},
-	},
-} as const;
-
-export const $ClientRegister = {
-	properties: {
-		email: {
-	type: 'string',
-	isRequired: true,
-},
-		first_name: {
-	type: 'string',
-	isRequired: true,
-},
-		last_name: {
-	type: 'string',
-	isRequired: true,
-},
-		pronouns: {
-	type: 'string',
-	isRequired: true,
-},
-		birthday: {
-	type: 'string',
-	isRequired: true,
-	format: 'date-time',
-},
-		preferred_contact: {
-	type: 'string',
-	isRequired: true,
-},
-		phone_number: {
-	type: 'string',
-	isRequired: true,
 },
 	},
 } as const;
@@ -402,6 +415,37 @@ export const $NewPassword = {
 	},
 } as const;
 
+export const $ServiceCreate = {
+	properties: {
+		name: {
+	type: 'string',
+	isRequired: true,
+},
+		active: {
+	type: 'boolean',
+	isRequired: true,
+},
+		duration: {
+	type: 'number',
+	isRequired: true,
+},
+		max_per_day: {
+	type: 'number',
+	isRequired: true,
+},
+		start: {
+	type: 'string',
+	isRequired: true,
+	format: 'date',
+},
+		end: {
+	type: 'string',
+	isRequired: true,
+	format: 'date',
+},
+	},
+} as const;
+
 export const $ServicePublic = {
 	properties: {
 		name: {
@@ -439,44 +483,6 @@ export const $ServicePublic = {
 	type: 'string',
 	isRequired: true,
 	format: 'uuid',
-},
-		workinghours: {
-	type: 'array',
-	contains: {
-		type: 'WorkingHours',
-	},
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $ServiceRegister = {
-	properties: {
-		name: {
-	type: 'string',
-	isRequired: true,
-},
-		active: {
-	type: 'boolean',
-	isRequired: true,
-},
-		duration: {
-	type: 'number',
-	isRequired: true,
-},
-		max_per_day: {
-	type: 'number',
-	isRequired: true,
-},
-		start: {
-	type: 'string',
-	isRequired: true,
-	format: 'date',
-},
-		end: {
-	type: 'string',
-	isRequired: true,
-	format: 'date',
 },
 		workinghours: {
 	type: 'array',

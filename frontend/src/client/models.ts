@@ -1,3 +1,15 @@
+export type AppointmentCreate = {
+	start: string;
+	end: string;
+	confirmed?: boolean;
+	canceled?: boolean;
+	user_id: string;
+	client_id: string;
+	service_id: string;
+};
+
+
+
 export type AppointmentPublic = {
 	start: string;
 	end: string;
@@ -7,15 +19,6 @@ export type AppointmentPublic = {
 	user_id: string;
 	client_id: string;
 	service_id: string;
-};
-
-
-
-export type AppointmentRegister = {
-	client_id: string;
-	service_id: string;
-	start: string;
-	end: string;
 };
 
 
@@ -63,6 +66,18 @@ export type ClientAppointmentRequest = {
 
 
 
+export type ClientCreate = {
+	email: string;
+	first_name: string;
+	last_name: string;
+	pronouns: string;
+	birthday: string;
+	preferred_contact: string;
+	phone_number: string;
+};
+
+
+
 export type ClientPublic = {
 	email: string;
 	first_name: string;
@@ -72,18 +87,6 @@ export type ClientPublic = {
 	preferred_contact: string;
 	phone_number: string;
 	id: string;
-};
-
-
-
-export type ClientRegister = {
-	email: string;
-	first_name: string;
-	last_name: string;
-	pronouns: string;
-	birthday: string;
-	preferred_contact: string;
-	phone_number: string;
 };
 
 
@@ -125,6 +128,17 @@ export type NewPassword = {
 
 
 
+export type ServiceCreate = {
+	name: string;
+	active: boolean;
+	duration: number;
+	max_per_day: number;
+	start: string;
+	end: string;
+};
+
+
+
 export type ServicePublic = {
 	name: string;
 	active: boolean;
@@ -134,18 +148,6 @@ export type ServicePublic = {
 	end: string;
 	id: string;
 	user_id: string;
-	workinghours: Array<WorkingHours>;
-};
-
-
-
-export type ServiceRegister = {
-	name: string;
-	active: boolean;
-	duration: number;
-	max_per_day: number;
-	start: string;
-	end: string;
 	workinghours: Array<WorkingHours>;
 };
 

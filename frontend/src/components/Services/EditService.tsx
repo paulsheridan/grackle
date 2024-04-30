@@ -1,5 +1,3 @@
-import "react-datepicker/dist/react-datepicker.css";
-
 import {
   Button,
   FormControl,
@@ -13,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Switch,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -48,7 +47,7 @@ const EditService = ({ service, isOpen, onClose }: EditServiceProps) => {
   const mutation = useMutation({
     mutationFn: (data: ServiceUpdate) =>
       ServicesService.updateService({
-        id: service.id,
+        svcId: service.id,
         requestBody: data,
       }),
     onSuccess: () => {
@@ -94,6 +93,52 @@ const EditService = ({ service, isOpen, onClose }: EditServiceProps) => {
                 placeholder="Name"
                 type="text"
               />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel htmlFor="active">Active</FormLabel>
+              <Switch id="active" {...register("active")} size="lg" />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel htmlFor="duration">Duration</FormLabel>
+              <Input
+                id="duration"
+                {...register("duration")}
+                placeholder="Duration"
+                type="text"
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel htmlFor="max_per_day">Max Bookable Per Day</FormLabel>
+              <Input
+                id="max_per_day"
+                {...register("max_per_day")}
+                placeholder="Max Per Day"
+                type="text"
+              />
+            </FormControl>
+            <FormControl mt={4} isRequired isInvalid={!!errors.start}>
+              <FormLabel htmlFor="start">Start</FormLabel>
+              <Input
+                id="start"
+                {...register("start", { valueAsDate: true })}
+                placeholder="Start"
+                type="date"
+              />
+              {errors.start && (
+                <FormErrorMessage>{errors.start.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl mt={4} isRequired isInvalid={!!errors.end}>
+              <FormLabel htmlFor="end">End</FormLabel>
+              <Input
+                id="end"
+                {...register("end", { valueAsDate: true })}
+                placeholder="End"
+                type="date"
+              />
+              {errors.end && (
+                <FormErrorMessage>{errors.end.message}</FormErrorMessage>
+              )}
             </FormControl>
           </ModalBody>
           <ModalFooter gap={3}>

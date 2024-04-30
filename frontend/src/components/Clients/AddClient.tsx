@@ -1,5 +1,6 @@
 import {
   Button,
+  InputGroup,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -11,16 +12,15 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
-import {
-  type ApiError,
-  type ClientRegister,
-  ClientsService,
-} from "../../client";
+import { type ClientCreate, ClientsService } from "../../client";
+import type { ApiError } from "../../client/core/ApiError";
 import useCustomToast from "../../hooks/useCustomToast";
+import { emailPattern } from "../../utils";
 
 interface AddClientProps {
   isOpen: boolean;
@@ -35,7 +35,7 @@ const AddClient = ({ isOpen, onClose }: AddClientProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ClientRegister>({
+  } = useForm<ClientCreate>({
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -50,7 +50,7 @@ const AddClient = ({ isOpen, onClose }: AddClientProps) => {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: ClientRegister) =>
+    mutationFn: (data: ClientCreate) =>
       ClientsService.createClient({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "Client created successfully.", "success");
@@ -62,11 +62,11 @@ const AddClient = ({ isOpen, onClose }: AddClientProps) => {
       showToast("Something went wrong.", `${errDetail}`, "error");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["Clients"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
     },
   });
 
-  const onSubmit: SubmitHandler<ClientRegister> = (data) => {
+  const onSubmit: SubmitHandler<ClientCreate> = (data) => {
     mutation.mutate(data);
   };
 
@@ -83,34 +83,46 @@ const AddClient = ({ isOpen, onClose }: AddClientProps) => {
           <ModalHeader>Add Client</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl mt={4}>
+            <FormControl isRequired isInvalid={!!errors.email}>
               <FormLabel htmlFor="email">Email</FormLabel>
               <Input
                 id="email"
-                {...register("email")}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: emailPattern,
+                })}
                 placeholder="Email"
                 type="email"
               />
+              {errors.email && (
+                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="first_name">First Name</FormLabel>
+            <FormControl mt={4} isRequired isInvalid={!!errors.first_name}>
+              <FormLabel htmlFor="first_name">First name</FormLabel>
               <Input
                 id="first_name"
                 {...register("first_name")}
-                placeholder="First Name"
+                placeholder="First name"
                 type="text"
               />
+              {errors.first_name && (
+                <FormErrorMessage>{errors.first_name.message}</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="last_name">Last Name</FormLabel>
+            <FormControl mt={4} isRequired isInvalid={!!errors.last_name}>
+              <FormLabel htmlFor="last_name">Last name</FormLabel>
               <Input
                 id="last_name"
                 {...register("last_name")}
-                placeholder="Last Name"
+                placeholder="Last name"
                 type="text"
               />
+              {errors.last_name && (
+                <FormErrorMessage>{errors.last_name.message}</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl mt={4} isRequired isInvalid={!!errors.pronouns}>
               <FormLabel htmlFor="pronouns">Pronouns</FormLabel>
               <Input
                 id="pronouns"
@@ -118,17 +130,27 @@ const AddClient = ({ isOpen, onClose }: AddClientProps) => {
                 placeholder="Pronouns"
                 type="text"
               />
+              {errors.pronouns && (
+                <FormErrorMessage>{errors.pronouns.message}</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl mt={4} isRequired isInvalid={!!errors.birthday}>
               <FormLabel htmlFor="birthday">Birthday</FormLabel>
               <Input
                 id="birthday"
-                {...register("birthday")}
+                {...register("birthday", { valueAsDate: true })}
                 placeholder="Birthday"
-                type="text"
+                type="date"
               />
+              {errors.birthday && (
+                <FormErrorMessage>{errors.birthday.message}</FormErrorMessage>
+              )}
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl
+              mt={4}
+              isRequired
+              isInvalid={!!errors.preferred_contact}
+            >
               <FormLabel htmlFor="preferred_contact">
                 Preferred Contact
               </FormLabel>
@@ -138,18 +160,25 @@ const AddClient = ({ isOpen, onClose }: AddClientProps) => {
                 placeholder="Preferred Contact"
                 type="text"
               />
+              {errors.preferred_contact && (
+                <FormErrorMessage>
+                  {errors.preferred_contact.message}
+                </FormErrorMessage>
+              )}
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
-              <Input
-                id="phone_number"
-                {...register("phone_number")}
-                placeholder="Phone Number"
-                type="text"
-              />
+              <InputGroup>
+                <InputLeftAddon>+1</InputLeftAddon>
+                <Input
+                  id="phone_number"
+                  {...register("phone_number")}
+                  placeholder="Phone Number"
+                  type="tel"
+                />
+              </InputGroup>
             </FormControl>
           </ModalBody>
-
           <ModalFooter gap={3}>
             <Button variant="primary" type="submit" isLoading={isSubmitting}>
               Save

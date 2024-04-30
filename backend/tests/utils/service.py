@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, time, date
 
 from sqlmodel import Session
 
-from app.services.models import Service, ServiceRegister
+from app.services.models import Service, ServiceCreate
 from tests.utils.user import create_random_user
 from tests.utils.utils import random_lower_string
 from app.services.domain import create_service
@@ -35,7 +35,7 @@ def create_random_service(db: Session) -> Service:
 
     name = random_lower_string()
     description = random_lower_string()
-    service_in = ServiceRegister(
+    service_in = ServiceCreate(
         name=name,
         active=True,
         duration=random.choice(duration),

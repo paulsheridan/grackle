@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional, List
 
 from sqlmodel import Field, Relationship, SQLModel
 from sqlalchemy import UniqueConstraint, Column, String, types, ForeignKey
+from pydantic import field_validator
 
 if TYPE_CHECKING:
     from app.appointments.models import Appointment
@@ -71,18 +72,11 @@ class Service(ServiceBase, table=True):
 
 
 class ServiceCreate(ServiceBase):
-    user_id: uuid.UUID
 
-
-class ServiceRegister(SQLModel):
-    name: str
-    active: bool
-    duration: int
-    max_per_day: int
-    start: date
-    end: date
-
-    workinghours: list["WorkingHours"]
+    @field_validator("start", "end", mode="before")
+    def start_end_must_be_dates_only(cls, d):
+        if "T" in d:
+            return d.split("T")[0]
 
 
 class ServiceUpdate(SQLModel):
