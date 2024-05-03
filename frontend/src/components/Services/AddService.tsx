@@ -12,6 +12,11 @@ import {
   ModalHeader,
   ModalOverlay,
   Switch,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -83,7 +88,7 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
           <ModalHeader>Add Service</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl mt={4}>
+            <FormControl mt={4} isRequired>
               <FormLabel htmlFor="name">Name</FormLabel>
               <Input
                 id="name"
@@ -98,21 +103,31 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="duration">Duration</FormLabel>
-              <Input
-                id="duration"
-                {...register("duration")}
-                placeholder="Duration"
-                type="text"
-              />
+              <NumberInput defaultValue={15} min={15} max={240} step={15}>
+                <NumberInputField
+                  {...register("duration", {
+                    required: "This field is required",
+                  })}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </FormControl>
             <FormControl mt={4}>
               <FormLabel htmlFor="max_per_day">Max Per Day</FormLabel>
-              <Input
-                id="max_per_day"
-                {...register("max_per_day")}
-                placeholder="Max Per Day"
-                type="text"
-              />
+              <NumberInput defaultValue={1} min={1} max={20}>
+                <NumberInputField
+                  {...register("max_per_day", {
+                    required: "This field is required",
+                  })}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
             </FormControl>
             <FormControl mt={4} isRequired isInvalid={!!errors.start}>
               <FormLabel htmlFor="start">Start</FormLabel>

@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa";
 import AddUser from "../Admin/AddUser";
 import AddClient from "../Clients/AddClient";
 import AddService from "../Services/AddService";
+import AddAppointment from "../Appointments/AddAppointment";
 
 interface NavbarProps {
   type: string;
@@ -13,6 +14,7 @@ const Navbar = ({ type }: NavbarProps) => {
   const addUserModal = useDisclosure();
   const addClientModal = useDisclosure();
   const addServiceModal = useDisclosure();
+  const addAppointmentModal = useDisclosure();
 
   return (
     <>
@@ -33,7 +35,9 @@ const Navbar = ({ type }: NavbarProps) => {
               ? addUserModal.onOpen
               : type === "Client"
                 ? addClientModal.onOpen
-                : addServiceModal.onOpen
+                : type === "Appointment"
+                  ? addAppointmentModal.onOpen
+                  : addServiceModal.onOpen
           }
         >
           <Icon as={FaPlus} /> Add {type}
@@ -46,6 +50,10 @@ const Navbar = ({ type }: NavbarProps) => {
         <AddService
           isOpen={addServiceModal.isOpen}
           onClose={addServiceModal.onClose}
+        />
+        <AddAppointment
+          isOpen={addAppointmentModal.isOpen}
+          onClose={addAppointmentModal.onClose}
         />
       </Flex>
     </>

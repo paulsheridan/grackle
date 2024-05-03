@@ -12,7 +12,8 @@ from app.services.domain import (
     calculate_service_date_range,
     availability_per_day,
 )
-from app.appointments.domain import list_appts_between_dates
+
+# from app.appointments.domain import list_appts_between_dates
 
 
 @pytest.fixture

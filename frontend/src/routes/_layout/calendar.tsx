@@ -1,30 +1,46 @@
-import { Box, Container, Text } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Box, Container, Text, Heading, Spinner } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import type { UserPublic } from "../../client";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { AppointmentsService } from "../../client";
+import Navbar from "../../components/Common/Navbar";
+import { Suspense } from "react";
+
 import UserCalendar from "../../components/Calendar/UserCalendar";
 
 export const Route = createFileRoute("/_layout/calendar")({
-  component: Dashboard,
+  component: Schedule,
 });
 
-function Dashboard() {
-  const queryClient = useQueryClient();
+const appointments = (info) => {
+  useSuspenseQuery({
+    queryKey: ["appointments"],
+    queryFn: () => AppointmentsService.listAppointmentsBetween(info),
+  });
+};
 
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
-
+function Schedule() {
   return (
-    <>
-      <Container maxW="full">
-        <Box pt={12} m={4}>
-          <Text fontSize="2xl">
-            {currentUser?.full_name || currentUser?.email}'s Schedule
-          </Text>
-          <Text>Welcome to Grackle!</Text>
-        </Box>
+    <Container maxW="full">
+      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+        User Schedule
+      </Heading>
+      <Navbar type={"Appointments"} />
+      <Suspense fallback={<CalendarSpinner />}>
         <UserCalendar />
-      </Container>
-    </>
+      </Suspense>
+    </Container>
   );
 }
+
+const CalendarSpinner = () => {
+  return (
+    <Spinner
+      thickness="4px"
+      speed="0.65s"
+      emptyColor="gray.200"
+      color="blue.500"
+      size="xl"
+    />
+  );
+};

@@ -10,6 +10,7 @@ from app.appointments.models import Appointment, AppointmentCreate
 
 def list_appts_between_dates(
     session: SessionDep,
+    user_id: uuid.UUID,
     start: datetime | date,
     end: datetime | date,
     skip: int | None = None,
@@ -17,6 +18,7 @@ def list_appts_between_dates(
 ) -> Sequence[Appointment]:
     stmt = (
         select(Appointment)
+        .where(col(Appointment.user_id) == user_id)
         .where(col(Appointment.start) >= start)
         .where(col(Appointment.end) <= end)
         .offset(skip)

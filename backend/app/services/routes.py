@@ -117,10 +117,10 @@ def get_service_availability(
     stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
     service = session.exec(stmt).first()
 
-    if not service:
+    if service is None:
         raise HTTPException(status_code=404, detail="Not Found")
 
     earliest, latest = calculate_service_date_range(service, year, month)
-    current_appts = list_appts_between_dates(session, earliest, latest)
+    current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
     availability = calculate_availability(earliest, latest, service, current_appts)
     return Availabilities(data=availability)

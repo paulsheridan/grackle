@@ -15,6 +15,7 @@ from app.appointments.models import (
     AppointmentUpdate,
     ClientAppointmentRequest,
 )
+from app.appointments.domain import list_appts_between_dates
 from app.clients.models import Client, ClientCreate
 from app.users.models import User
 from app.services.models import Service
@@ -107,6 +108,14 @@ def delete_appointment(
     session.delete(appointment)
     session.commit()
     return Message(message="Appointment deleted successfully")
+
+
+@router.get("/schedule/")
+def list_appointments_between(
+    session: SessionDep, current_user: CurrentUser, start: datetime, end: datetime
+) -> AppointmentsPublic:
+    data = list_appts_between_dates(session, current_user.id, start, end)
+    return AppointmentsPublic(data=data)
 
 
 @router.post("/request", response_model=ClientAppointmentRequest)
