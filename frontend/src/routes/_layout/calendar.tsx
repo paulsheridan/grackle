@@ -1,8 +1,6 @@
-import { Box, Container, Text, Heading, Spinner } from "@chakra-ui/react";
+import { Container, Heading, Spinner } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { AppointmentsService } from "../../client";
 import Navbar from "../../components/Common/Navbar";
 import { Suspense } from "react";
 
@@ -11,13 +9,6 @@ import UserCalendar from "../../components/Calendar/UserCalendar";
 export const Route = createFileRoute("/_layout/calendar")({
   component: Schedule,
 });
-
-const appointments = (info) => {
-  useSuspenseQuery({
-    queryKey: ["appointments"],
-    queryFn: () => AppointmentsService.listAppointmentsBetween(info),
-  });
-};
 
 function Schedule() {
   return (

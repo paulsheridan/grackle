@@ -25,12 +25,6 @@ class WorkingHours(SQLModel, table=True):
     service: "Service" = Relationship(back_populates="workinghours")
 
 
-class WorkingHoursCreate(SQLModel):
-    weekday: int
-    open: time
-    close: time
-
-
 class ServiceBase(SQLModel):
     name: str
     active: bool
@@ -71,12 +65,14 @@ class Service(ServiceBase, table=True):
         return None
 
 
-class ServiceCreate(ServiceBase):
-
-    @field_validator("start", "end", mode="before")
-    def start_end_must_be_dates_only(cls, d):
-        if "T" in d:
-            return d.split("T")[0]
+class ServiceCreate(SQLModel):
+    name: str
+    active: bool
+    duration: int
+    max_per_day: int
+    start: datetime
+    end: datetime
+    workinghours: list["WorkingHours"]
 
 
 class ServiceUpdate(SQLModel):

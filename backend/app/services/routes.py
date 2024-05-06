@@ -14,7 +14,6 @@ from app.services.models import (
     ServicePublic,
     ServicesPublic,
     WorkingHours,
-    WorkingHoursCreate,
     ServiceCreate,
     ServiceUpdate,
     Availabilities,

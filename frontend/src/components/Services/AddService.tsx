@@ -19,7 +19,7 @@ import {
   NumberDecrementStepper,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 
 import {
   ServicesService,
@@ -74,6 +74,13 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
   const onSubmit: SubmitHandler<ServiceCreate> = (data) => {
     mutation.mutate(data);
   };
+  const { control } = useForm();
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control, // control props comes from useForm (optional: if you are using FormProvider)
+      name: "workinghours", // unique name for your Field Array
+    },
+  );
 
   return (
     <>
@@ -153,6 +160,58 @@ const AddService = ({ isOpen, onClose }: AddServiceProps) => {
                 <FormErrorMessage>{errors.end.message}</FormErrorMessage>
               )}
             </FormControl>
+            <FormLabel htmlFor="workinghours">Working Hours</FormLabel>
+
+            <Button
+              variant="primary"
+              type="button"
+              onClick={() => append({ weekday: 1, open: "", close: "" })}
+            >
+              Add Working Hours
+            </Button>
+            {fields.map((field, index) => (
+              <div className="workinghours">
+                <FormControl mt={4}>
+                  <FormLabel htmlFor="weekday">Weekday</FormLabel>
+                  <NumberInput defaultValue={0} min={0} max={6}>
+                    <NumberInputField
+                      {...register(`workinghours[${index}].weekday`)}
+                    />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+                <FormControl mt={4} isRequired isInvalid={!!errors.open}>
+                  <FormLabel htmlFor="open">Open</FormLabel>
+                  <Input
+                    id="open"
+                    {...register(`workinghours[${index}].open`)}
+                    placeholder="Open"
+                    type="time"
+                  />
+                  {errors.open && (
+                    <FormErrorMessage>{errors.open.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+                <FormControl mt={4} isRequired isInvalid={!!errors.close}>
+                  <FormLabel htmlFor="close">Close</FormLabel>
+                  <Input
+                    id="close"
+                    {...register(`workinghours[${index}].close`)}
+                    placeholder="Close"
+                    type="time"
+                  />
+                  {errors.close && (
+                    <FormErrorMessage>{errors.close.message}</FormErrorMessage>
+                  )}
+                </FormControl>
+                <Button variant="primary" onClick={() => remove(index)}>
+                  Delete
+                </Button>
+              </div>
+            ))}
           </ModalBody>
           <ModalFooter gap={3}>
             <Button variant="primary" type="submit" isLoading={isSubmitting}>

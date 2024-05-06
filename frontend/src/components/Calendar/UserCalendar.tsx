@@ -1,106 +1,38 @@
-import React from "react";
-import {
-  EventApi,
-  DateSelectArg,
-  EventClickArg,
-  EventContentArg,
-} from "@fullcalendar/core";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
+import { useCallback, useState } from "react";
+import withDragAndDrop, {
+  withDragAndDropProps,
+} from "react-big-calendar/lib/addons/dragAndDrop";
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { type ApiError, AppointmentsService } from "../../client";
 
-interface CalendarState {
-  weekendsVisible: boolean;
-  currentEvents: EventApi[];
-}
+import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
-export default class UserCalendar extends React.Component<{}, CalendarState> {
-  state: CalendarState = {
-    weekendsVisible: true,
-    currentEvents: [],
-  };
+const localizer = momentLocalizer(moment);
+const DnDCalendar = withDragAndDrop(Calendar);
 
-  render() {
-    return (
-      <div className="calendar">
-        <FullCalendar
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            interactionPlugin,
-            listPlugin,
-          ]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-          }}
-          initialView="timeGridWeek"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={this.state.weekendsVisible}
-          select={this.handleDateSelect}
-          eventContent={renderEventContent} // custom render function
-          eventClick={this.handleEventClick}
-          eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
-          /* you can update a remote database when these fire:
-            eventAdd={function(){}}
-            eventChange={function(){}}
-            eventRemove={function(){}}
-            */
-        />
-      </div>
-    );
-  }
+export default function UserCalendar() {
+  const [date, setDate] = useState(new Date());
+  const [events, setEvents] = useState([]);
+  const onNavigate = useCallback((newDate: any) => setDate(newDate), [setDate]);
+  const { data: appointments } = useSuspenseQuery({
+    queryKey: ["appointments"],
+    queryFn: () => AppointmentsService.listAppointments(),
+  });
 
-  handleWeekendsToggle = () => {
-    this.setState({
-      weekendsVisible: !this.state.weekendsVisible,
-    });
-  };
-
-  handleDateSelect = (selectInfo: DateSelectArg) => {
-    let title = prompt("Please enter a new title for your event");
-    let calendarApi = selectInfo.view.calendar;
-
-    calendarApi.unselect(); // clear date selection
-
-    if (title) {
-      calendarApi.addEvent({
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
-      });
-    }
-  };
-
-  handleEventClick = (clickInfo: EventClickArg) => {
-    if (
-      confirm(
-        `Are you sure you want to delete the event '${clickInfo.event.title}'`,
-      )
-    ) {
-      clickInfo.event.remove();
-    }
-  };
-
-  handleEvents = (events: EventApi[]) => {
-    this.setState({
-      currentEvents: events,
-    });
-  };
-}
-
-function renderEventContent(eventContent: EventContentArg) {
   return (
-    <>
-      <b>{eventContent.timeText}</b>
-      <i>{eventContent.event.title}</i>
-    </>
+    <div className="appointments">
+      <DnDCalendar
+        localizer={localizer}
+        events={appointments.data}
+        startAccessor="start"
+        endAccessor="end"
+        onNavigate={onNavigate}
+        style={{ height: "100vh" }}
+      />
+    </div>
   );
 }

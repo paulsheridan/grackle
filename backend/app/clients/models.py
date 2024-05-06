@@ -34,11 +34,7 @@ class Client(ClientBase, table=True):
 
 
 class ClientCreate(ClientBase):
-
-    @field_validator("birthday", mode="before")
-    def start_end_must_be_dates_only(cls, d):
-        if "T" in d:
-            return d.split("T")[0]
+    pass
 
 
 class ClientUpdate(SQLModel):
