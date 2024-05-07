@@ -1,13 +1,13 @@
 import uuid
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union, Tuple
 from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone
 from sqlalchemy import UniqueConstraint, Column, String, types, ForeignKey
+from app.clients.models import Client, ClientPublic
 
 
 if TYPE_CHECKING:
-    from app.clients.models import Client
     from app.services.models import Service
     from app.users.models import User
 
@@ -61,6 +61,14 @@ class AppointmentPublic(AppointmentBase):
     user_id: uuid.UUID
     client_id: uuid.UUID
     service_id: uuid.UUID
+
+
+class AppointmentPublicWithClient(AppointmentPublic):
+    client: ClientPublic | None = None
+
+
+class AppointmentsPublicWithClients(SQLModel):
+    data: list[AppointmentPublicWithClient]
 
 
 class AppointmentsPublic(SQLModel):

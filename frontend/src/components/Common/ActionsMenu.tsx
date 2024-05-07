@@ -9,11 +9,17 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
-import type { ClientPublic, UserPublic, ServicePublic } from "../../client";
+import type {
+  ClientPublic,
+  UserPublic,
+  ServicePublic,
+  AppointmentPublic,
+} from "../../client";
 import EditUser from "../Admin/EditUser";
 import EditClient from "../Clients/EditClient";
 import EditService from "../Services/EditService";
 import Delete from "./DeleteAlert";
+import EditAppointment from "../Appointments/EditAppointment";
 
 interface ActionsMenuProps {
   type: string;
@@ -23,6 +29,9 @@ interface ActionsMenuProps {
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
   const editUserModal = useDisclosure();
+  const editClientModal = useDisclosure();
+  const editServiceModal = useDisclosure();
+  const editAppointmentModal = useDisclosure();
   const deleteModal = useDisclosure();
 
   return (
@@ -58,15 +67,20 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         ) : type === "Client" ? (
           <EditClient
             client={value as ClientPublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
+            isOpen={editClientModal.isOpen}
+            onClose={editClientModal.onClose}
           />
-        ) : (
-          // ) : type === "Service" ? (
+        ) : type === "Service" ? (
           <EditService
             service={value as ServicePublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
+            isOpen={editServiceModal.isOpen}
+            onClose={editServiceModal.onClose}
+          />
+        ) : (
+          <EditAppointment
+            appointment={value as AppointmentPublic}
+            isOpen={editAppointmentModal.isOpen}
+            onClose={editAppointmentModal.onClose}
           />
         )}
         <Delete

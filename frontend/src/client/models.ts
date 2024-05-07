@@ -23,6 +23,20 @@ export type AppointmentPublic = {
 
 
 
+export type AppointmentPublicWithClient = {
+	start: string;
+	end: string;
+	confirmed?: boolean;
+	canceled?: boolean;
+	id: string;
+	user_id: string;
+	client_id: string;
+	service_id: string;
+	client?: ClientPublic | null;
+};
+
+
+
 export type AppointmentUpdate = {
 	canceled?: boolean | null;
 	confirmed?: boolean | null;
@@ -34,6 +48,12 @@ export type AppointmentUpdate = {
 
 export type AppointmentsPublic = {
 	data: Array<AppointmentPublic>;
+};
+
+
+
+export type AppointmentsPublicWithClients = {
+	data: Array<AppointmentPublicWithClient>;
 };
 
 
@@ -135,6 +155,7 @@ export type ServiceCreate = {
 	max_per_day: number;
 	start: string;
 	end: string;
+	workinghours: Array<WorkingHours>;
 };
 
 

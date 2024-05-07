@@ -79,6 +79,57 @@ export const $AppointmentPublic = {
 	},
 } as const;
 
+export const $AppointmentPublicWithClient = {
+	properties: {
+		start: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		end: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		confirmed: {
+	type: 'boolean',
+	default: false,
+},
+		canceled: {
+	type: 'boolean',
+	default: false,
+},
+		id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		user_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		client_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		service_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		client: {
+	type: 'any-of',
+	contains: [{
+	type: 'ClientPublic',
+}, {
+	type: 'null',
+}],
+},
+	},
+} as const;
+
 export const $AppointmentUpdate = {
 	properties: {
 		canceled: {
@@ -124,6 +175,18 @@ export const $AppointmentsPublic = {
 	type: 'array',
 	contains: {
 		type: 'AppointmentPublic',
+	},
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $AppointmentsPublicWithClients = {
+	properties: {
+		data: {
+	type: 'array',
+	contains: {
+		type: 'AppointmentPublicWithClient',
 	},
 	isRequired: true,
 },
@@ -436,12 +499,19 @@ export const $ServiceCreate = {
 		start: {
 	type: 'string',
 	isRequired: true,
-	format: 'date',
+	format: 'date-time',
 },
 		end: {
 	type: 'string',
 	isRequired: true,
-	format: 'date',
+	format: 'date-time',
+},
+		workinghours: {
+	type: 'array',
+	contains: {
+		type: 'WorkingHours',
+	},
+	isRequired: true,
 },
 	},
 } as const;

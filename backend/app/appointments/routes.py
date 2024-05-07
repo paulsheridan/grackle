@@ -1,6 +1,7 @@
 import uuid
+import json
 
-from typing import Any, Union, Sequence
+from typing import Any, Union, Sequence, Tuple
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
@@ -14,9 +15,10 @@ from app.appointments.models import (
     AppointmentCreate,
     AppointmentUpdate,
     ClientAppointmentRequest,
+    AppointmentsPublicWithClients,
 )
 from app.appointments.domain import list_appts_between_dates
-from app.clients.models import Client, ClientCreate
+from app.clients.models import Client, ClientCreate, ClientsPublic, ClientPublic
 from app.users.models import User
 from app.services.models import Service
 
@@ -29,16 +31,24 @@ from app.clients import domain as client_domain
 router = APIRouter()
 
 
-@router.get("/", response_model=AppointmentsPublic)
+@router.get("/", response_model=AppointmentsPublicWithClients)
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
-) -> AppointmentsPublic:
-    stmt = select(Appointment).where(Appointment.user_id == current_user.id)
-    data = session.exec(stmt)
-    return AppointmentsPublic(data=data)
+) -> AppointmentsPublicWithClients:
+    stmt = (
+        select(Appointment)
+        .join(Client, isouter=False)
+        .where(Appointment.user_id == current_user.id)
+    )
+    data = session.exec(stmt).all()
+    for item in data:
+        print(item)
+    return AppointmentsPublicWithClients(data=data)
+    # return AppointmentsPublic(data=data)
+    # return ClientsPublic(data=data)
 
 
 @router.get("/{appt_id}", response_model=AppointmentPublic)
