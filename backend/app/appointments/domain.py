@@ -6,6 +6,7 @@ from sqlmodel import Session, col, delete, func, select
 
 from app.deps import SessionDep
 from app.appointments.models import Appointment, AppointmentCreate
+from app.clients.models import Client
 
 
 def list_appts_between_dates(
@@ -18,6 +19,7 @@ def list_appts_between_dates(
 ) -> Sequence[Appointment]:
     stmt = (
         select(Appointment)
+        .join(Client, isouter=True)
         .where(col(Appointment.user_id) == user_id)
         .where(col(Appointment.start) >= start)
         .where(col(Appointment.end) <= end)

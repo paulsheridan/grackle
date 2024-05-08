@@ -16,7 +16,7 @@ function Schedule() {
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
         User Schedule
       </Heading>
-      <Navbar type={"Appointments"} />
+      <Navbar type={"Appointment"} />
       <Suspense fallback={<CalendarSpinner />}>
         <UserCalendar />
       </Suspense>

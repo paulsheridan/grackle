@@ -40,15 +40,19 @@ def list_appointments(
 ) -> AppointmentsPublicWithClients:
     stmt = (
         select(Appointment)
-        .join(Client, isouter=False)
+        .join(Client, isouter=True)
         .where(Appointment.user_id == current_user.id)
     )
     data = session.exec(stmt).all()
-    for item in data:
-        print(item)
     return AppointmentsPublicWithClients(data=data)
-    # return AppointmentsPublic(data=data)
-    # return ClientsPublic(data=data)
+
+
+@router.get("/schedule/", response_model=AppointmentsPublicWithClients)
+def list_appointments_between(
+    session: SessionDep, current_user: CurrentUser, start: datetime, end: datetime
+) -> AppointmentsPublicWithClients:
+    data = list_appts_between_dates(session, current_user.id, start, end)
+    return AppointmentsPublicWithClients(data=data)
 
 
 @router.get("/{appt_id}", response_model=AppointmentPublic)
@@ -118,14 +122,6 @@ def delete_appointment(
     session.delete(appointment)
     session.commit()
     return Message(message="Appointment deleted successfully")
-
-
-@router.get("/schedule/")
-def list_appointments_between(
-    session: SessionDep, current_user: CurrentUser, start: datetime, end: datetime
-) -> AppointmentsPublic:
-    data = list_appts_between_dates(session, current_user.id, start, end)
-    return AppointmentsPublic(data=data)
 
 
 @router.post("/request", response_model=ClientAppointmentRequest)
