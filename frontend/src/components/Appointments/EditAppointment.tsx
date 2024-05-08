@@ -90,35 +90,8 @@ const EditAppointment = ({
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl mt={4}>
-              <FormLabel htmlFor="name">Name</FormLabel>
-              <Input
-                id="name"
-                {...register("name")}
-                placeholder="Name"
-                type="text"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="active">Active</FormLabel>
-              <Switch id="active" {...register("active")} size="lg" />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="duration">Duration</FormLabel>
-              <Input
-                id="duration"
-                {...register("duration")}
-                placeholder="Duration"
-                type="text"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="max_per_day">Max Bookable Per Day</FormLabel>
-              <Input
-                id="max_per_day"
-                {...register("max_per_day")}
-                placeholder="Max Per Day"
-                type="text"
-              />
+              <FormLabel htmlFor="confirmed">Confirmed</FormLabel>
+              <Switch id="confirmed" {...register("confirmed")} size="lg" />
             </FormControl>
             <FormControl mt={4} isRequired isInvalid={!!errors.start}>
               <FormLabel htmlFor="start">Start</FormLabel>
@@ -126,7 +99,7 @@ const EditAppointment = ({
                 id="start"
                 {...register("start", { valueAsDate: true })}
                 placeholder="Start"
-                type="date"
+                type="datetime-local"
               />
               {errors.start && (
                 <FormErrorMessage>{errors.start.message}</FormErrorMessage>
@@ -138,7 +111,7 @@ const EditAppointment = ({
                 id="end"
                 {...register("end", { valueAsDate: true })}
                 placeholder="End"
-                type="date"
+                type="datetime-local"
               />
               {errors.end && (
                 <FormErrorMessage>{errors.end.message}</FormErrorMessage>

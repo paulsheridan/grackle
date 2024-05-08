@@ -9,17 +9,11 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
-import type {
-  ClientPublic,
-  UserPublic,
-  ServicePublic,
-  AppointmentPublic,
-} from "../../client";
+import type { ClientPublic, UserPublic, ServicePublic } from "../../client";
 import EditUser from "../Admin/EditUser";
 import EditClient from "../Clients/EditClient";
 import EditService from "../Services/EditService";
 import Delete from "./DeleteAlert";
-import EditAppointment from "../Appointments/EditAppointment";
 
 interface ActionsMenuProps {
   type: string;
@@ -28,10 +22,7 @@ interface ActionsMenuProps {
 }
 
 const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
-  const editUserModal = useDisclosure();
-  const editClientModal = useDisclosure();
-  const editServiceModal = useDisclosure();
-  const editAppointmentModal = useDisclosure();
+  const editModal = useDisclosure();
   const deleteModal = useDisclosure();
 
   return (
@@ -45,7 +36,7 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         />
         <MenuList>
           <MenuItem
-            onClick={editUserModal.onOpen}
+            onClick={editModal.onOpen}
             icon={<FiEdit fontSize="16px" />}
           >
             Edit {type}
@@ -61,26 +52,20 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
         {type === "User" ? (
           <EditUser
             user={value as UserPublic}
-            isOpen={editUserModal.isOpen}
-            onClose={editUserModal.onClose}
+            isOpen={editModal.isOpen}
+            onClose={editModal.onClose}
           />
         ) : type === "Client" ? (
           <EditClient
             client={value as ClientPublic}
-            isOpen={editClientModal.isOpen}
-            onClose={editClientModal.onClose}
-          />
-        ) : type === "Service" ? (
-          <EditService
-            service={value as ServicePublic}
-            isOpen={editServiceModal.isOpen}
-            onClose={editServiceModal.onClose}
+            isOpen={editModal.isOpen}
+            onClose={editModal.onClose}
           />
         ) : (
-          <EditAppointment
-            appointment={value as AppointmentPublic}
-            isOpen={editAppointmentModal.isOpen}
-            onClose={editAppointmentModal.onClose}
+          <EditService
+            service={value as ServicePublic}
+            isOpen={editModal.isOpen}
+            onClose={editModal.onClose}
           />
         )}
         <Delete

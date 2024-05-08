@@ -1,4 +1,3 @@
-import { Badge } from "@chakra-ui/react";
 import { endOfMonth, startOfMonth } from "date-fns";
 import format from "date-fns/format";
 import getDay from "date-fns/getDay";
@@ -12,13 +11,13 @@ import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   Button,
+  Badge,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { FiBookmark, FiBox } from "react-icons/fi";
 import {
@@ -47,8 +46,6 @@ export default function UserCalendar() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
-  const editAppointmentModal = useDisclosure();
 
   const handleEventClick = useCallback((event) => {
     setSelectedAppointment(event);

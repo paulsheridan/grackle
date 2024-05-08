@@ -45,10 +45,7 @@ const AddAppointment = ({ isOpen, onClose }: AddAppointmentProps) => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      name: "",
-      active: false,
-      duration: 0,
-      max_per_day: 0,
+      confirmed: false,
       start: "",
       end: "",
     },
@@ -88,46 +85,9 @@ const AddAppointment = ({ isOpen, onClose }: AddAppointmentProps) => {
           <ModalHeader>Add Appointment</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl mt={4} isRequired>
-              <FormLabel htmlFor="name">Name</FormLabel>
-              <Input
-                id="name"
-                {...register("name")}
-                placeholder="Name"
-                type="text"
-              />
-            </FormControl>
             <FormControl mt={4}>
-              <FormLabel htmlFor="active">Active</FormLabel>
-              <Switch id="active" {...register("active")} size="lg" />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="duration">Duration</FormLabel>
-              <NumberInput defaultValue={15} min={15} max={240} step={15}>
-                <NumberInputField
-                  {...register("duration", {
-                    required: "This field is required",
-                  })}
-                />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel htmlFor="max_per_day">Max Per Day</FormLabel>
-              <NumberInput defaultValue={1} min={1} max={20}>
-                <NumberInputField
-                  {...register("max_per_day", {
-                    required: "This field is required",
-                  })}
-                />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+              <FormLabel htmlFor="confirmed">Confirmed</FormLabel>
+              <Switch id="confirmed" {...register("confirmed")} size="lg" />
             </FormControl>
             <FormControl mt={4} isRequired isInvalid={!!errors.start}>
               <FormLabel htmlFor="start">Start</FormLabel>
@@ -135,7 +95,7 @@ const AddAppointment = ({ isOpen, onClose }: AddAppointmentProps) => {
                 id="start"
                 {...register("start", { valueAsDate: true })}
                 placeholder="Start"
-                type="date"
+                type="datetime-local"
               />
               {errors.start && (
                 <FormErrorMessage>{errors.start.message}</FormErrorMessage>
@@ -147,7 +107,7 @@ const AddAppointment = ({ isOpen, onClose }: AddAppointmentProps) => {
                 id="end"
                 {...register("end", { valueAsDate: true })}
                 placeholder="End"
-                type="date"
+                type="datetime-local"
               />
               {errors.end && (
                 <FormErrorMessage>{errors.end.message}</FormErrorMessage>
