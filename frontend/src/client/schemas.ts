@@ -79,7 +79,46 @@ export const $AppointmentPublic = {
 	},
 } as const;
 
-export const $AppointmentPublicWithClient = {
+export const $AppointmentUpdate = {
+	properties: {
+		canceled: {
+	type: 'any-of',
+	contains: [{
+	type: 'boolean',
+}, {
+	type: 'null',
+}],
+},
+		confirmed: {
+	type: 'any-of',
+	contains: [{
+	type: 'boolean',
+}, {
+	type: 'null',
+}],
+},
+		start: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+	format: 'date-time',
+}, {
+	type: 'null',
+}],
+},
+		end: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+	format: 'date-time',
+}, {
+	type: 'null',
+}],
+},
+	},
+} as const;
+
+export const $ApptJoinSvcClient = {
 	properties: {
 		start: {
 	type: 'string',
@@ -127,41 +166,10 @@ export const $AppointmentPublicWithClient = {
 	type: 'null',
 }],
 },
-	},
-} as const;
-
-export const $AppointmentUpdate = {
-	properties: {
-		canceled: {
+		service: {
 	type: 'any-of',
 	contains: [{
-	type: 'boolean',
-}, {
-	type: 'null',
-}],
-},
-		confirmed: {
-	type: 'any-of',
-	contains: [{
-	type: 'boolean',
-}, {
-	type: 'null',
-}],
-},
-		start: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	format: 'date-time',
-}, {
-	type: 'null',
-}],
-},
-		end: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	format: 'date-time',
+	type: 'ServicePublic',
 }, {
 	type: 'null',
 }],
@@ -169,24 +177,12 @@ export const $AppointmentUpdate = {
 	},
 } as const;
 
-export const $AppointmentsPublic = {
+export const $ApptsJoinSvcsClients = {
 	properties: {
 		data: {
 	type: 'array',
 	contains: {
-		type: 'AppointmentPublic',
-	},
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $AppointmentsPublicWithClients = {
-	properties: {
-		data: {
-	type: 'array',
-	contains: {
-		type: 'AppointmentPublicWithClient',
+		type: 'ApptJoinSvcClient',
 	},
 	isRequired: true,
 },

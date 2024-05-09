@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentsPublic,AppointmentsPublicWithClients,AppointmentUpdate,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -353,6 +353,11 @@ export type TDataCreateAppointment = {
                 requestBody: AppointmentCreate
                 
             }
+export type TDataJoinApptsSvcClientsBetween = {
+                end: string
+start: string
+                
+            }
 export type TDataGetAppointment = {
                 apptId: string
                 
@@ -366,11 +371,6 @@ export type TDataDeleteAppointment = {
                 apptId: string
                 
             }
-export type TDataListAppointmentsBetween = {
-                end: string
-start: string
-                
-            }
 export type TDataRequestAppointment = {
                 requestBody: ClientAppointmentRequest
                 
@@ -380,10 +380,10 @@ export class AppointmentsService {
 
 	/**
 	 * List Appointments
-	 * @returns AppointmentsPublicWithClients Successful Response
+	 * @returns ApptsJoinSvcsClients Successful Response
 	 * @throws ApiError
 	 */
-	public static listAppointments(data: TDataListAppointments = {}): CancelablePromise<AppointmentsPublicWithClients> {
+	public static listAppointments(data: TDataListAppointments = {}): CancelablePromise<ApptsJoinSvcsClients> {
 		const {
 limit = 100,
 skip = 0,
@@ -414,6 +414,28 @@ requestBody,
 			url: '/api/v1/appointments/',
 			body: requestBody,
 			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Join Appts Svc Clients Between
+	 * @returns ApptsJoinSvcsClients Successful Response
+	 * @throws ApiError
+	 */
+	public static joinApptsSvcClientsBetween(data: TDataJoinApptsSvcClientsBetween): CancelablePromise<ApptsJoinSvcsClients> {
+		const {
+end,
+start,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/appointments/schedule/',
+			query: {
+				start, end
+			},
 			errors: {
 				422: `Validation Error`,
 			},
@@ -479,28 +501,6 @@ apptId,
 			url: '/api/v1/appointments/{appt_id}',
 			path: {
 				appt_id: apptId
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * List Appointments Between
-	 * @returns AppointmentsPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static listAppointmentsBetween(data: TDataListAppointmentsBetween): CancelablePromise<AppointmentsPublic> {
-		const {
-end,
-start,
-} = data;
-		return __request(OpenAPI, {
-			method: 'GET',
-			url: '/api/v1/appointments/schedule/',
-			query: {
-				start, end
 			},
 			errors: {
 				422: `Validation Error`,

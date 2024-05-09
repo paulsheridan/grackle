@@ -93,7 +93,7 @@ const EditAppointment = ({
               <FormLabel htmlFor="confirmed">Confirmed</FormLabel>
               <Switch id="confirmed" {...register("confirmed")} size="lg" />
             </FormControl>
-            <FormControl mt={4} isRequired isInvalid={!!errors.start}>
+            <FormControl mt={4} isInvalid={!!errors.start}>
               <FormLabel htmlFor="start">Start</FormLabel>
               <Input
                 id="start"
@@ -105,7 +105,7 @@ const EditAppointment = ({
                 <FormErrorMessage>{errors.start.message}</FormErrorMessage>
               )}
             </FormControl>
-            <FormControl mt={4} isRequired isInvalid={!!errors.end}>
+            <FormControl mt={4} isInvalid={!!errors.end}>
               <FormLabel htmlFor="end">End</FormLabel>
               <Input
                 id="end"

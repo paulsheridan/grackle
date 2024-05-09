@@ -23,20 +23,6 @@ export type AppointmentPublic = {
 
 
 
-export type AppointmentPublicWithClient = {
-	start: string;
-	end: string;
-	confirmed?: boolean;
-	canceled?: boolean;
-	id: string;
-	user_id: string;
-	client_id: string;
-	service_id: string;
-	client?: ClientPublic | null;
-};
-
-
-
 export type AppointmentUpdate = {
 	canceled?: boolean | null;
 	confirmed?: boolean | null;
@@ -46,14 +32,23 @@ export type AppointmentUpdate = {
 
 
 
-export type AppointmentsPublic = {
-	data: Array<AppointmentPublic>;
+export type ApptJoinSvcClient = {
+	start: string;
+	end: string;
+	confirmed?: boolean;
+	canceled?: boolean;
+	id: string;
+	user_id: string;
+	client_id: string;
+	service_id: string;
+	client?: ClientPublic | null;
+	service?: ServicePublic | null;
 };
 
 
 
-export type AppointmentsPublicWithClients = {
-	data: Array<AppointmentPublicWithClient>;
+export type ApptsJoinSvcsClients = {
+	data: Array<ApptJoinSvcClient>;
 };
 
 

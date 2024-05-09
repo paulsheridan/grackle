@@ -5,10 +5,10 @@ from sqlmodel import Field, Relationship, SQLModel
 from datetime import datetime, timezone
 from sqlalchemy import UniqueConstraint, Column, String, types, ForeignKey
 from app.clients.models import Client, ClientPublic
+from app.services.models import Service, ServicePublic
 
 
 if TYPE_CHECKING:
-    from app.services.models import Service
     from app.users.models import User
 
 
@@ -63,12 +63,13 @@ class AppointmentPublic(AppointmentBase):
     service_id: uuid.UUID
 
 
-class AppointmentPublicWithClient(AppointmentPublic):
+class ApptJoinSvcClient(AppointmentPublic):
     client: ClientPublic | None = None
+    service: ServicePublic | None = None
 
 
-class AppointmentsPublicWithClients(SQLModel):
-    data: list[AppointmentPublicWithClient]
+class ApptsJoinSvcsClients(SQLModel):
+    data: list[ApptJoinSvcClient]
 
 
 class AppointmentsPublic(SQLModel):

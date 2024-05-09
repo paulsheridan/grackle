@@ -15,7 +15,7 @@ from app.appointments.models import (
     AppointmentCreate,
     AppointmentUpdate,
     ClientAppointmentRequest,
-    AppointmentsPublicWithClients,
+    ApptsJoinSvcsClients,
 )
 from app.appointments.domain import list_appts_between_dates
 from app.clients.models import Client, ClientCreate, ClientsPublic, ClientPublic
@@ -31,28 +31,29 @@ from app.clients import domain as client_domain
 router = APIRouter()
 
 
-@router.get("/", response_model=AppointmentsPublicWithClients)
+@router.get("/", response_model=ApptsJoinSvcsClients)
 def list_appointments(
     session: SessionDep,
     current_user: CurrentUser,
     skip: int = 0,
     limit: int = 100,
-) -> AppointmentsPublicWithClients:
+) -> ApptsJoinSvcsClients:
     stmt = (
         select(Appointment)
         .join(Client, isouter=True)
+        .join(Service, isouter=True)
         .where(Appointment.user_id == current_user.id)
     )
     data = session.exec(stmt).all()
-    return AppointmentsPublicWithClients(data=data)
+    return ApptsJoinSvcsClients(data=data)
 
 
-@router.get("/schedule/", response_model=AppointmentsPublicWithClients)
-def list_appointments_between(
+@router.get("/schedule/", response_model=ApptsJoinSvcsClients)
+def join_appts_svc_clients_between(
     session: SessionDep, current_user: CurrentUser, start: datetime, end: datetime
-) -> AppointmentsPublicWithClients:
+) -> ApptsJoinSvcsClients:
     data = list_appts_between_dates(session, current_user.id, start, end)
-    return AppointmentsPublicWithClients(data=data)
+    return ApptsJoinSvcsClients(data=data)
 
 
 @router.get("/{appt_id}", response_model=AppointmentPublic)

@@ -9,15 +9,21 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiEdit, FiTrash } from "react-icons/fi";
 
-import type { ClientPublic, UserPublic, ServicePublic } from "../../client";
+import type {
+  ClientPublic,
+  UserPublic,
+  ServicePublic,
+  AppointmentPublic,
+} from "../../client";
 import EditUser from "../Admin/EditUser";
 import EditClient from "../Clients/EditClient";
 import EditService from "../Services/EditService";
+import EditAppointment from "../Appointments/EditAppointment";
 import Delete from "./DeleteAlert";
 
 interface ActionsMenuProps {
   type: string;
-  value: ClientPublic | UserPublic | ServicePublic;
+  value: ClientPublic | UserPublic | ServicePublic | AppointmentPublic;
   disabled?: boolean;
 }
 
@@ -61,9 +67,15 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
             isOpen={editModal.isOpen}
             onClose={editModal.onClose}
           />
-        ) : (
+        ) : type === "Service" ? (
           <EditService
             service={value as ServicePublic}
+            isOpen={editModal.isOpen}
+            onClose={editModal.onClose}
+          />
+        ) : (
+          <EditAppointment
+            appointment={value as AppointmentPublic}
             isOpen={editModal.isOpen}
             onClose={editModal.onClose}
           />
