@@ -14,11 +14,11 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
+import { Route as LandingImport } from './routes/landing'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutServicesImport } from './routes/_layout/services'
-import { Route as LayoutLandingImport } from './routes/_layout/landing'
 import { Route as LayoutClientsImport } from './routes/_layout/clients'
 import { Route as LayoutCalendarImport } from './routes/_layout/calendar'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
@@ -40,6 +40,11 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const LandingRoute = LandingImport.update({
+  path: '/landing',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const LayoutRoute = LayoutImport.update({
   id: '/_layout',
   getParentRoute: () => rootRoute,
@@ -57,11 +62,6 @@ const LayoutSettingsRoute = LayoutSettingsImport.update({
 
 const LayoutServicesRoute = LayoutServicesImport.update({
   path: '/services',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
-const LayoutLandingRoute = LayoutLandingImport.update({
-  path: '/landing',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -88,6 +88,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
+    '/landing': {
+      preLoaderRoute: typeof LandingImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
@@ -112,10 +116,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutClientsImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/landing': {
-      preLoaderRoute: typeof LayoutLandingImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/services': {
       preLoaderRoute: typeof LayoutServicesImport
       parentRoute: typeof LayoutImport
@@ -138,11 +138,11 @@ export const routeTree = rootRoute.addChildren([
     LayoutAdminRoute,
     LayoutCalendarRoute,
     LayoutClientsRoute,
-    LayoutLandingRoute,
     LayoutServicesRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
   ]),
+  LandingRoute,
   LoginRoute,
   RecoverPasswordRoute,
   ResetPasswordRoute,
