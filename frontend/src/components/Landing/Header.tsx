@@ -1,5 +1,5 @@
-import { Box, Flex, Text, Button, Stack } from "@chakra-ui/react";
-import Logo from "./Logo";
+import { Box, Flex, Text, Button, Image } from "@chakra-ui/react";
+import Logo from "../../assets/images/gracklesmall.png";
 
 const MenuItem = (props) => {
   const { children, isLast, to = "/", ...rest } = props;
@@ -13,7 +13,7 @@ const MenuItem = (props) => {
   );
 };
 
-const Header = (props) => {
+const Header = (props: any) => {
   return (
     <Flex
       as="nav"
@@ -27,7 +27,15 @@ const Header = (props) => {
       {...props}
     >
       <Flex align="center">
-        <Logo height={44} />
+        <Image src={Logo} alt="logo" p={6} boxSize="90px" />
+        <Text
+          bgGradient="linear(to-l, #7928CA, #FF0080)"
+          bgClip="text"
+          fontSize="6xl"
+          fontWeight="extrabold"
+        >
+          Grackle
+        </Text>
       </Flex>
 
       <Box flexBasis={{ base: "100%", md: "auto" }}>

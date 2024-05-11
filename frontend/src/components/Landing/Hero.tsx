@@ -25,6 +25,7 @@ export default function Hero({
       minH="70vh"
       px={8}
       mb={16}
+      bgGradient="linear(to-r, orange.200, blue.500)"
       {...rest}
     >
       <Stack
