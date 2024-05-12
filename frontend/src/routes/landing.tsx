@@ -4,6 +4,7 @@ import Footer from "../components/Landing/Footer";
 import Hero from "../components/Landing/Hero";
 import { createFileRoute } from "@tanstack/react-router";
 import Logo from "../assets/images/GrackleBlue.png";
+import Pricing from "../components/Landing/Pricing";
 
 export const Route = createFileRoute("/landing")({
   component: Landing,
@@ -11,7 +12,13 @@ export const Route = createFileRoute("/landing")({
 
 function Landing() {
   return (
-    <Flex direction="column" align="center" maxW={{ xl: "1800px" }} m="0 auto">
+    <Flex
+      direction="column"
+      // align="center"
+      w="100%"
+      // maxW={{ xl: "1800px" }}
+      // m="0 auto"
+    >
       <Header />
       <Hero
         title="Welcome to Tattoo"
@@ -20,6 +27,7 @@ function Landing() {
         ctaText="Sign Up Now!"
         ctaLink="/signup"
       />
+      <Pricing />
       <Footer />
     </Flex>
   );

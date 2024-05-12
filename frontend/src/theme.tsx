@@ -1,12 +1,18 @@
-import { extendTheme } from "@chakra-ui/react"
+import { extendTheme } from "@chakra-ui/react";
+import "@fontsource/raleway";
+import "@fontsource/space-mono";
 
 const disabledStyles = {
   _disabled: {
     backgroundColor: "ui.main",
   },
-}
+};
 
 const theme = extendTheme({
+  fonts: {
+    // body: `'Space Mono', space-mono`,
+    // body: `'Raleway', sans-serif`,
+  },
   colors: {
     ui: {
       main: "#009688",
@@ -56,6 +62,6 @@ const theme = extendTheme({
       },
     },
   },
-})
+});
 
-export default theme
+export default theme;

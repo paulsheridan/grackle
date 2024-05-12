@@ -105,7 +105,7 @@ function Services() {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Services Management
+        Services
       </Heading>
 
       <Navbar type={"Service"} />

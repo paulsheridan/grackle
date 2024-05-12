@@ -25,12 +25,12 @@ export default function Hero({
       minH="70vh"
       px={8}
       mb={16}
-      bgGradient="linear(to-r, orange.200, blue.500)"
+      bgGradient="linear(to-r, green.200, blue.600)"
       {...rest}
     >
       <Stack
         spacing={4}
-        w={{ base: "80%", md: "40%" }}
+        w={{ base: "80%", md: "50%" }}
         align={["center", "center", "flex-start", "flex-start"]}
       >
         <Heading
