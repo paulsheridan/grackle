@@ -34,7 +34,7 @@ export default function ThreeTierPricing() {
     <Box py={12}>
       <VStack spacing={2} textAlign="center">
         <Heading as="h1" fontSize="4xl">
-          Plans that fit your need
+          Plans that fit in the palm of your hand
         </Heading>
         <Text fontSize="lg" color={"gray.500"}>
           Start with 14-day free trial. No credit card needed. Cancel at
