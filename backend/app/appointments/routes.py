@@ -150,7 +150,6 @@ def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequ
             session, appt_request, appt_request.user_id
         )
 
-    # There's now an appointment_create domain function to handle this
     appt_request.client_id = client.id
     appointment = Appointment.model_validate(appt_request)
     session.add(appointment)

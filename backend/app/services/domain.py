@@ -5,12 +5,16 @@ from datetime import date, datetime, timedelta
 from typing import Optional, List, Sequence
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlmodel import select
 
+from app.services.models import Availabilities
 from app.clients.models import Client
 from app.services.models import Service, WorkingHours, Availability, ServiceCreate
 from app.users.models import User
 from app.appointments.models import Appointment
 from app.core.models import Message
+from app.deps import CurrentUser, SessionDep
+from app.appointments.domain import list_appts_between_dates
 
 
 def create_service(
@@ -21,6 +25,24 @@ def create_service(
     session.commit()
     session.refresh(db_item)
     return db_item
+
+
+def get_service_availability(
+    session: SessionDep,
+    svc_id: uuid.UUID,
+    year: int | None = None,
+    month: int | None = None,
+) -> Availabilities | None:
+    stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
+    service = session.exec(stmt).first()
+
+    if service is None:
+        return None
+
+    earliest, latest = calculate_service_date_range(service, year, month)
+    current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
+    availability = calculate_availability(earliest, latest, service, current_appts)
+    return Availabilities(data=availability)
 
 
 def calculate_service_date_range(

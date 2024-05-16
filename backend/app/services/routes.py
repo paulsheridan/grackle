@@ -106,20 +106,20 @@ def delete_service(
     return Message(message="Service deleted successfully")
 
 
-@router.get("/{svc_id}/availability")
-def get_service_availability(
-    session: SessionDep,
-    svc_id: uuid.UUID,
-    year: int | None = None,
-    month: int | None = None,
-):
-    stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
-    service = session.exec(stmt).first()
+# @router.get("/{svc_id}/availability")
+# def get_service_availability(
+#     session: SessionDep,
+#     svc_id: uuid.UUID,
+#     year: int | None = None,
+#     month: int | None = None,
+# ):
+#     stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
+#     service = session.exec(stmt).first()
 
-    if service is None:
-        raise HTTPException(status_code=404, detail="Not Found")
+#     if service is None:
+#         raise HTTPException(status_code=404, detail="Not Found")
 
-    earliest, latest = calculate_service_date_range(service, year, month)
-    current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
-    availability = calculate_availability(earliest, latest, service, current_appts)
-    return Availabilities(data=availability)
+#     earliest, latest = calculate_service_date_range(service, year, month)
+#     current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
+#     availability = calculate_availability(earliest, latest, service, current_appts)
+#     return Availabilities(data=availability)
