@@ -192,6 +192,7 @@ def test_get_date_window_returns_correct_date_passed(test_service_long):
     assert latest == datetime.date(2024, 6, 30)
 
 
+@freeze_time("2024-05-19")
 def test_get_date_window_returns_correct_start_end_within_month(test_service_short):
     service = test_service_short
     earliest, latest = calculate_service_date_range(service)
