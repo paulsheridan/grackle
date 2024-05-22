@@ -12,13 +12,7 @@ export const Route = createFileRoute("/landing")({
 
 function Landing() {
   return (
-    <Flex
-      direction="column"
-      // align="center"
-      w="100%"
-      // maxW={{ xl: "1800px" }}
-      // m="0 auto"
-    >
+    <Flex direction="column" w="100%">
       <Header />
       <Hero
         title="Welcome to Tattoo"
