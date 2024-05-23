@@ -1,4 +1,4 @@
-import { HStack, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { HStack, Flex, Text } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 

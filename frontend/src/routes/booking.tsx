@@ -19,7 +19,7 @@ function Booking() {
           align="center"
           justify="center"
           flex="1"
-          bgGradient="linear(to-r, orange.400, blue.400)"
+          bgGradient="linear(to-r, purple.400, pink.400)"
           color="white"
         >
           <Outlet />
