@@ -785,6 +785,20 @@ export const $UserRegister = {
 	},
 } as const;
 
+export const $UserShop = {
+	properties: {
+		id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		shop_name: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $UserUpdate = {
 	properties: {
 		email: {

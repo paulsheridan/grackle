@@ -1,11 +1,11 @@
 import { Text, Flex } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/booking/services")({
-  component: Services,
+export const Route = createFileRoute("/booking/$shopName/portfolio")({
+  component: Portfolio,
 });
 
-function Services() {
+function Portfolio() {
   return (
     <Flex
       as="section"
@@ -17,7 +17,7 @@ function Services() {
       p={10}
     >
       <Text fontSize="4xl" fontWeight="bold" mb={4}>
-        Services
+        PORTFOLIO
       </Text>
     </Flex>
   );

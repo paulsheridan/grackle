@@ -1,14 +1,23 @@
 import { Container, Flex, Box } from "@chakra-ui/react";
-// import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
+import { type UserPublic, UsersService } from "../client";
 import Header from "../components/Booking/Header";
 
-export const Route = createFileRoute("/booking")({
+export const Route = createFileRoute("/booking/$shopName")({
   component: Booking,
 });
 
 function Booking() {
+  const { shopName } = Route.useParams();
+  const queryClient = useQueryClient();
+
+  const { data: user } = useSuspenseQuery({
+    queryKey: ["users"],
+    queryFn: () => UsersService.readByShopName({ shopName }),
+  });
+
   return (
     <Container maxW="full">
       <Flex direction="column" minHeight="100vh" w="100%">

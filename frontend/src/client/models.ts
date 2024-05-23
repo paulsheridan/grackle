@@ -233,6 +233,13 @@ export type UserRegister = {
 
 
 
+export type UserShop = {
+	id: string;
+	shop_name: string;
+};
+
+
+
 export type UserUpdate = {
 	email?: string | null;
 	username?: string | null;

@@ -18,6 +18,7 @@ from app.users.models import (
     UserUpdate,
     UpdatePassword,
     UserRegister,
+    UserShop,
 )
 from app.services.models import Service
 from app.appointments.models import Appointment
@@ -137,6 +138,13 @@ def read_user_by_id(
             status_code=403,
             detail="The user doesn't have enough privileges",
         )
+    return user
+
+
+@router.get("/shop/{shop_name}", response_model=UserShop)
+def read_by_shop_name(shop_name: str, session: SessionDep) -> Any:
+    stmt = select(User).where(User.shop_name == shop_name)
+    user = session.exec(stmt).one()
     return user
 
 

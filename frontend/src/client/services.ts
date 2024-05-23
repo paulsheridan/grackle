@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UserShop,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -156,6 +156,10 @@ userId: string
             }
 export type TDataDeleteUser = {
                 userId: string
+                
+            }
+export type TDataReadByShopName = {
+                shopName: string
                 
             }
 
@@ -335,6 +339,27 @@ userId,
 			url: '/api/v1/users/{user_id}',
 			path: {
 				user_id: userId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Read By Shop Name
+	 * @returns UserShop Successful Response
+	 * @throws ApiError
+	 */
+	public static readByShopName(data: TDataReadByShopName): CancelablePromise<UserShop> {
+		const {
+shopName,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/users/shop/{shop_name}',
+			path: {
+				shop_name: shopName
 			},
 			errors: {
 				422: `Validation Error`,
@@ -552,12 +577,6 @@ export type TDataDeleteService = {
                 svcId: string
                 
             }
-export type TDataGetServiceAvailability = {
-                month?: number | null
-svcId: string
-year?: number | null
-                
-            }
 
 export class ServicesService {
 
@@ -662,32 +681,6 @@ svcId,
 			url: '/api/v1/services/{svc_id}',
 			path: {
 				svc_id: svcId
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Get Service Availability
-	 * @returns unknown Successful Response
-	 * @throws ApiError
-	 */
-	public static getServiceAvailability(data: TDataGetServiceAvailability): CancelablePromise<unknown> {
-		const {
-month,
-svcId,
-year,
-} = data;
-		return __request(OpenAPI, {
-			method: 'GET',
-			url: '/api/v1/services/{svc_id}/availability',
-			path: {
-				svc_id: svcId
-			},
-			query: {
-				year, month
 			},
 			errors: {
 				422: `Validation Error`,

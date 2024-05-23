@@ -75,3 +75,8 @@ class UserPublic(UserBase):
 
 class UsersPublic(SQLModel):
     data: list[UserPublic]
+
+
+class UserShop(SQLModel):
+    id: uuid.UUID
+    shop_name: str
