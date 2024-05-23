@@ -34,7 +34,6 @@ function ClientsTableBody() {
     <Tbody>
       {clients.data.map((client) => (
         <Tr key={client.id}>
-          {/* <Td>{client.id}</Td> */}
           <Td>
             {client.first_name} {client.last_name}
           </Td>
