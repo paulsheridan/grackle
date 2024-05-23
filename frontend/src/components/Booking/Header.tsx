@@ -1,14 +1,4 @@
-import {
-  Container,
-  Flex,
-  Box,
-  Button,
-  Text,
-  Link,
-  IconButton,
-  HStack,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Flex, Button, Text, Link, IconButton, HStack } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 
 import HeaderItems from "./HeaderItems";
@@ -23,7 +13,7 @@ const Header = () => {
       color="black"
     >
       <Text fontSize="2xl" fontWeight="bold">
-        Appointment Booking
+        Example Tattooist
       </Text>
       <HStack spacing={8} align="center">
         <HeaderItems />
