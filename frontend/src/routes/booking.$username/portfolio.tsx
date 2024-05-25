@@ -1,11 +1,11 @@
 import { Text, Flex } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/booking/$shopName/about")({
-  component: About,
+export const Route = createFileRoute("/booking/$username/portfolio")({
+  component: Portfolio,
 });
 
-function About() {
+function Portfolio() {
   return (
     <Flex
       as="section"
@@ -17,10 +17,7 @@ function About() {
       p={10}
     >
       <Text fontSize="4xl" fontWeight="bold" mb={4}>
-        About Me
-      </Text>
-      <Text fontSize="xl" mb={8}>
-        I am a living tattoo.
+        PORTFOLIO
       </Text>
     </Flex>
   );

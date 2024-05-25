@@ -200,6 +200,13 @@ export type UpdatePassword = {
 
 
 
+export type UserBooking = {
+	id: string;
+	shop_name: string;
+};
+
+
+
 export type UserCreate = {
 	email: string;
 	username?: string | null;
@@ -228,13 +235,6 @@ export type UserRegister = {
 	email: string;
 	password: string;
 	full_name?: string | null;
-	shop_name: string;
-};
-
-
-
-export type UserShop = {
-	id: string;
 	shop_name: string;
 };
 

@@ -10,7 +10,6 @@ export const Route = createFileRoute("/_layout/")({
 
 function Dashboard() {
   const queryClient = useQueryClient();
-
   const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
 
   return (

@@ -1,11 +1,14 @@
 import { Text, Flex, Button } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
+import { UserBooking } from "../../client";
 
-export const Route = createFileRoute("/booking/$shopName/")({
+export const Route = createFileRoute("/booking/$username/")({
   component: Booking,
 });
 
-function Booking() {
+function Booking(user: UserBooking) {
+  console.log("LSDKJFLDSK");
+  console.log(user);
   return (
     <Flex
       as="section"
@@ -17,7 +20,7 @@ function Booking() {
       p={10}
     >
       <Text fontSize="4xl" fontWeight="bold" mb={4}>
-        Welcome to Our Booking Service
+        Book with {user?.shop_name}
       </Text>
       <Text fontSize="xl" mb={8}>
         Schedule your appointment easily and conveniently.

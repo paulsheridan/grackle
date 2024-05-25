@@ -20,7 +20,7 @@ import { ServicesService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
 import Navbar from "../../components/Common/Navbar";
 
-export const Route = createFileRoute("/booking/$shopName/services")({
+export const Route = createFileRoute("/booking/$username/services")({
   component: Services,
 });
 
@@ -34,7 +34,6 @@ function ServicesTableBody() {
     <Tbody>
       {services.data.map((service) => (
         <Tr key={service.id}>
-          {/* <Td>{service.id}</Td>
           <Td>{service.user_id}</Td> */}
           <Td>{service.name}</Td>
           <Td>{service.active ? "Active" : "Inactive"}</Td>

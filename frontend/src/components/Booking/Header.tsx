@@ -2,8 +2,9 @@ import { Flex, Button, Text, Link, IconButton, HStack } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 
 import HeaderItems from "./HeaderItems";
+import { UserBooking } from "../../client";
 
-const Header = () => {
+const Header = (user: UserBooking) => {
   return (
     <Flex
       as="header"
@@ -13,7 +14,7 @@ const Header = () => {
       color="black"
     >
       <Text fontSize="2xl" fontWeight="bold">
-        Example Tattooist
+        {user.shop_name}
       </Text>
       <HStack spacing={8} align="center">
         <HeaderItems />

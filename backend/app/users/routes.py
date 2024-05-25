@@ -18,7 +18,7 @@ from app.users.models import (
     UserUpdate,
     UpdatePassword,
     UserRegister,
-    UserShop,
+    UserBooking,
 )
 from app.services.models import Service
 from app.appointments.models import Appointment
@@ -141,9 +141,9 @@ def read_user_by_id(
     return user
 
 
-@router.get("/shop/{shop_name}", response_model=UserShop)
-def read_by_shop_name(shop_name: str, session: SessionDep) -> Any:
-    stmt = select(User).where(User.shop_name == shop_name)
+@router.get("/artist/{username}", response_model=UserBooking)
+def read_by_username(username: str, session: SessionDep) -> Any:
+    stmt = select(User).where(User.username == username)
     user = session.exec(stmt).one()
     return user
 

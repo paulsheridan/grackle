@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserCreate,UserRegister,UserShop,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserBooking,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -158,8 +158,8 @@ export type TDataDeleteUser = {
                 userId: string
                 
             }
-export type TDataReadByShopName = {
-                shopName: string
+export type TDataReadByUsername = {
+                username: string
                 
             }
 
@@ -347,19 +347,19 @@ userId,
 	}
 
 	/**
-	 * Read By Shop Name
-	 * @returns UserShop Successful Response
+	 * Read By Username
+	 * @returns UserBooking Successful Response
 	 * @throws ApiError
 	 */
-	public static readByShopName(data: TDataReadByShopName): CancelablePromise<UserShop> {
+	public static readByUsername(data: TDataReadByUsername): CancelablePromise<UserBooking> {
 		const {
-shopName,
+username,
 } = data;
 		return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/users/shop/{shop_name}',
+			url: '/api/v1/users/artist/{username}',
 			path: {
-				shop_name: shopName
+				username
 			},
 			errors: {
 				422: `Validation Error`,

@@ -653,6 +653,20 @@ export const $UpdatePassword = {
 	},
 } as const;
 
+export const $UserBooking = {
+	properties: {
+		id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		shop_name: {
+	type: 'string',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $UserCreate = {
 	properties: {
 		email: {
@@ -777,20 +791,6 @@ export const $UserRegister = {
 }, {
 	type: 'null',
 }],
-},
-		shop_name: {
-	type: 'string',
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $UserShop = {
-	properties: {
-		id: {
-	type: 'string',
-	isRequired: true,
-	format: 'uuid',
 },
 		shop_name: {
 	type: 'string',

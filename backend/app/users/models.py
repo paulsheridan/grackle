@@ -77,6 +77,7 @@ class UsersPublic(SQLModel):
     data: list[UserPublic]
 
 
-class UserShop(SQLModel):
+class UserBooking(SQLModel):
     id: uuid.UUID
     shop_name: str
+    username: str
