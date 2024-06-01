@@ -16,9 +16,9 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ServicesService } from "../../client";
-import ActionsMenu from "../../components/Common/ActionsMenu";
-import Navbar from "../../components/Common/Navbar";
+import { ServicesService } from "../../../client";
+import ActionsMenu from "../../../components/Common/ActionsMenu";
+import Navbar from "../../../components/Common/Navbar";
 
 export const Route = createFileRoute("/booking/$username/services")({
   component: Services,

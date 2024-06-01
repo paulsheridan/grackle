@@ -1,14 +1,12 @@
 import { Text, Flex, Button } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { UserBooking } from "../../client";
+import { UserBooking } from "../../../client";
 
 export const Route = createFileRoute("/booking/$username/")({
   component: Booking,
 });
 
 function Booking(user: UserBooking) {
-  console.log("LSDKJFLDSK");
-  console.log(user);
   return (
     <Flex
       as="section"

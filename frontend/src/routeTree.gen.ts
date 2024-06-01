@@ -15,18 +15,18 @@ import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
 import { Route as LandingImport } from './routes/landing'
+import { Route as BookingImport } from './routes/booking'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
-import { Route as BookingUsernameImport } from './routes/booking.$username'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutServicesImport } from './routes/_layout/services'
 import { Route as LayoutClientsImport } from './routes/_layout/clients'
 import { Route as LayoutCalendarImport } from './routes/_layout/calendar'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as BookingUsernameIndexImport } from './routes/booking.$username/index'
-import { Route as BookingUsernameServicesImport } from './routes/booking.$username/services'
-import { Route as BookingUsernamePortfolioImport } from './routes/booking.$username/portfolio'
-import { Route as BookingUsernameAboutImport } from './routes/booking.$username/about'
+import { Route as BookingUsernameIndexImport } from './routes/booking/$username/index'
+import { Route as BookingUsernameServicesImport } from './routes/booking/$username/services'
+import { Route as BookingUsernamePortfolioImport } from './routes/booking/$username/portfolio'
+import { Route as BookingUsernameAboutImport } from './routes/booking/$username/about'
 
 // Create/Update Routes
 
@@ -50,6 +50,11 @@ const LandingRoute = LandingImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const BookingRoute = BookingImport.update({
+  path: '/booking',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const LayoutRoute = LayoutImport.update({
   id: '/_layout',
   getParentRoute: () => rootRoute,
@@ -58,11 +63,6 @@ const LayoutRoute = LayoutImport.update({
 const LayoutIndexRoute = LayoutIndexImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
-} as any)
-
-const BookingUsernameRoute = BookingUsernameImport.update({
-  path: '/booking/$username',
-  getParentRoute: () => rootRoute,
 } as any)
 
 const LayoutSettingsRoute = LayoutSettingsImport.update({
@@ -91,23 +91,23 @@ const LayoutAdminRoute = LayoutAdminImport.update({
 } as any)
 
 const BookingUsernameIndexRoute = BookingUsernameIndexImport.update({
-  path: '/',
-  getParentRoute: () => BookingUsernameRoute,
+  path: '/$username/',
+  getParentRoute: () => BookingRoute,
 } as any)
 
 const BookingUsernameServicesRoute = BookingUsernameServicesImport.update({
-  path: '/services',
-  getParentRoute: () => BookingUsernameRoute,
+  path: '/$username/services',
+  getParentRoute: () => BookingRoute,
 } as any)
 
 const BookingUsernamePortfolioRoute = BookingUsernamePortfolioImport.update({
-  path: '/portfolio',
-  getParentRoute: () => BookingUsernameRoute,
+  path: '/$username/portfolio',
+  getParentRoute: () => BookingRoute,
 } as any)
 
 const BookingUsernameAboutRoute = BookingUsernameAboutImport.update({
-  path: '/about',
-  getParentRoute: () => BookingUsernameRoute,
+  path: '/$username/about',
+  getParentRoute: () => BookingRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -116,6 +116,10 @@ declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_layout': {
       preLoaderRoute: typeof LayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/booking': {
+      preLoaderRoute: typeof BookingImport
       parentRoute: typeof rootRoute
     }
     '/landing': {
@@ -154,29 +158,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
     }
-    '/booking/$username': {
-      preLoaderRoute: typeof BookingUsernameImport
-      parentRoute: typeof rootRoute
-    }
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
     '/booking/$username/about': {
       preLoaderRoute: typeof BookingUsernameAboutImport
-      parentRoute: typeof BookingUsernameImport
+      parentRoute: typeof BookingImport
     }
     '/booking/$username/portfolio': {
       preLoaderRoute: typeof BookingUsernamePortfolioImport
-      parentRoute: typeof BookingUsernameImport
+      parentRoute: typeof BookingImport
     }
     '/booking/$username/services': {
       preLoaderRoute: typeof BookingUsernameServicesImport
-      parentRoute: typeof BookingUsernameImport
+      parentRoute: typeof BookingImport
     }
     '/booking/$username/': {
       preLoaderRoute: typeof BookingUsernameIndexImport
-      parentRoute: typeof BookingUsernameImport
+      parentRoute: typeof BookingImport
     }
   }
 }
@@ -192,16 +192,16 @@ export const routeTree = rootRoute.addChildren([
     LayoutSettingsRoute,
     LayoutIndexRoute,
   ]),
-  LandingRoute,
-  LoginRoute,
-  RecoverPasswordRoute,
-  ResetPasswordRoute,
-  BookingUsernameRoute.addChildren([
+  BookingRoute.addChildren([
     BookingUsernameAboutRoute,
     BookingUsernamePortfolioRoute,
     BookingUsernameServicesRoute,
     BookingUsernameIndexRoute,
   ]),
+  LandingRoute,
+  LoginRoute,
+  RecoverPasswordRoute,
+  ResetPasswordRoute,
 ])
 
 /* prettier-ignore-end */

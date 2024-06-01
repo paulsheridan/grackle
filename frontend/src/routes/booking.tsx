@@ -1,12 +1,13 @@
 import { Container, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { createContext, useContext } from "react";
 
 import Header from "../components/Booking/Header";
 import Footer from "../components/Landing/Footer";
-import { UsersService } from "../client";
+import { UserBooking, UsersService } from "../client";
 
-export const Route = createFileRoute("/booking/$username")({
+export const Route = createFileRoute("/booking")({
   component: Booking,
 });
 
@@ -16,13 +17,12 @@ function Booking() {
     queryKey: ["users"],
     queryFn: () => UsersService.readByUsername({ username }),
   });
-  console.log(user);
 
   return (
     <Container maxW="full">
       {user ? (
         <Flex direction="column" minHeight="100vh" w="100%">
-          <Header user={user} />
+          <Header />
           <Flex
             as="section"
             direction="column"
@@ -32,7 +32,7 @@ function Booking() {
             bgGradient="linear(to-r, purple.400, pink.400)"
             color="white"
           >
-            <Outlet user={user} />
+            <Outlet />
             <Footer />
           </Flex>
         </Flex>

@@ -16,7 +16,7 @@ function Landing() {
       <Header />
       <Hero
         title="Welcome to Tattoo"
-        subtitle="It's called Grackle and it's for scheduling!"
+        subtitle="It's called Grackle and it's for booking tattoos!"
         image={Logo}
         ctaText="Sign Up Now!"
         ctaLink="/signup"
