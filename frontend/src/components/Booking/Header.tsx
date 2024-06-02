@@ -1,10 +1,13 @@
 import { Flex, Button, Text, Link, IconButton, HStack } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
+import { useQueryClient } from "@tanstack/react-query";
 
 import HeaderItems from "./HeaderItems";
-import { UserBooking } from "../../../client";
+import { UserBooking } from "../../client";
 
 const Header = () => {
+  const queryClient = useQueryClient();
+  const artist = queryClient.getQueryData<UserBooking>(["artist"]);
   return (
     <Flex
       as="header"
@@ -14,7 +17,7 @@ const Header = () => {
       color="black"
     >
       <Text fontSize="2xl" fontWeight="bold">
-        Shop Name
+        {artist?.shop_name}
       </Text>
       <HStack spacing={8} align="center">
         <HeaderItems />

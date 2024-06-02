@@ -17,7 +17,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Suspense } from "react";
-import { type UserPublic, UsersService } from "../../client";
+import { type UserBooking, UsersService } from "../../client";
 import ActionsMenu from "../../components/Common/ActionsMenu";
 import Navbar from "../../components/Common/Navbar";
 
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_layout/admin")({
 
 const MembersTableBody = () => {
   const queryClient = useQueryClient();
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
+  const currentUser = queryClient.getQueryData<UserBooking>(["currentUser"]);
 
   const { data: users } = useSuspenseQuery({
     queryKey: ["users"],

@@ -144,7 +144,12 @@ def read_user_by_id(
 @router.get("/artist/{username}", response_model=UserBooking)
 def read_by_username(username: str, session: SessionDep) -> Any:
     stmt = select(User).where(User.username == username)
-    user = session.exec(stmt).one()
+    user = session.exec(stmt).one_or_none()
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="Artist not found.",
+        )
     return user
 
 
