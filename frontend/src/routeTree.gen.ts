@@ -26,6 +26,7 @@ import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as BookingUsernameIndexImport } from './routes/booking/$username/index'
 import { Route as BookingUsernameServicesImport } from './routes/booking/$username/services'
 import { Route as BookingUsernamePortfolioImport } from './routes/booking/$username/portfolio'
+import { Route as BookingUsernameAppointmentsImport } from './routes/booking/$username/appointments'
 import { Route as BookingUsernameAboutImport } from './routes/booking/$username/about'
 
 // Create/Update Routes
@@ -105,6 +106,12 @@ const BookingUsernamePortfolioRoute = BookingUsernamePortfolioImport.update({
   getParentRoute: () => BookingRoute,
 } as any)
 
+const BookingUsernameAppointmentsRoute =
+  BookingUsernameAppointmentsImport.update({
+    path: '/$username/appointments',
+    getParentRoute: () => BookingRoute,
+  } as any)
+
 const BookingUsernameAboutRoute = BookingUsernameAboutImport.update({
   path: '/$username/about',
   getParentRoute: () => BookingRoute,
@@ -166,6 +173,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingUsernameAboutImport
       parentRoute: typeof BookingImport
     }
+    '/booking/$username/appointments': {
+      preLoaderRoute: typeof BookingUsernameAppointmentsImport
+      parentRoute: typeof BookingImport
+    }
     '/booking/$username/portfolio': {
       preLoaderRoute: typeof BookingUsernamePortfolioImport
       parentRoute: typeof BookingImport
@@ -194,6 +205,7 @@ export const routeTree = rootRoute.addChildren([
   ]),
   BookingRoute.addChildren([
     BookingUsernameAboutRoute,
+    BookingUsernameAppointmentsRoute,
     BookingUsernamePortfolioRoute,
     BookingUsernameServicesRoute,
     BookingUsernameIndexRoute,

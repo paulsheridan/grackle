@@ -1,20 +1,11 @@
 import {
   Box,
   Container,
-  Flex,
   Heading,
-  Skeleton,
   SimpleGrid,
   SkeletonCircle,
   SkeletonText,
-  Table,
-  TableContainer,
-  Tbody,
   Text,
-  Td,
-  Th,
-  Thead,
-  Tr,
 } from "@chakra-ui/react";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -22,7 +13,6 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { ServicesService, UserPublic } from "../../../client";
-import Navbar from "../../../components/Common/Navbar";
 import ServiceCard from "../../../components/Booking/ServiceCard";
 
 export const Route = createFileRoute("/booking/$username/services")({
@@ -39,12 +29,9 @@ function ServicesCards() {
   });
 
   return (
-    <SimpleGrid
-      spacing={4}
-      templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-    >
+    <SimpleGrid spacing={4} columns={{ sm: 2, md: 3 }}>
       {artistServices.data.map((service) => (
-        <ServiceCard />
+        <ServiceCard service={service} />
       ))}
     </SimpleGrid>
   );
@@ -52,7 +39,7 @@ function ServicesCards() {
 
 function ServicesGrid() {
   return (
-    <Container>
+    <Container maxW="full">
       <ErrorBoundary
         fallbackRender={({ error }) => (
           <Text>Something went wrong: {error.message}</Text>

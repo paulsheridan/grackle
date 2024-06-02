@@ -10,12 +10,18 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { BsArrowUpRight, BsHeartFill, BsHeart } from "react-icons/bs";
+import { ServicePublic } from "../../client";
 
-export default function ServiceCard() {
+interface ServiceCardProps {
+  service: ServicePublic;
+  onClose?: () => void;
+}
+
+export default function ServiceCard({ service, onClose }: ServiceCardProps) {
   const [liked, setLiked] = useState(false);
 
   return (
-    <Center py={6}>
+    <Flex py={6}>
       <Box
         w="xs"
         rounded={"sm"}
@@ -49,15 +55,14 @@ export default function ServiceCard() {
             mb={2}
           >
             <Text fontSize={"xs"} fontWeight="medium">
-              React
+              {service.duration + " Minutes"}
             </Text>
           </Box>
           <Heading color={"black"} fontSize={"2xl"} noOfLines={1}>
-            React v18.0
+            {service.name}
           </Heading>
           <Text color={"gray.500"} noOfLines={2}>
-            In this post, we will give an overview of what is new in React 18,
-            and what it means for the future.
+            This is a stand-in description.
           </Text>
         </Box>
         <HStack borderTop={"1px"} color="black">
@@ -68,9 +73,10 @@ export default function ServiceCard() {
             roundedBottom={"sm"}
             cursor={"pointer"}
             w="full"
+            onClick={() => setLiked(!liked)}
           >
             <Text fontSize={"md"} fontWeight={"semibold"}>
-              View more
+              Book it!
             </Text>
             <BsArrowUpRight />
           </Flex>
@@ -91,6 +97,6 @@ export default function ServiceCard() {
           </Flex>
         </HStack>
       </Box>
-    </Center>
+    </Flex>
   );
 }

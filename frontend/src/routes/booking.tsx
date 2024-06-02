@@ -1,11 +1,10 @@
 import { Container, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { createContext, useContext } from "react";
 
+import { UsersService } from "../client";
 import Header from "../components/Booking/Header";
-import Footer from "../components/Landing/Footer";
-import { UserBooking, UsersService } from "../client";
+import Footer from "../components/Booking/Footer";
 
 export const Route = createFileRoute("/booking")({
   component: Booking,
