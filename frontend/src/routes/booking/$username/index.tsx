@@ -1,13 +1,13 @@
 import { Text, Flex, Button } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { UserBooking, UserPublic } from "../../../client";
+import { UserPublic } from "../../../client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/booking/$username/")({
   component: Booking,
 });
 
-function Booking(user: UserBooking) {
+function Booking() {
   const queryClient = useQueryClient();
   const artist = queryClient.getQueryData<UserPublic>(["artist"]);
   return (

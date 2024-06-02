@@ -5,7 +5,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import HeaderItems from "./HeaderItems";
 import { UserBooking } from "../../client";
 
-const Header = () => {
+interface HeaderProps {
+  onClose?: () => void;
+}
+
+const Header = ({ onClose }: HeaderProps) => {
   const queryClient = useQueryClient();
   const artist = queryClient.getQueryData<UserBooking>(["artist"]);
   return (
@@ -16,9 +20,19 @@ const Header = () => {
       p={5}
       color="black"
     >
-      <Text fontSize="2xl" fontWeight="bold">
+      {/* <Text fontSize="2xl" fontWeight="bold">
         {artist?.shop_name}
-      </Text>
+      </Text> */}
+      <Flex
+        as={Link}
+        href={`/booking/${artist?.username}`}
+        fontSize="2xl"
+        fontWeight="bold"
+        key={artist?.shop_name}
+        onClick={onClose}
+      >
+        <Text ml={2}>{artist?.shop_name}</Text>
+      </Flex>
       <HStack spacing={8} align="center">
         <HeaderItems />
         <Link href="https://facebook.com" isExternal>

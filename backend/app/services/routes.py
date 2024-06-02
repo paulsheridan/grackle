@@ -106,7 +106,7 @@ def delete_service(
     return Message(message="Service deleted successfully")
 
 
-@router.get("/{user_id}", response_model=ServicesPublic)
+@router.get("/available/{user_id}", response_model=ServicesPublic)
 def list_available_services(
     session: SessionDep,
     user_id: uuid.UUID,

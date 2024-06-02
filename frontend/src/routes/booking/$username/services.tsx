@@ -1,102 +1,84 @@
 import {
+  Box,
   Container,
   Flex,
   Heading,
   Skeleton,
+  SimpleGrid,
+  SkeletonCircle,
+  SkeletonText,
   Table,
   TableContainer,
   Tbody,
+  Text,
   Td,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { ServicesService } from "../../../client";
-import ActionsMenu from "../../../components/Common/ActionsMenu";
+
+import { ServicesService, UserPublic } from "../../../client";
 import Navbar from "../../../components/Common/Navbar";
+import ServiceCard from "../../../components/Booking/ServiceCard";
 
 export const Route = createFileRoute("/booking/$username/services")({
   component: Services,
 });
 
-function ServicesTableBody() {
-  const { data: services } = useSuspenseQuery({
-    queryKey: ["services"],
-    queryFn: () => ServicesService.listServices({}),
+function ServicesCards() {
+  const queryClient = useQueryClient();
+  const artist = queryClient.getQueryData<UserPublic>(["artist"]);
+
+  const { data: artistServices } = useSuspenseQuery({
+    queryKey: ["artistServices"],
+    queryFn: () => ServicesService.listAvailableServices({ userId: artist.id }),
   });
 
   return (
-    <Tbody>
-      {services.data.map((service) => (
-        <Tr key={service.id}>
-          <Td>{service.user_id}</Td> */}
-          <Td>{service.name}</Td>
-          <Td>{service.active ? "Active" : "Inactive"}</Td>
-          <Td>{service.duration}</Td>
-          <Td>{service.max_per_day}</Td>
-          <Td>{service.start}</Td>
-          <Td>{service.end}</Td>
-          <Td>
-            <ActionsMenu type={"Service"} value={service} />
-          </Td>
-        </Tr>
+    <SimpleGrid
+      spacing={4}
+      templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+    >
+      {artistServices.data.map((service) => (
+        <ServiceCard />
       ))}
-    </Tbody>
+    </SimpleGrid>
   );
 }
-function ServicesTable() {
+
+function ServicesGrid() {
   return (
-    <TableContainer>
-      <Table size={{ base: "sm", md: "md" }}>
-        <Thead>
-          <Tr>
-            {/* <Th>ID</Th>
-            <Th>User ID</Th> */}
-            <Th>Name</Th>
-            <Th>Status</Th>
-            <Th>Duration</Th>
-            <Th>Max per Day</Th>
-            <Th>Start</Th>
-            <Th>End</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Thead>
-        <ErrorBoundary
-          fallbackRender={({ error }) => (
-            <Tbody>
-              <Tr>
-                <Td colSpan={4}>Something went wrong: {error.message}</Td>
-              </Tr>
-            </Tbody>
-          )}
+    <Container>
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <Text>Something went wrong: {error.message}</Text>
+        )}
+      >
+        <Suspense
+          fallback={
+            <Box>
+              {new Array(2).fill(null).map(() => (
+                <Box padding="6" boxShadow="lg" bg="white">
+                  <SkeletonCircle size="10" />
+                  <SkeletonText
+                    mt="4"
+                    noOfLines={4}
+                    spacing="4"
+                    skeletonHeight="2"
+                  />
+                </Box>
+              ))}
+            </Box>
+          }
         >
-          <Suspense
-            fallback={
-              <Tbody>
-                {new Array(5).fill(null).map((_, index) => (
-                  <Tr key={index}>
-                    {new Array(4).fill(null).map((_, index) => (
-                      <Td key={index}>
-                        <Flex>
-                          <Skeleton height="20px" width="20px" />
-                        </Flex>
-                      </Td>
-                    ))}
-                  </Tr>
-                ))}
-              </Tbody>
-            }
-          >
-            <ServicesTableBody />
-          </Suspense>
-        </ErrorBoundary>
-      </Table>
-    </TableContainer>
+          <ServicesCards />
+        </Suspense>
+      </ErrorBoundary>
+    </Container>
   );
 }
 
@@ -104,11 +86,9 @@ function Services() {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Services
+        My Services
       </Heading>
-
-      <Navbar type={"Service"} />
-      <ServicesTable />
+      <ServicesGrid />
     </Container>
   );
 }

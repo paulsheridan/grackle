@@ -577,6 +577,18 @@ export type TDataDeleteService = {
                 svcId: string
                 
             }
+export type TDataListAvailableServices = {
+                limit?: number
+skip?: number
+userId: string
+                
+            }
+export type TDataGetServiceAvailability = {
+                month?: number | null
+svcId: string
+year?: number | null
+                
+            }
 
 export class ServicesService {
 
@@ -681,6 +693,58 @@ svcId,
 			url: '/api/v1/services/{svc_id}',
 			path: {
 				svc_id: svcId
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * List Available Services
+	 * @returns ServicesPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static listAvailableServices(data: TDataListAvailableServices): CancelablePromise<ServicesPublic> {
+		const {
+limit = 100,
+skip = 0,
+userId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/services/available/{user_id}',
+			path: {
+				user_id: userId
+			},
+			query: {
+				skip, limit
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Get Service Availability
+	 * @returns unknown Successful Response
+	 * @throws ApiError
+	 */
+	public static getServiceAvailability(data: TDataGetServiceAvailability): CancelablePromise<unknown> {
+		const {
+month,
+svcId,
+year,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/services/{svc_id}/availability',
+			path: {
+				svc_id: svcId
+			},
+			query: {
+				year, month
 			},
 			errors: {
 				422: `Validation Error`,

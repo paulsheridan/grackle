@@ -664,6 +664,10 @@ export const $UserBooking = {
 	type: 'string',
 	isRequired: true,
 },
+		username: {
+	type: 'string',
+	isRequired: true,
+},
 	},
 } as const;
 

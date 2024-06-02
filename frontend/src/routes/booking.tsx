@@ -13,12 +13,10 @@ export const Route = createFileRoute("/booking")({
 
 function Booking() {
   const { username } = Route.useParams() as { username: string };
-  console.log(username);
   const { data: user } = useQuery({
     queryKey: ["artist"],
     queryFn: () => UsersService.readByUsername({ username }),
   });
-  console.log(user);
 
   return (
     <Container maxW="full">
