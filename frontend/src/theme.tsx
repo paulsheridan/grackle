@@ -9,10 +9,6 @@ const disabledStyles = {
 };
 
 const theme = extendTheme({
-  fonts: {
-    // body: `'Space Mono', space-mono`,
-    // body: `'Raleway', sans-serif`,
-  },
   colors: {
     ui: {
       main: "#009688",

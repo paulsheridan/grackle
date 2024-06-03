@@ -23,9 +23,9 @@ import { Route as LayoutServicesImport } from './routes/_layout/services'
 import { Route as LayoutClientsImport } from './routes/_layout/clients'
 import { Route as LayoutCalendarImport } from './routes/_layout/calendar'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as BookingUsernameScheduleImport } from './routes/booking/$username/schedule'
 import { Route as BookingUsernameIndexImport } from './routes/booking/$username/index'
 import { Route as BookingUsernameServicesImport } from './routes/booking/$username/services'
+import { Route as BookingUsernameScheduleImport } from './routes/booking/$username/schedule'
 import { Route as BookingUsernamePortfolioImport } from './routes/booking/$username/portfolio'
 import { Route as BookingUsernameAboutImport } from './routes/booking/$username/about'
 
@@ -91,11 +91,6 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const BookingUsernameScheduleRoute = BookingUsernameScheduleImport.update({
-  path: '/$username/schedule',
-  getParentRoute: () => BookingRoute,
-} as any)
-
 const BookingUsernameIndexRoute = BookingUsernameIndexImport.update({
   path: '/$username/',
   getParentRoute: () => BookingRoute,
@@ -103,6 +98,11 @@ const BookingUsernameIndexRoute = BookingUsernameIndexImport.update({
 
 const BookingUsernameServicesRoute = BookingUsernameServicesImport.update({
   path: '/$username/services',
+  getParentRoute: () => BookingRoute,
+} as any)
+
+const BookingUsernameScheduleRoute = BookingUsernameScheduleImport.update({
+  path: '/$username/schedule',
   getParentRoute: () => BookingRoute,
 } as any)
 
@@ -176,16 +176,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingUsernamePortfolioImport
       parentRoute: typeof BookingImport
     }
+    '/booking/$username/schedule': {
+      preLoaderRoute: typeof BookingUsernameScheduleImport
+      parentRoute: typeof BookingImport
+    }
     '/booking/$username/services': {
       preLoaderRoute: typeof BookingUsernameServicesImport
       parentRoute: typeof BookingImport
     }
     '/booking/$username/': {
       preLoaderRoute: typeof BookingUsernameIndexImport
-      parentRoute: typeof BookingImport
-    }
-    '/booking/$username/schedule': {
-      preLoaderRoute: typeof BookingUsernameScheduleImport
       parentRoute: typeof BookingImport
     }
   }
@@ -205,9 +205,9 @@ export const routeTree = rootRoute.addChildren([
   BookingRoute.addChildren([
     BookingUsernameAboutRoute,
     BookingUsernamePortfolioRoute,
+    BookingUsernameScheduleRoute,
     BookingUsernameServicesRoute,
     BookingUsernameIndexRoute,
-    BookingUsernameScheduleRoute,
   ]),
   LandingRoute,
   LoginRoute,

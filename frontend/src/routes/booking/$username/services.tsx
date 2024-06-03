@@ -72,7 +72,12 @@ function ServicesGrid() {
 function Services() {
   return (
     <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+      <Heading
+        size="lg"
+        textAlign={{ base: "center", md: "left" }}
+        pt={12}
+        position="static"
+      >
         My Services
       </Heading>
       <ServicesGrid />
