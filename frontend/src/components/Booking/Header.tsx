@@ -1,4 +1,12 @@
-import { Flex, Button, Text, Link, IconButton, HStack } from "@chakra-ui/react";
+import {
+  Flex,
+  Button,
+  Text,
+  Link,
+  IconButton,
+  HStack,
+  ButtonGroup,
+} from "@chakra-ui/react";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -20,9 +28,6 @@ const Header = ({ onClose }: HeaderProps) => {
       p={5}
       color="black"
     >
-      {/* <Text fontSize="2xl" fontWeight="bold">
-        {artist?.shop_name}
-      </Text> */}
       <Flex
         as={Link}
         href={`/booking/${artist?.username}`}
@@ -35,27 +40,35 @@ const Header = ({ onClose }: HeaderProps) => {
       </Flex>
       <HStack spacing={8} align="center">
         <HeaderItems />
-        <Link href="https://facebook.com" isExternal>
-          <IconButton
-            icon={<FaFacebook />}
-            aria-label="Facebook"
-            variant="ghost"
-            color="black"
-            mr={2}
-          />
-        </Link>
-        <Link href="https://instagram.com" isExternal>
-          <IconButton
-            icon={<FaInstagram />}
-            aria-label="Instagram"
-            variant="ghost"
-            color="black"
-            mr={2}
-          />
-        </Link>
-        <Button colorScheme="blackAlpha" variant="outline">
-          Book Now
-        </Button>
+        <ButtonGroup>
+          <Link href="https://facebook.com" isExternal>
+            <IconButton
+              icon={<FaFacebook />}
+              aria-label="Facebook"
+              variant="ghost"
+              color="black"
+              mr={2}
+            />
+          </Link>
+          <Link href="https://instagram.com" isExternal>
+            <IconButton
+              icon={<FaInstagram />}
+              aria-label="Instagram"
+              variant="ghost"
+              color="black"
+              mr={2}
+            />
+          </Link>
+          <Link to={`/booking/${artist?.username}/about`}>
+            <Button
+              colorScheme="blackAlpha"
+              variant="outline"
+              onClick={onClose}
+            >
+              Book Now
+            </Button>
+          </Link>
+        </ButtonGroup>
       </HStack>
     </Flex>
   );
