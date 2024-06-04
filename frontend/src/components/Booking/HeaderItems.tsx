@@ -15,11 +15,14 @@ const HeaderItems = ({ onClose }: HeaderItemsProps) => {
     { title: "About", path: `/booking/${artist?.username}/about` },
     { title: "Services", path: `/booking/${artist?.username}/services` },
     { title: "Portfolio", path: `/booking/${artist?.username}/portfolio` },
+    { title: "Book Now", path: `/booking/${artist?.username}/services` },
   ];
 
   const listClients = finalClients.map(({ title, path }) => (
     <Flex as={Link} to={path} p={2} key={title} onClick={onClose}>
-      <Text ml={2}>{title}</Text>
+      <Text ml={2} fontSize="xl">
+        {title}
+      </Text>
     </Flex>
   ));
 

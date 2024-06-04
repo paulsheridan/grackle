@@ -6,6 +6,7 @@ import {
   IconButton,
   HStack,
   ButtonGroup,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ interface HeaderProps {
 }
 
 const Header = ({ onClose }: HeaderProps) => {
+  const { isOpen, onToggle } = useDisclosure();
   const queryClient = useQueryClient();
   const artist = queryClient.getQueryData<UserBooking>(["artist"]);
   return (
@@ -31,15 +33,12 @@ const Header = ({ onClose }: HeaderProps) => {
       <Flex
         as={Link}
         href={`/booking/${artist?.username}`}
-        fontSize="2xl"
+        fontSize="3xl"
         fontWeight="bold"
         key={artist?.shop_name}
         onClick={onClose}
       >
         <Text ml={2}>{artist?.shop_name}</Text>
-      </Flex>
-      <HStack spacing={8} align="center">
-        <HeaderItems />
         <ButtonGroup>
           <Link href="https://facebook.com" isExternal>
             <IconButton
@@ -47,7 +46,8 @@ const Header = ({ onClose }: HeaderProps) => {
               aria-label="Facebook"
               variant="ghost"
               color="black"
-              mr={2}
+              ml={10}
+              size="lg"
             />
           </Link>
           <Link href="https://instagram.com" isExternal>
@@ -56,19 +56,13 @@ const Header = ({ onClose }: HeaderProps) => {
               aria-label="Instagram"
               variant="ghost"
               color="black"
-              mr={2}
+              size="lg"
             />
           </Link>
-          <Link to={`/booking/${artist?.username}/about`}>
-            <Button
-              colorScheme="blackAlpha"
-              variant="outline"
-              onClick={onClose}
-            >
-              Book Now
-            </Button>
-          </Link>
         </ButtonGroup>
+      </Flex>
+      <HStack spacing={8} align="left">
+        <HeaderItems />
       </HStack>
     </Flex>
   );

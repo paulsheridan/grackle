@@ -18,7 +18,15 @@ function Booking() {
   });
 
   return (
-    <Container maxW="full">
+    <Flex
+      as="section"
+      direction="column"
+      align="center"
+      justify="center"
+      flex="1"
+      color="white"
+      p={10}
+    >
       {user ? (
         <Flex direction="column" minHeight="100vh" w="100%">
           <Header />
@@ -40,7 +48,7 @@ function Booking() {
           <Spinner size="xl" color="ui.main" />
         </Flex>
       )}
-    </Container>
+    </Flex>
   );
 }
 

@@ -1,5 +1,6 @@
 import {
   Box,
+  Flex,
   Container,
   Heading,
   SimpleGrid,
@@ -71,7 +72,15 @@ function ServicesGrid() {
 
 function Services() {
   return (
-    <Container maxW="full">
+    <Flex
+      as="section"
+      direction="column"
+      align="center"
+      justify="center"
+      flex="1"
+      color="white"
+      p={10}
+    >
       <Heading
         size="lg"
         textAlign={{ base: "center", md: "left" }}
@@ -81,6 +90,6 @@ function Services() {
         My Services
       </Heading>
       <ServicesGrid />
-    </Container>
+    </Flex>
   );
 }
