@@ -8,6 +8,7 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { FaFacebook, FaInstagram } from "react-icons/fa";
@@ -30,9 +31,20 @@ export default function Header() {
             aria-label={"Open Menu"}
             display={{ md: "none" }}
             onClick={isOpen ? onClose : onOpen}
+            // mr={12}
           />
           <HStack spacing={8} alignItems={"center"}>
-            <Box color="chakra-body-text">{artist?.shop_name}</Box>
+            <Text
+              style={{ flex: 1, textAlign: "left" }}
+              bgGradient="linear(to-l, purple.400, green.500)"
+              bgClip="text"
+              fontSize="4xl"
+              fontWeight="extrabold"
+              whiteSpace="nowrap"
+              overflow="hidden"
+            >
+              {artist?.shop_name}
+            </Text>
             <HStack
               as={"nav"}
               spacing={4}
@@ -48,7 +60,6 @@ export default function Header() {
                 aria-label="Facebook"
                 variant="ghost"
                 color="chakra-body-text"
-                ml={10}
                 size="lg"
               />
             </Link>

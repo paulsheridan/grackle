@@ -30,9 +30,9 @@ function ServicesCards() {
   });
 
   return (
-    <SimpleGrid spacing={4} columns={{ sm: 1, md: 2, xl: 3 }}>
+    <SimpleGrid spacing={4} columns={{ sm: 1, lg: 2, xl: 3 }}>
       {artistServices.data.map((service) => (
-        <ServiceCard service={service} />
+        <ServiceCard username={artist.username} service={service} />
       ))}
     </SimpleGrid>
   );

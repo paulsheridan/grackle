@@ -7,14 +7,18 @@ import {
   Heading,
   Text,
   Image,
+  Link,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { ServicePublic } from "../../client";
 
 interface ServiceCardProps {
+  username: string;
   service: ServicePublic;
 }
 
-export default function ServiceCard({ service }: ServiceCardProps) {
+export default function ServiceCard({ username, service }: ServiceCardProps) {
+  const { onClose } = useDisclosure();
   return (
     <>
       <Card
@@ -26,7 +30,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           objectFit="cover"
           maxW={{ base: "100%", sm: "200px" }}
           src="https://picsum.photos/400/400"
-          alt="Caffe Latte"
+          alt="Tattoo"
         />
 
         <Stack>
@@ -34,19 +38,20 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             <Text fontSize={"md"} fontWeight="medium">
               {service.duration + " Minutes"}
             </Text>
-            <Heading size="xl">{service.name}</Heading>
-            <Text py="2">
-              This is example text. This is probably some sort of tattoo thing,
-              I bet you'll be really glad if you actually scheduled it.
-              Hopefully Paul will replace this with the real descriptions
-              someday.
-            </Text>
+            <Heading size="lg">{service.name}</Heading>
+            <Text py="2">This is a stand-in description.</Text>
           </CardBody>
 
           <CardFooter>
-            <Button variant="solid" colorScheme="blue">
-              Book it!
-            </Button>
+            <Link
+              to="/booking/$username/services/$service_id"
+              params={{ username: username, service_id: service.id }}
+              onClick={onClose}
+            >
+              <Button ml={2} fontSize="xl" color="chakra-body-text">
+                Book It!
+              </Button>
+            </Link>
           </CardFooter>
         </Stack>
       </Card>
