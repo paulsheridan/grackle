@@ -5,7 +5,6 @@ import {
   Text,
   Img,
   Flex,
-  Center,
   useColorModeValue,
   HStack,
 } from "@chakra-ui/react";
@@ -23,7 +22,7 @@ export default function ServiceCard({ service, onClose }: ServiceCardProps) {
   return (
     <Flex py={6}>
       <Box
-        w="xs"
+        w="sm"
         rounded={"sm"}
         my={5}
         mx={[0, 5]}

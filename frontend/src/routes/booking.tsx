@@ -1,4 +1,4 @@
-import { Container, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
@@ -25,7 +25,6 @@ function Booking() {
       justify="center"
       flex="1"
       color="white"
-      p={10}
     >
       {user ? (
         <Flex direction="column" minHeight="100vh" w="100%">
@@ -36,7 +35,7 @@ function Booking() {
             align="center"
             justify="center"
             flex="1"
-            bgGradient="linear(to-r, purple.400, pink.400)"
+            bgGradient="linear(to-r, purple.400, green.400)"
             color="white"
           >
             <Outlet />

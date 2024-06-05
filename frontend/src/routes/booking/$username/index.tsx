@@ -17,8 +17,6 @@ function Booking() {
       align="center"
       justify="center"
       flex="1"
-      color="white"
-      p={10}
     >
       <Text fontSize="4xl" fontWeight="bold" mb={4}>
         Book with {artist?.shop_name}

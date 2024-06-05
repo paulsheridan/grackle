@@ -30,7 +30,7 @@ function ServicesCards() {
   });
 
   return (
-    <SimpleGrid spacing={4} columns={{ sm: 2, md: 3 }}>
+    <SimpleGrid spacing={4} columns={{ sm: 1, md: 3 }}>
       {artistServices.data.map((service) => (
         <ServiceCard service={service} />
       ))}
@@ -78,16 +78,15 @@ function Services() {
       align="center"
       justify="center"
       flex="1"
-      color="white"
-      p={10}
     >
       <Heading
-        size="lg"
-        textAlign={{ base: "center", md: "left" }}
-        pt={12}
-        position="static"
+        m="7"
+        fontSize={{
+          base: "4xl",
+          md: "5xl",
+        }}
       >
-        My Services
+        Services
       </Heading>
       <ServicesGrid />
     </Flex>

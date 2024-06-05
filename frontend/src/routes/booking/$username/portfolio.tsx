@@ -9,18 +9,18 @@ const srces = [
   "https://picsum.photos/500/600",
   "https://picsum.photos/600/700",
   "https://picsum.photos/500/800",
-  "https://picsum.photos/700/700",
-  "https://picsum.photos/500/600",
+  "https://picsum.photos/1200/700",
+  "https://picsum.photos/500/400",
   "https://picsum.photos/600/400",
   "https://picsum.photos/700/600",
   "https://picsum.photos/900/600",
-  "https://picsum.photos/600/600",
+  "https://picsum.photos/1100/600",
   "https://picsum.photos/500/500",
+  "https://picsum.photos/400/400",
+  "https://picsum.photos/500/400",
+  "https://picsum.photos/800/400",
   "https://picsum.photos/500/700",
-  "https://picsum.photos/500/600",
-  "https://picsum.photos/800/600",
-  "https://picsum.photos/500/700",
-  "https://picsum.photos/700/600",
+  "https://picsum.photos/700/400",
   "https://picsum.photos/400/600",
   "https://picsum.photos/500/700",
 ];
@@ -32,7 +32,7 @@ function Images() {
       w="100%"
       mx="auto"
       // bg="gray.600"
-      sx={{ columnCount: [1, 2, 3, 4, 5], columnGap: "8px" }}
+      sx={{ columnCount: [1, 2, 3, 4], columnGap: "8px" }}
     >
       {srces.map((src) => (
         <Image
@@ -57,14 +57,13 @@ function Portfolio() {
       align="center"
       justify="center"
       flex="1"
-      color="white"
-      p={10}
     >
       <Heading
-        size="lg"
-        textAlign={{ base: "center", md: "left" }}
-        pt={12}
-        position="static"
+        m="7"
+        fontSize={{
+          base: "4xl",
+          md: "5xl",
+        }}
       >
         My Work
       </Heading>

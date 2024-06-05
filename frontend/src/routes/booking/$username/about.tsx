@@ -1,4 +1,4 @@
-import { Text, Flex } from "@chakra-ui/react";
+import { Text, Flex, Heading } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/booking/$username/about")({
@@ -13,12 +13,15 @@ function About() {
       align="center"
       justify="center"
       flex="1"
-      color="white"
-      p={10}
     >
-      <Text fontSize="4xl" fontWeight="bold" mb={4}>
-        About Me
-      </Text>
+      <Heading
+        fontSize={{
+          base: "4xl",
+          md: "5xl",
+        }}
+      >
+        Meet the Artist
+      </Heading>
       <Text fontSize="xl" mb={8}>
         I am a living tattoo.
       </Text>
