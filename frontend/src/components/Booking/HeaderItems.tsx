@@ -27,13 +27,7 @@ const HeaderItems = ({ onClose }: HeaderItemsProps) => {
     </Flex>
   ));
 
-  return (
-    <>
-      <HStack spacing={8} align="center">
-        {listClients}
-      </HStack>
-    </>
-  );
+  return <>{listClients}</>;
 };
 
 export default HeaderItems;
