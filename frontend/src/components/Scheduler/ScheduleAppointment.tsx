@@ -51,11 +51,11 @@ const ScheduleAppointment = ({
     criteriaMode: "all",
   });
 
-  // const { data: availability } = useSuspenseQuery({
-  //   queryKey: ["services"],
-  //   queryFn: () =>
-  //     ServicesService.getServiceAvailability({ svcId: service.id }),
-  // });
+  const { data: availability } = useSuspenseQuery({
+    queryKey: ["services"],
+    queryFn: () =>
+      ServicesService.getServiceAvailability({ svcId: service.id }),
+  });
 
   const mutation = useMutation({
     mutationFn: (data: ClientAppointmentRequest) =>

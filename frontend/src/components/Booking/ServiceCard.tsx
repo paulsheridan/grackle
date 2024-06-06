@@ -1,20 +1,15 @@
 import {
-  Stack,
   Card,
-  Button,
   CardBody,
   CardFooter,
   Heading,
-  Text,
   Image,
   Link,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import {
-  Link as RouterLink,
-  createFileRoute,
-  redirect,
-} from "@tanstack/react-router";
-import { ServicePublic, UserPublic } from "../../client";
+import { Link as RouterLink } from "@tanstack/react-router";
+import { ServicePublic } from "../../client";
 
 interface ServiceCardProps {
   username: string;
