@@ -5,6 +5,7 @@ import {
   FormLabel,
   Input,
   InputGroup,
+  InputLeftAddon,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,17 +13,16 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  InputLeftAddon,
 } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 import {
-  type ApiError,
-  UserPublic,
-  ServicePublic,
-  ClientAppointmentRequest,
   AppointmentsService,
+  ClientAppointmentRequest,
+  ServicePublic,
+  UserPublic,
+  type ApiError,
 } from "../../client";
 import useCustomToast from "../../hooks/useCustomToast";
 
@@ -49,8 +49,13 @@ const ScheduleAppointment = ({
   } = useForm<ClientAppointmentRequest>({
     mode: "onBlur",
     criteriaMode: "all",
-    defaultValues: client,
   });
+
+  // const { data: availability } = useSuspenseQuery({
+  //   queryKey: ["services"],
+  //   queryFn: () =>
+  //     ServicesService.getServiceAvailability({ svcId: service.id }),
+  // });
 
   const mutation = useMutation({
     mutationFn: (data: ClientAppointmentRequest) =>
@@ -84,12 +89,12 @@ const ScheduleAppointment = ({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        size={{ base: "sm", md: "md" }}
+        size={{ base: "md", md: "xl" }}
         isCentered
       >
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Edit Client</ModalHeader>
+          <ModalHeader>Your Details</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl mt={4} isRequired isInvalid={!!errors.email}>

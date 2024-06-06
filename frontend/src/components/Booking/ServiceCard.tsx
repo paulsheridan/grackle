@@ -8,9 +8,13 @@ import {
   Text,
   Image,
   Link,
-  useDisclosure,
 } from "@chakra-ui/react";
-import { ServicePublic } from "../../client";
+import {
+  Link as RouterLink,
+  createFileRoute,
+  redirect,
+} from "@tanstack/react-router";
+import { ServicePublic, UserPublic } from "../../client";
 
 interface ServiceCardProps {
   username: string;
@@ -18,7 +22,6 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ username, service }: ServiceCardProps) {
-  const { onClose } = useDisclosure();
   return (
     <>
       <Card
@@ -44,13 +47,16 @@ export default function ServiceCard({ username, service }: ServiceCardProps) {
 
           <CardFooter>
             <Link
-              to="/booking/$username/services/$service_id"
-              params={{ username: username, service_id: service.id }}
-              onClick={onClose}
+              as={RouterLink}
+              to="/booking/$username/services/$serviceId"
+              params={{
+                username: username,
+                serviceId: service.id,
+              }}
+              fontSize="md"
+              color="chakra-body-text"
             >
-              <Button ml={2} fontSize="xl" color="chakra-body-text">
-                Book It!
-              </Button>
+              Book Now!
             </Link>
           </CardFooter>
         </Stack>

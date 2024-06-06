@@ -24,11 +24,11 @@ import { Route as LayoutClientsImport } from './routes/_layout/clients'
 import { Route as LayoutCalendarImport } from './routes/_layout/calendar'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as BookingUsernameIndexImport } from './routes/booking/$username/index'
-import { Route as BookingUsernameServicesImport } from './routes/booking/$username/services'
-import { Route as BookingUsernameScheduleImport } from './routes/booking/$username/schedule'
 import { Route as BookingUsernamePortfolioImport } from './routes/booking/$username/portfolio'
 import { Route as BookingUsernameContactImport } from './routes/booking/$username/contact'
 import { Route as BookingUsernameAboutImport } from './routes/booking/$username/about'
+import { Route as BookingUsernameServicesIndexImport } from './routes/booking/$username/services/index'
+import { Route as BookingUsernameServicesServiceIdIndexImport } from './routes/booking/$username/services/$serviceId/index'
 
 // Create/Update Routes
 
@@ -97,16 +97,6 @@ const BookingUsernameIndexRoute = BookingUsernameIndexImport.update({
   getParentRoute: () => BookingRoute,
 } as any)
 
-const BookingUsernameServicesRoute = BookingUsernameServicesImport.update({
-  path: '/$username/services',
-  getParentRoute: () => BookingRoute,
-} as any)
-
-const BookingUsernameScheduleRoute = BookingUsernameScheduleImport.update({
-  path: '/$username/schedule',
-  getParentRoute: () => BookingRoute,
-} as any)
-
 const BookingUsernamePortfolioRoute = BookingUsernamePortfolioImport.update({
   path: '/$username/portfolio',
   getParentRoute: () => BookingRoute,
@@ -121,6 +111,18 @@ const BookingUsernameAboutRoute = BookingUsernameAboutImport.update({
   path: '/$username/about',
   getParentRoute: () => BookingRoute,
 } as any)
+
+const BookingUsernameServicesIndexRoute =
+  BookingUsernameServicesIndexImport.update({
+    path: '/$username/services/',
+    getParentRoute: () => BookingRoute,
+  } as any)
+
+const BookingUsernameServicesServiceIdIndexRoute =
+  BookingUsernameServicesServiceIdIndexImport.update({
+    path: '/$username/services/$serviceId/',
+    getParentRoute: () => BookingRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -186,16 +188,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingUsernamePortfolioImport
       parentRoute: typeof BookingImport
     }
-    '/booking/$username/schedule': {
-      preLoaderRoute: typeof BookingUsernameScheduleImport
-      parentRoute: typeof BookingImport
-    }
-    '/booking/$username/services': {
-      preLoaderRoute: typeof BookingUsernameServicesImport
-      parentRoute: typeof BookingImport
-    }
     '/booking/$username/': {
       preLoaderRoute: typeof BookingUsernameIndexImport
+      parentRoute: typeof BookingImport
+    }
+    '/booking/$username/services/': {
+      preLoaderRoute: typeof BookingUsernameServicesIndexImport
+      parentRoute: typeof BookingImport
+    }
+    '/booking/$username/services/$serviceId/': {
+      preLoaderRoute: typeof BookingUsernameServicesServiceIdIndexImport
       parentRoute: typeof BookingImport
     }
   }
@@ -216,9 +218,9 @@ export const routeTree = rootRoute.addChildren([
     BookingUsernameAboutRoute,
     BookingUsernameContactRoute,
     BookingUsernamePortfolioRoute,
-    BookingUsernameScheduleRoute,
-    BookingUsernameServicesRoute,
     BookingUsernameIndexRoute,
+    BookingUsernameServicesIndexRoute,
+    BookingUsernameServicesServiceIdIndexRoute,
   ]),
   LandingRoute,
   LoginRoute,

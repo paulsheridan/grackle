@@ -13,10 +13,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { ServicesService, UserPublic } from "../../../client";
-import ServiceCard from "../../../components/Booking/ServiceCard";
+import { ServicesService, UserPublic } from "../../../../client";
+import ServiceCard from "../../../../components/Booking/ServiceCard";
 
-export const Route = createFileRoute("/booking/$username/services")({
+export const Route = createFileRoute("/booking/$username/services/")({
   component: Services,
 });
 
@@ -32,7 +32,11 @@ function ServicesCards() {
   return (
     <SimpleGrid spacing={4} columns={{ sm: 1, lg: 2, xl: 3 }}>
       {artistServices.data.map((service) => (
-        <ServiceCard username={artist.username} service={service} />
+        <ServiceCard
+          username={artist?.username}
+          service={service}
+          id="{service}"
+        />
       ))}
     </SimpleGrid>
   );
@@ -91,4 +95,13 @@ function Services() {
       <ServicesGrid />
     </Flex>
   );
+}
+
+function getSvcAvailability(service_id: string) {
+  const { data: availability } = useSuspenseQuery({
+    queryKey: ["services"],
+    queryFn: () =>
+      ServicesService.getServiceAvailability({ svcId: service_id }),
+  });
+  return availability;
 }

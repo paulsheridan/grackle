@@ -26,7 +26,8 @@ export default function Header() {
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
-            size={"lg"}
+            size={"md"}
+            fontSize="20px"
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label={"Open Menu"}
             display={{ md: "none" }}
@@ -53,14 +54,15 @@ export default function Header() {
               <HeaderItems />
             </HStack>
           </HStack>
-          <ButtonGroup>
+          <ButtonGroup gap={"0"}>
             <Link href="https://facebook.com" isExternal>
               <IconButton
                 icon={<FaFacebook />}
                 aria-label="Facebook"
                 variant="ghost"
                 color="chakra-body-text"
-                size="lg"
+                size="md"
+                fontSize="20px"
               />
             </Link>
             <Link href="https://instagram.com" isExternal>
@@ -69,7 +71,8 @@ export default function Header() {
                 aria-label="Instagram"
                 variant="ghost"
                 color="chakra-body-text"
-                size="lg"
+                size="md"
+                fontSize="20px"
               />
             </Link>
           </ButtonGroup>
