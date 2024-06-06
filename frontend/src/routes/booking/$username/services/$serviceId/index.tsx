@@ -1,40 +1,34 @@
 import {
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  GridItem,
+  Heading,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  SimpleGrid,
+  VStack,
+} from "@chakra-ui/react";
+import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import {
   ApiError,
   AppointmentsService,
   ClientAppointmentRequest,
   ServicesService,
   UserPublic,
-  UsersService,
 } from "../../../../../client";
 import useCustomToast from "../../../../../hooks/useCustomToast";
-import { SubmitHandler } from "react-hook-form";
-import {
-  GridItem,
-  Heading,
-  SimpleGrid,
-  VStack,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import { register } from "module";
+
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
   {
@@ -43,9 +37,20 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 );
 
 function ScheduleService() {
+  const [date, setDate] = useState(new Date());
   const { username } = Route.useParams() as { username: string };
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, errors, isDirty },
+  } = useForm<ClientAppointmentRequest>({
+    mode: "onBlur",
+    criteriaMode: "all",
+  });
 
   const artist = queryClient.getQueryData<UserPublic>(["artist"]);
 
@@ -80,6 +85,7 @@ function ScheduleService() {
     reset();
     onClose();
   };
+
   return (
     <VStack w="full" h="full" p={10} spacing={10} alignItems="flex-start">
       <VStack spacing={3} alignItems="flex-start">
@@ -99,6 +105,8 @@ function ScheduleService() {
               <FormErrorMessage>{errors.email.message}</FormErrorMessage>
             )}
           </FormControl>
+        </GridItem>
+        <GridItem colSpan={2}>
           <FormControl mt={4}>
             <FormLabel htmlFor="first_name">First Name</FormLabel>
             <Input
@@ -108,6 +116,8 @@ function ScheduleService() {
               type="text"
             />
           </FormControl>
+        </GridItem>
+        <GridItem colSpan={2}>
           <FormControl mt={4}>
             <FormLabel htmlFor="last_name">Last Name</FormLabel>
             <Input
@@ -117,6 +127,8 @@ function ScheduleService() {
               type="text"
             />
           </FormControl>
+        </GridItem>
+        <GridItem colSpan={2}>
           <FormControl mt={4}>
             <FormLabel htmlFor="pronouns">Pronouns</FormLabel>
             <Input
@@ -126,6 +138,8 @@ function ScheduleService() {
               type="text"
             />
           </FormControl>
+        </GridItem>
+        <GridItem colSpan={2}>
           <FormControl mt={4} isInvalid={!!errors.birthday}>
             <FormLabel htmlFor="birthday">Birthday</FormLabel>
             <Input
@@ -138,6 +152,8 @@ function ScheduleService() {
               <FormErrorMessage>{errors.birthday.message}</FormErrorMessage>
             )}
           </FormControl>
+        </GridItem>
+        <GridItem colSpan={2}>
           <FormControl mt={4}>
             <FormLabel htmlFor="preferred_contact">Preferred Contact</FormLabel>
             <Input
@@ -147,6 +163,8 @@ function ScheduleService() {
               type="text"
             />
           </FormControl>
+        </GridItem>
+        <GridItem colSpan={2}>
           <FormControl mt={4}>
             <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
             <InputGroup>
@@ -160,7 +178,19 @@ function ScheduleService() {
             </InputGroup>
           </FormControl>
         </GridItem>
+        <GridItem colSpan={2}>
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={isSubmitting}
+            isDisabled={!isDirty}
+          >
+            Save
+          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
+        </GridItem>
       </SimpleGrid>
+      <SingleDatepicker name="date-input" date={date} onDateChange={setDate} />
     </VStack>
   );
 }
