@@ -24,7 +24,6 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import {
   ApiError,
   AppointmentsService,
@@ -38,6 +37,7 @@ import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import CustomerDetails from "../../../../../components/Scheduling/CustomerDetails";
+import Availability from "../../../../../components/Scheduling/Availability";
 
 export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
   {
@@ -46,7 +46,6 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 );
 
 function BookingForm() {
-  const [date, setDate] = useState(new Date());
   const { serviceId } = Route.useParams();
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
@@ -102,46 +101,27 @@ function BookingForm() {
   return (
     <FormProvider {...methods}>
       <Container
-        maxW="container.xl"
+        maxW="5xl"
         bg={useColorModeValue("white", "gray.700")}
         color={useColorModeValue("gray.700", "whiteAlpha.900")}
         borderRadius="xl"
+        as="form"
+        onSubmit={methods.handleSubmit(onSubmit)}
       >
-        <Flex py={20}>
-          <VStack
-            w="full"
-            h="full"
-            p={6}
-            spacing={10}
-            alignItems="flex-start"
-            as="form"
-            onSubmit={methods.handleSubmit(onSubmit)}
-          >
+        <Flex>
+          <SimpleGrid columns={[1, null, 2]}>
             <CustomerDetails />
-          </VStack>
-          <VStack w="full" h="full" p={6} spacing={6} align="flex-start">
-            <SimpleGrid columns={2} columnGap={3} rowGap={2} w="full">
-              <GridItem colSpan={1}>
-                <Heading size="xl">Pick a Date</Heading>
-                <SingleDatepicker
-                  name="date-input"
-                  date={date}
-                  onDateChange={setDate}
-                />
-              </GridItem>
-            </SimpleGrid>
-          </VStack>
-          {/* <GridItem colSpan={2}>
-            <Button
-              variant="primary"
-              type="submit"
-              isLoading={methods.formState.isSubmitting}
-              isDisabled={!methods.formState.isDirty}
-            >
-              Save
-            </Button>
-            <Button onClick={onCancel}>Cancel</Button>
-          </GridItem> */}
+            <Availability />
+          </SimpleGrid>
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={methods.formState.isSubmitting}
+            isDisabled={!methods.formState.isDirty}
+          >
+            Save
+          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </Flex>
       </Container>
     </FormProvider>
