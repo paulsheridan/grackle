@@ -96,12 +96,3 @@ function Services() {
     </Flex>
   );
 }
-
-// function getSvcAvailability(service_id: string) {
-//   const { data: availability } = useSuspenseQuery({
-//     queryKey: ["services"],
-//     queryFn: () =>
-//       ServicesService.getServiceAvailability({ svcId: service_id }),
-//   });
-//   return availability;
-// }

@@ -1,7 +1,8 @@
 import {
+  Box,
+  Button,
   Container,
   Flex,
-  Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -11,11 +12,11 @@ import {
   InputGroup,
   InputLeftAddon,
   SimpleGrid,
-  VStack,
   SkeletonCircle,
   SkeletonText,
-  Box,
   Text,
+  VStack,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   useMutation,
@@ -33,8 +34,7 @@ import {
 } from "../../../../../client";
 import useCustomToast from "../../../../../hooks/useCustomToast";
 
-import { useState } from "react";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 
 function BookingForm() {
   const [date, setDate] = useState(new Date());
-  const { username } = Route.useParams() as { username: string };
+  const { serviceId } = Route.useParams();
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
 
@@ -66,6 +66,7 @@ function BookingForm() {
     queryKey: ["availability"],
     queryFn: () => ServicesService.getServiceAvailability({ svcId: serviceId }),
   });
+  console.log(availability);
 
   const mutation = useMutation({
     mutationFn: (data: ClientAppointmentRequest) =>
@@ -93,37 +94,28 @@ function BookingForm() {
   };
 
   return (
-    <Container maxW="container.xl" p={0}>
-      <Flex h="100vh" py={20}>
+    <Container
+      maxW="container.xl"
+      bg={useColorModeValue("white", "gray.700")}
+      color={useColorModeValue("gray.700", "whiteAlpha.900")}
+      borderRadius="xl"
+    >
+      <Flex py={20}>
         <VStack
           w="full"
           h="full"
-          p={10}
+          p={6}
           spacing={10}
           alignItems="flex-start"
           as="form"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <VStack spacing={3} alignItems="flex-start">
-            <Heading size="2xl">Your details</Heading>
+          <VStack spacing={1} alignItems="flex-start">
+            <Heading size="xl">Your details</Heading>
           </VStack>
-          <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
+          <SimpleGrid columns={2} columnGap={3} rowGap={2} w="full">
             <GridItem colSpan={1}>
-              <FormControl mt={4} isRequired isInvalid={!!errors.email}>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <Input
-                  id="email"
-                  {...register("email")}
-                  placeholder="Email"
-                  type="email"
-                />
-                {errors.email && (
-                  <FormErrorMessage>{errors.email.message}</FormErrorMessage>
-                )}
-              </FormControl>
-            </GridItem>
-            <GridItem colSpan={2}>
-              <FormControl mt={4}>
+              <FormControl>
                 <FormLabel htmlFor="first_name">First Name</FormLabel>
                 <Input
                   id="first_name"
@@ -133,8 +125,8 @@ function BookingForm() {
                 />
               </FormControl>
             </GridItem>
-            <GridItem colSpan={2}>
-              <FormControl mt={4}>
+            <GridItem colSpan={1}>
+              <FormControl>
                 <FormLabel htmlFor="last_name">Last Name</FormLabel>
                 <Input
                   id="last_name"
@@ -144,8 +136,8 @@ function BookingForm() {
                 />
               </FormControl>
             </GridItem>
-            <GridItem colSpan={2}>
-              <FormControl mt={4}>
+            <GridItem colSpan={1}>
+              <FormControl>
                 <FormLabel htmlFor="pronouns">Pronouns</FormLabel>
                 <Input
                   id="pronouns"
@@ -155,8 +147,8 @@ function BookingForm() {
                 />
               </FormControl>
             </GridItem>
-            <GridItem colSpan={2}>
-              <FormControl mt={4} isInvalid={!!errors.birthday}>
+            <GridItem colSpan={1}>
+              <FormControl isInvalid={!!errors.birthday}>
                 <FormLabel htmlFor="birthday">Birthday</FormLabel>
                 <Input
                   id="birthday"
@@ -169,21 +161,9 @@ function BookingForm() {
                 )}
               </FormControl>
             </GridItem>
+
             <GridItem colSpan={2}>
-              <FormControl mt={4}>
-                <FormLabel htmlFor="preferred_contact">
-                  Preferred Contact
-                </FormLabel>
-                <Input
-                  id="preferred_contact"
-                  {...register("preferred_contact")}
-                  placeholder="Preferred Contact"
-                  type="text"
-                />
-              </FormControl>
-            </GridItem>
-            <GridItem colSpan={2}>
-              <FormControl mt={4}>
+              <FormControl>
                 <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
                 <InputGroup>
                   <InputLeftAddon>+1</InputLeftAddon>
@@ -194,6 +174,33 @@ function BookingForm() {
                     type="tel"
                   />
                 </InputGroup>
+              </FormControl>
+            </GridItem>
+            <GridItem colSpan={2}>
+              <FormControl isRequired isInvalid={!!errors.email}>
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <Input
+                  id="email"
+                  {...register("email")}
+                  placeholder="Email"
+                  type="email"
+                />
+                {errors.email && (
+                  <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+                )}
+              </FormControl>
+            </GridItem>
+            <GridItem colSpan={1}>
+              <FormControl>
+                <FormLabel htmlFor="preferred_contact">
+                  Preferred Contact
+                </FormLabel>
+                <Input
+                  id="preferred_contact"
+                  {...register("preferred_contact")}
+                  placeholder="Preferred Contact"
+                  type="text"
+                />
               </FormControl>
             </GridItem>
             <GridItem colSpan={2}>
@@ -209,22 +216,17 @@ function BookingForm() {
             </GridItem>
           </SimpleGrid>
         </VStack>
-        <VStack
-          w="full"
-          h="full"
-          p={10}
-          spacing={6}
-          align="flex-start"
-          bg="gray.50"
-        >
-          <VStack alignItems="flex-start" spacing={3}>
-            <Heading size="2xl">Your cart</Heading>
-            <SingleDatepicker
-              name="date-input"
-              date={date}
-              onDateChange={setDate}
-            />
-          </VStack>
+        <VStack w="full" h="full" p={6} spacing={6} align="flex-start">
+          <SimpleGrid columns={2} columnGap={3} rowGap={2} w="full">
+            <GridItem colSpan={1}>
+              <Heading size="xl">Pick a Date</Heading>
+              <SingleDatepicker
+                name="date-input"
+                date={date}
+                onDateChange={setDate}
+              />
+            </GridItem>
+          </SimpleGrid>
         </VStack>
       </Flex>
     </Container>
