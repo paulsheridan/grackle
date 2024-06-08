@@ -33,7 +33,7 @@ import {
 } from "../../../../../client";
 import useCustomToast from "../../../../../hooks/useCustomToast";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import CustomerDetails from "../../../../../components/Scheduling/CustomerDetails";
@@ -49,17 +49,6 @@ function BookingForm() {
   const { serviceId } = Route.useParams();
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
-
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   reset,
-  //   formState: { isSubmitting, errors, isDirty },
-  // } = useForm<ClientAppointmentRequest>({
-  //   mode: "onBlur",
-  //   criteriaMode: "all",
-  // });
-  //
   const methods = useForm<ClientAppointmentRequest>({
     mode: "onBlur",
     criteriaMode: "all",
@@ -101,7 +90,7 @@ function BookingForm() {
   return (
     <FormProvider {...methods}>
       <Container
-        maxW="5xl"
+        maxW="4xl"
         bg={useColorModeValue("white", "gray.700")}
         color={useColorModeValue("gray.700", "whiteAlpha.900")}
         borderRadius="xl"
@@ -113,7 +102,7 @@ function BookingForm() {
             <CustomerDetails />
             <Availability />
           </SimpleGrid>
-          <Button
+          {/* <Button
             variant="primary"
             type="submit"
             isLoading={methods.formState.isSubmitting}
@@ -121,7 +110,7 @@ function BookingForm() {
           >
             Save
           </Button>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={onCancel}>Cancel</Button> */}
         </Flex>
       </Container>
     </FormProvider>

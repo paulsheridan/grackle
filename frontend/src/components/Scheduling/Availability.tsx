@@ -1,26 +1,7 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  GridItem,
-  Heading,
-  Input,
-  InputGroup,
-  InputLeftAddon,
-  SimpleGrid,
-  SkeletonCircle,
-  SkeletonText,
-  Text,
-  VStack,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
+import { GridItem, Heading, SimpleGrid, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import DatePickerCalendar from "./DatePickerCalendar";
 
 const Availability = () => {
   const [date, setDate] = useState(new Date());
@@ -34,11 +15,7 @@ const Availability = () => {
       <Heading size="xl">Pick a Date</Heading>
       <SimpleGrid columns={2} columnGap={3} rowGap={2} w="full">
         <GridItem colSpan={2}>
-          <SingleDatepicker
-            name="date-input"
-            date={date}
-            onDateChange={setDate}
-          />
+          <DatePickerCalendar />
         </GridItem>
       </SimpleGrid>
     </VStack>
