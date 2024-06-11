@@ -20,8 +20,7 @@ import {
   addDays,
   parseISO,
 } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
-import { Availabilities, ServicesService } from "../../client";
+import { Availabilities } from "../../client";
 
 interface DatePickerCalendarProps {
   availability: Availabilities;
@@ -47,6 +46,8 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
       onDateChange(day);
     }
   };
+
+  console.log(availability);
 
   const handlePreviousMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1));

@@ -133,7 +133,10 @@ def get_service_availability(
     if service is None:
         raise HTTPException(status_code=404, detail="Not Found")
 
-    earliest, latest = calculate_service_date_range(service, year, month)
+    try:
+        earliest, latest = calculate_service_date_range(service, year, month)
+    except IndexError:
+        return Availabilities(data=[])
     current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
     availability = calculate_availability(earliest, latest, service, current_appts)
     return Availabilities(data=availability)

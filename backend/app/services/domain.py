@@ -28,22 +28,22 @@ def create_service(
     return db_item
 
 
-def get_service_availability(
-    session: SessionDep,
-    svc_id: uuid.UUID,
-    year: int | None = None,
-    month: int | None = None,
-) -> Availabilities | None:
-    stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
-    service = session.exec(stmt).first()
+# def get_service_availability(
+#     session: SessionDep,
+#     svc_id: uuid.UUID,
+#     year: int | None = None,
+#     month: int | None = None,
+# ) -> Availabilities | None:
+#     stmt = select(Service).join(WorkingHours).where(Service.id == svc_id)
+#     service = session.exec(stmt).first()
 
-    if service is None:
-        return None
+#     if service is None:
+#         return None
 
-    earliest, latest = calculate_service_date_range(service, year, month)
-    current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
-    availability = calculate_availability(earliest, latest, service, current_appts)
-    return Availabilities(data=availability)
+#     earliest, latest = calculate_service_date_range(service, year, month)
+#     current_appts = list_appts_between_dates(session, service.user_id, earliest, latest)
+#     availability = calculate_availability(earliest, latest, service, current_appts)
+#     return Availabilities(data=availability)
 
 
 def calculate_service_date_range(
@@ -64,10 +64,9 @@ def calculate_service_date_range(
     if (
         month < earliest.month
         or year < earliest.year
-        or month > service.end.month
-        or year > service.end.year
+        or (year > service.end.year and month > service.end.month)
     ):
-        return earliest, earliest
+        raise IndexError
     earliest = max(earliest, date(year, month, 1))
     latest = min(
         date(year, month, calendar.monthrange(year, month)[-1]),

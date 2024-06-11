@@ -41,7 +41,7 @@ const ServiceHours = () => {
         Add Working Hours
       </Button>
       {fields.map((field, index) => (
-        <SimpleGrid columns={3} columnGap={3} rowGap={2} w="full">
+        <SimpleGrid columns={3} columnGap={3} rowGap={2} w="full" key={index}>
           <GridItem colSpan={1}>
             <FormControl mt={4}>
               <FormLabel htmlFor="weekday">Weekday</FormLabel>

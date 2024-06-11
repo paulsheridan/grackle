@@ -12,12 +12,7 @@ import {
   VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ApiError,
@@ -93,7 +88,7 @@ function BookingForm() {
   return (
     <FormProvider {...methods}>
       <Container
-        maxW="4xl"
+        maxW="6xl"
         bg={useColorModeValue("white", "gray.700")}
         color={useColorModeValue("gray.700", "whiteAlpha.900")}
         borderRadius="xl"
@@ -101,7 +96,7 @@ function BookingForm() {
         onSubmit={methods.handleSubmit(onSubmit)}
       >
         <Flex>
-          <SimpleGrid columns={[1, null, 2]}>
+          <SimpleGrid columns={[1, null, 3]}>
             <CustomerDetails />
             <VStack w="full" h="full" p={6} spacing={6} align="flex-start">
               <Heading size="xl">Pick a Date</Heading>
@@ -149,8 +144,8 @@ function ScheduleService() {
         <Suspense
           fallback={
             <Box>
-              {new Array(2).fill(null).map(() => (
-                <Box padding="6" boxShadow="lg" bg="white">
+              {new Array(2).fill(null).map((_, index) => (
+                <Box padding="6" boxShadow="lg" bg="white" key={index}>
                   <SkeletonCircle size="10" />
                   <SkeletonText
                     mt="4"

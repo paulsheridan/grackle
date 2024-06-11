@@ -54,8 +54,8 @@ function ServicesGrid() {
         <Suspense
           fallback={
             <Box>
-              {new Array(2).fill(null).map(() => (
-                <Box padding="6" boxShadow="lg" bg="white">
+              {new Array(2).fill(null).map((_, index) => (
+                <Box padding="6" boxShadow="lg" bg="white" key={index}>
                   <SkeletonCircle size="10" />
                   <SkeletonText
                     mt="4"
