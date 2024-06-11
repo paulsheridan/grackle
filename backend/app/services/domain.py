@@ -3,6 +3,7 @@ import uuid
 
 from datetime import date, datetime, timedelta
 from typing import Optional, List, Sequence
+from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlmodel import select
@@ -66,7 +67,7 @@ def calculate_service_date_range(
         or month > service.end.month
         or year > service.end.year
     ):
-        raise IndexError
+        return earliest, earliest
     earliest = max(earliest, date(year, month, 1))
     latest = min(
         date(year, month, calendar.monthrange(year, month)[-1]),
@@ -86,7 +87,6 @@ def calculate_availability(
 
     cal = calendar.Calendar()
     for day in cal.itermonthdates(earliest.year, earliest.month):
-        today_slots = {"date": day, "windows": []}
         if day < earliest or day > latest:
             continue
         office_hours = service.get_workinghours(day.weekday())
@@ -96,7 +96,8 @@ def calculate_availability(
                 day, service.duration, today_appts, office_hours
             )
 
-        output_calendar.append(today_slots)
+            if len(today_slots["windows"]) > 0:
+                output_calendar.append(today_slots)
 
     return output_calendar
 

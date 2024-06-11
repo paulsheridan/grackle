@@ -36,6 +36,7 @@ function ServicesCards() {
           username={artist?.username}
           service={service}
           id="{service}"
+          key={service.id}
         />
       ))}
     </SimpleGrid>

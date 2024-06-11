@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserBooking,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserBooking,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,Availabilities,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -728,10 +728,10 @@ userId,
 
 	/**
 	 * Get Service Availability
-	 * @returns unknown Successful Response
+	 * @returns Availabilities Successful Response
 	 * @throws ApiError
 	 */
-	public static getServiceAvailability(data: TDataGetServiceAvailability): CancelablePromise<unknown> {
+	public static getServiceAvailability(data: TDataGetServiceAvailability): CancelablePromise<Availabilities> {
 		const {
 month,
 svcId,

@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Button,
   SimpleGrid,
   Text,
-  useToast,
   Grid,
   GridItem,
-  VStack,
 } from "@chakra-ui/react";
 import {
   startOfMonth,
@@ -22,47 +20,54 @@ import {
   addDays,
   parseISO,
 } from "date-fns";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { ServicesService } from "../../client";
+import { useQuery } from "@tanstack/react-query";
+import { Availabilities, ServicesService } from "../../client";
 
-const Calendar = ({ selectedDate, onDateChange, windowsData }) => {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const toast = useToast();
-  const serviceId = "your_service_id"; // Replace 'your_service_id' with the actual service ID
+interface Window {
+  start: string;
+  end: string;
+}
 
-  // Fetch new month worth of appointments using useSuspenseQuery
-  const { data: availability, status } = useSuspenseQuery({
-    queryKey: [
-      "availability",
-      currentMonth.getMonth(),
-      currentMonth.getFullYear(),
-    ],
-    queryFn: () => ServicesService.getServiceAvailability({ svcId: serviceId }),
+interface DateData {
+  date: string;
+  windows: Window[];
+}
+
+interface DatePickerCalendarProps {
+  onDateChange: (date: Date) => void;
+  serviceId: string;
+}
+
+const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
+  serviceId,
+  onDateChange,
+}) => {
+  const [currentMonth, setCurrentMonth] = React.useState(new Date());
+
+  const {
+    data: availability,
+    status,
+    error,
+  } = useQuery<Availabilities>({
+    queryKey: ["availability", currentMonth],
+    queryFn: () =>
+      ServicesService.getServiceAvailability({
+        svcId: serviceId,
+        month: currentMonth.getMonth() + 1,
+        year: currentMonth.getFullYear(),
+      }),
   });
 
-  useEffect(() => {
-    // Handle fetching new month appointments when month changes
-    if (status === "success") {
-      // Update windowsData with the fetched data
-      // Here, assume availability.data is in the same format as windowsData
-      windowsData = availability.data;
+  const handleDateClick = (day: Date) => {
+    let selectedDay = null; // Initialize selectedDay as null
+    if (availability) {
+      selectedDay = availability.data.find((item) =>
+        isSameDay(parseISO(item.date), day),
+      );
     }
-  }, [status, availability, windowsData]);
-
-  const handleDateClick = (day) => {
-    const selectedDay = windowsData.find((item) =>
-      isSameDay(parseISO(item.date), day),
-    );
     if (selectedDay && selectedDay.windows.length > 0) {
       onDateChange(day);
     }
-    toast({
-      title: "Date Selected",
-      description: format(day, "yyyy-MM-dd"),
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
   };
 
   const handlePreviousMonth = () => {
@@ -106,12 +111,15 @@ const Calendar = ({ selectedDate, onDateChange, windowsData }) => {
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
     const rows = [];
-    let days = [];
+    let days: JSX.Element[] = [];
     let day = startDate;
     let formattedDate = "";
 
-    const isDateWithWindows = (date) => {
-      return windowsData.some(
+    const isDateWithWindows = (date: Date) => {
+      if (!availability) {
+        return false; // Return false if availability is null
+      }
+      return availability.data.some(
         (item) =>
           isSameDay(parseISO(item.date), date) && item.windows.length > 0,
       );
@@ -126,14 +134,14 @@ const Calendar = ({ selectedDate, onDateChange, windowsData }) => {
 
         days.push(
           <GridItem
-            key={day}
+            key={day.toString()}
             textAlign="center"
             p={2}
             cursor={dateHasWindows ? "pointer" : "not-allowed"}
             bg={isSameMonth(day, monthStart) ? "white" : "gray.100"}
-            color={isSameDay(day, selectedDate) ? "white" : "black"}
+            color={isSameDay(day, new Date()) ? "white" : "black"}
             bgColor={
-              isSameDay(day, selectedDate)
+              isSameDay(day, new Date())
                 ? "blue.500"
                 : dateHasWindows
                   ? "green.200"
@@ -149,7 +157,7 @@ const Calendar = ({ selectedDate, onDateChange, windowsData }) => {
         day = addDays(day, 1);
       }
       rows.push(
-        <Grid templateColumns="repeat(7, 1fr)" gap={2} key={day}>
+        <Grid templateColumns="repeat(7, 1fr)" gap={2} key={day.toString()}>
           {days}
         </Grid>,
       );
@@ -171,46 +179,6 @@ const Calendar = ({ selectedDate, onDateChange, windowsData }) => {
       {renderHeader()}
       {renderDays()}
       {renderCells()}
-    </Box>
-  );
-};
-
-const AvailableTimes = ({ selectedDate, windowsData }) => {
-  const selectedDay = windowsData.find((item) =>
-    isSameDay(parseISO(item.date), selectedDate),
-  );
-
-  return (
-    <Box mt={4}>
-      {selectedDay && selectedDay.windows.length > 0 ? (
-        <VStack spacing={2}>
-          {selectedDay.windows.map((window, index) => (
-            <Button key={index} colorScheme="teal">
-              {format(parseISO(window.start), "HH:mm")} -{" "}
-              {format(parseISO(window.end), "HH:mm")}
-            </Button>
-          ))}
-        </VStack>
-      ) : (
-        <Text>No available times</Text>
-      )}
-    </Box>
-  );
-};
-
-const DatePickerCalendar = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  return (
-    <Box display="flex" flexDirection="column" alignItems="center" p={4}>
-      <Calendar
-        selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
-        windowsData={[]} // Initialize with empty array, data will be updated by useSuspenseQuery
-      />
-      <Box mt={4}>Selected Date: {format(selectedDate, "yyyy-MM-dd")}</Box>
-      <AvailableTimes selectedDate={selectedDate} windowsData={[]} />{" "}
-      {/* Initialize with empty array */}
     </Box>
   );
 };

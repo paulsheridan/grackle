@@ -53,6 +53,19 @@ export type ApptsJoinSvcsClients = {
 
 
 
+export type Availabilities = {
+	data: Array<Availability>;
+};
+
+
+
+export type Availability = {
+	date: string;
+	windows: Array<Record<string, string>>;
+};
+
+
+
 export type Body_login_login_access_token = {
 	grant_type?: string | null;
 	username: string;

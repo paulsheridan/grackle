@@ -1,16 +1,9 @@
 import {
   Box,
-  Button,
   Container,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   GridItem,
   Heading,
-  Input,
-  InputGroup,
-  InputLeftAddon,
   SimpleGrid,
   SkeletonCircle,
   SkeletonText,
@@ -29,15 +22,15 @@ import {
   AppointmentsService,
   ClientAppointmentRequest,
   ServicesService,
-  UserPublic,
 } from "../../../../../client";
 import useCustomToast from "../../../../../hooks/useCustomToast";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import CustomerDetails from "../../../../../components/Scheduling/CustomerDetails";
-import Availability from "../../../../../components/Scheduling/Availability";
+import DatePickerCalendar from "../../../../../components/Scheduling/DatePickerCalendar";
+import AvailableTimes from "../../../../../components/Scheduling/AvailableTimes";
 
 export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
   {
@@ -47,6 +40,8 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 
 function BookingForm() {
   const { serviceId } = Route.useParams();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
   const methods = useForm<ClientAppointmentRequest>({
@@ -54,13 +49,17 @@ function BookingForm() {
     criteriaMode: "all",
   });
 
-  const artist = queryClient.getQueryData<UserPublic>(["artist"]);
+  // const artist = queryClient.getQueryData<UserPublic>(["artist"]);
 
   const { data: availability } = useSuspenseQuery({
     queryKey: ["availability"],
-    queryFn: () => ServicesService.getServiceAvailability({ svcId: serviceId }),
+    queryFn: () =>
+      ServicesService.getServiceAvailability({
+        svcId: serviceId,
+        month: new Date().getMonth() + 1,
+        year: new Date().getFullYear(),
+      }),
   });
-  console.log(availability);
 
   const mutation = useMutation({
     mutationFn: (data: ClientAppointmentRequest) =>
@@ -75,7 +74,7 @@ function BookingForm() {
       showToast("Something went wrong.", `${errDetail}`, "error");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["availability"] });
     },
   });
 
@@ -100,7 +99,23 @@ function BookingForm() {
         <Flex>
           <SimpleGrid columns={[1, null, 2]}>
             <CustomerDetails />
-            <Availability />
+            <VStack w="full" h="full" p={6} spacing={6} align="flex-start">
+              <Heading size="xl">Pick a Date</Heading>
+              <SimpleGrid columns={3} columnGap={3} rowGap={2} w="full">
+                <GridItem colSpan={2}>
+                  <DatePickerCalendar
+                    serviceId={serviceId}
+                    onDateChange={setSelectedDate}
+                  />
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <AvailableTimes
+                    selectedDate={selectedDate}
+                    availability={availability}
+                  />
+                </GridItem>
+              </SimpleGrid>
+            </VStack>
           </SimpleGrid>
           {/* <Button
             variant="primary"

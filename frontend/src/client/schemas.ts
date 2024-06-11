@@ -189,6 +189,39 @@ export const $ApptsJoinSvcsClients = {
 	},
 } as const;
 
+export const $Availabilities = {
+	properties: {
+		data: {
+	type: 'array',
+	contains: {
+		type: 'Availability',
+	},
+	isRequired: true,
+},
+	},
+} as const;
+
+export const $Availability = {
+	properties: {
+		date: {
+	type: 'string',
+	isRequired: true,
+	format: 'date',
+},
+		windows: {
+	type: 'array',
+	contains: {
+	type: 'dictionary',
+	contains: {
+	type: 'string',
+	format: 'date-time',
+},
+},
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $Body_login_login_access_token = {
 	properties: {
 		grant_type: {
