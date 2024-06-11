@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   Flex,
   GridItem,
@@ -13,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
@@ -20,6 +22,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   ApiError,
   AppointmentsService,
+  Availabilities,
   ClientAppointmentRequest,
   ServicesService,
 } from "../../../../../client";
@@ -41,6 +44,7 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 function BookingForm() {
   const { serviceId } = Route.useParams();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
@@ -51,13 +55,13 @@ function BookingForm() {
 
   // const artist = queryClient.getQueryData<UserPublic>(["artist"]);
 
-  const { data: availability } = useSuspenseQuery({
-    queryKey: ["availability"],
+  const { data: availability = { data: [] } } = useQuery<Availabilities>({
+    queryKey: ["availability", currentMonth],
     queryFn: () =>
       ServicesService.getServiceAvailability({
         svcId: serviceId,
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
+        month: currentMonth.getMonth() + 1,
+        year: currentMonth.getFullYear(),
       }),
   });
 
@@ -104,20 +108,22 @@ function BookingForm() {
               <SimpleGrid columns={3} columnGap={3} rowGap={2} w="full">
                 <GridItem colSpan={2}>
                   <DatePickerCalendar
-                    serviceId={serviceId}
+                    availability={availability}
                     onDateChange={setSelectedDate}
+                    currentMonth={currentMonth}
+                    setCurrentMonth={setCurrentMonth}
                   />
                 </GridItem>
                 <GridItem colSpan={1}>
                   <AvailableTimes
-                    selectedDate={selectedDate}
                     availability={availability}
+                    selectedDate={selectedDate}
                   />
                 </GridItem>
               </SimpleGrid>
             </VStack>
           </SimpleGrid>
-          {/* <Button
+          <Button
             variant="primary"
             type="submit"
             isLoading={methods.formState.isSubmitting}
@@ -125,7 +131,7 @@ function BookingForm() {
           >
             Save
           </Button>
-          <Button onClick={onCancel}>Cancel</Button> */}
+          <Button onClick={onCancel}>Cancel</Button>
         </Flex>
       </Container>
     </FormProvider>

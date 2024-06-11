@@ -1,20 +1,11 @@
 import React from "react";
 import { Box, Button, Text, VStack } from "@chakra-ui/react";
 import { format, parseISO, isSameDay } from "date-fns";
-
-interface Window {
-  start: string;
-  end: string;
-}
-
-interface DateData {
-  date: string;
-  windows: Window[];
-}
+import { Availabilities } from "../../client";
 
 interface AvailableTimesProps {
   selectedDate: Date | null;
-  availability: DateData[];
+  availability: Availabilities;
 }
 
 const AvailableTimes: React.FC<AvailableTimesProps> = ({
@@ -24,7 +15,7 @@ const AvailableTimes: React.FC<AvailableTimesProps> = ({
   let selectedDay = null; // Initialize selectedDay as null
 
   if (selectedDate) {
-    selectedDay = availability.find((item) =>
+    selectedDay = availability.data.find((item) =>
       isSameDay(parseISO(item.date), selectedDate),
     );
   }

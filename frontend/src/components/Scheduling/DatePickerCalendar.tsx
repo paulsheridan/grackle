@@ -23,41 +23,19 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Availabilities, ServicesService } from "../../client";
 
-interface Window {
-  start: string;
-  end: string;
-}
-
-interface DateData {
-  date: string;
-  windows: Window[];
-}
-
 interface DatePickerCalendarProps {
+  availability: Availabilities;
   onDateChange: (date: Date) => void;
-  serviceId: string;
+  currentMonth: Date;
+  setCurrentMonth: (date: Date) => void;
 }
 
 const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
-  serviceId,
+  availability,
   onDateChange,
+  currentMonth,
+  setCurrentMonth,
 }) => {
-  const [currentMonth, setCurrentMonth] = React.useState(new Date());
-
-  const {
-    data: availability,
-    status,
-    error,
-  } = useQuery<Availabilities>({
-    queryKey: ["availability", currentMonth],
-    queryFn: () =>
-      ServicesService.getServiceAvailability({
-        svcId: serviceId,
-        month: currentMonth.getMonth() + 1,
-        year: currentMonth.getFullYear(),
-      }),
-  });
-
   const handleDateClick = (day: Date) => {
     let selectedDay = null; // Initialize selectedDay as null
     if (availability) {
@@ -117,7 +95,7 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
 
     const isDateWithWindows = (date: Date) => {
       if (!availability) {
-        return false; // Return false if availability is null
+        return false;
       }
       return availability.data.some(
         (item) =>

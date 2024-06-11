@@ -1,8 +1,5 @@
 import {
-  Box,
   Button,
-  Container,
-  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -12,18 +9,14 @@ import {
   InputGroup,
   InputLeftAddon,
   SimpleGrid,
-  SkeletonCircle,
-  SkeletonText,
-  Text,
   VStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 
 const CustomerDetails = () => {
   const {
     register,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitting },
   } = useFormContext();
 
   return (
