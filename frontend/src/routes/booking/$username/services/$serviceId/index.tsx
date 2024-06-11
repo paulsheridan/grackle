@@ -114,6 +114,19 @@ function BookingForm() {
             />
           </GridItem>
         </SimpleGrid>
+        <Box w="100%" p={4}>
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={methods.formState.isSubmitting}
+            isDisabled={!methods.formState.isDirty}
+          >
+            Save
+          </Button>
+          <Button onClick={onCancel} m={3}>
+            Cancel
+          </Button>
+        </Box>
       </Container>
     </FormProvider>
   );

@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
-import { format, parseISO, isSameDay } from "date-fns";
+import { format, parseISO, isSameDay, addMinutes } from "date-fns";
 import { Availabilities } from "../../client";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { useFormContext } from "react-hook-form";
 
 interface AvailableTimesProps {
   selectedDate: Date | null;
@@ -13,7 +14,8 @@ const AvailableTimes: React.FC<AvailableTimesProps> = ({
   selectedDate,
   availability,
 }) => {
-  let selectedDay = null; // Initialize selectedDay as null
+  const { register } = useFormContext();
+  let selectedDay = null;
 
   if (selectedDate) {
     selectedDay = availability.data.find((item) =>
@@ -36,8 +38,11 @@ const AvailableTimes: React.FC<AvailableTimesProps> = ({
                 minHeight={10}
                 w="full"
               >
-                {format(parseISO(window.start), "HH:mm")} -{" "}
-                {format(parseISO(window.end), "HH:mm")}
+                {format(parseISO(window.start), "hh:mm aaaaa'm'")} -{" "}
+                {format(
+                  addMinutes(parseISO(window.end), 1), // Add one minute to window.end
+                  "hh:mm aaaaa'm'",
+                )}
               </Button>
             ))}
           </VStack>

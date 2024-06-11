@@ -109,7 +109,7 @@ const CustomerDetails = () => {
             />
           </FormControl>
         </GridItem>
-        <GridItem colSpan={1}>
+        {/* <GridItem colSpan={1}>
           <FormLabel>Look, Buttons!</FormLabel>
           <Button
             variant="primary"
@@ -120,7 +120,7 @@ const CustomerDetails = () => {
             Save
           </Button>
           <Button ml={3}>Cancel</Button>
-        </GridItem>
+        </GridItem> */}
       </SimpleGrid>
     </VStack>
   );
