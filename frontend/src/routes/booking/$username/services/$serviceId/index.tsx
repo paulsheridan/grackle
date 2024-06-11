@@ -88,46 +88,41 @@ function BookingForm() {
   return (
     <FormProvider {...methods}>
       <Container
-        maxW="6xl"
+        maxW="7xl"
         bg={useColorModeValue("white", "gray.700")}
         color={useColorModeValue("gray.700", "whiteAlpha.900")}
         borderRadius="xl"
         as="form"
         onSubmit={methods.handleSubmit(onSubmit)}
       >
-        <Flex>
-          <SimpleGrid columns={[1, null, 3]}>
+        <SimpleGrid columns={[1, null, 5]}>
+          <GridItem colSpan={2}>
             <CustomerDetails />
-            <VStack w="full" h="full" p={6} spacing={6} align="flex-start">
-              <Heading size="xl">Pick a Date</Heading>
-              <SimpleGrid columns={3} columnGap={3} rowGap={2} w="full">
-                <GridItem colSpan={2}>
-                  <DatePickerCalendar
-                    availability={availability}
-                    onDateChange={setSelectedDate}
-                    currentMonth={currentMonth}
-                    setCurrentMonth={setCurrentMonth}
-                  />
-                </GridItem>
-                <GridItem colSpan={1}>
-                  <AvailableTimes
-                    availability={availability}
-                    selectedDate={selectedDate}
-                  />
-                </GridItem>
-              </SimpleGrid>
-            </VStack>
-          </SimpleGrid>
-          <Button
-            variant="primary"
-            type="submit"
-            isLoading={methods.formState.isSubmitting}
-            isDisabled={!methods.formState.isDirty}
-          >
-            Save
-          </Button>
-          <Button onClick={onCancel}>Cancel</Button>
-        </Flex>
+          </GridItem>
+          <GridItem colSpan={2}>
+            <DatePickerCalendar
+              availability={availability}
+              onDateChange={setSelectedDate}
+              currentMonth={currentMonth}
+              setCurrentMonth={setCurrentMonth}
+            />
+          </GridItem>
+          <GridItem colSpan={1}>
+            <AvailableTimes
+              availability={availability}
+              selectedDate={selectedDate}
+            />
+          </GridItem>
+        </SimpleGrid>
+        <Button
+          variant="primary"
+          type="submit"
+          isLoading={methods.formState.isSubmitting}
+          isDisabled={!methods.formState.isDirty}
+        >
+          Save
+        </Button>
+        <Button onClick={onCancel}>Cancel</Button>
       </Container>
     </FormProvider>
   );

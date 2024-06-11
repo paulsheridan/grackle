@@ -6,6 +6,8 @@ import {
   Text,
   Grid,
   GridItem,
+  VStack,
+  Heading,
 } from "@chakra-ui/react";
 import {
   startOfMonth,
@@ -147,18 +149,21 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
   };
 
   return (
-    <Box
-      p={4}
-      borderWidth={1}
-      borderRadius="md"
-      width="100%"
-      maxWidth="400px"
-      minWidth="400px"
-    >
-      {renderHeader()}
-      {renderDays()}
-      {renderCells()}
-    </Box>
+    <VStack w="full" h="full" p={6} spacing={6} align="center">
+      <Heading size="xl">Pick a Date</Heading>
+      <Box
+        p={4}
+        borderWidth={1}
+        borderRadius="md"
+        width="100%"
+        maxWidth="400px"
+        minWidth="400px"
+      >
+        {renderHeader()}
+        {renderDays()}
+        {renderCells()}
+      </Box>
+    </VStack>
   );
 };
 

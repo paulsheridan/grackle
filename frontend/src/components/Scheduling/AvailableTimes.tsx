@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 import { format, parseISO, isSameDay } from "date-fns";
 import { Availabilities } from "../../client";
 
@@ -21,20 +21,23 @@ const AvailableTimes: React.FC<AvailableTimesProps> = ({
   }
 
   return (
-    <Box mt={4}>
-      {selectedDay && selectedDay.windows.length > 0 ? (
-        <VStack spacing={2}>
-          {selectedDay.windows.map((window, index) => (
-            <Button key={index} colorScheme="teal">
-              {format(parseISO(window.start), "HH:mm")} -{" "}
-              {format(parseISO(window.end), "HH:mm")}
-            </Button>
-          ))}
-        </VStack>
-      ) : (
-        <Text>No available times</Text>
-      )}
-    </Box>
+    <VStack w="full" h="full" p={6} spacing={6} align="center">
+      <Heading size="xl">Pick a Time</Heading>
+      <Box mt={4}>
+        {selectedDay && selectedDay.windows.length > 0 ? (
+          <VStack spacing={2}>
+            {selectedDay.windows.map((window, index) => (
+              <Button key={index} colorScheme="teal">
+                {format(parseISO(window.start), "HH:mm")} -{" "}
+                {format(parseISO(window.end), "HH:mm")}
+              </Button>
+            ))}
+          </VStack>
+        ) : (
+          <Text>No available times</Text>
+        )}
+      </Box>
+    </VStack>
   );
 };
 

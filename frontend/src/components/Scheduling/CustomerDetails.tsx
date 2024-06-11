@@ -20,7 +20,7 @@ const CustomerDetails = () => {
   } = useFormContext();
 
   return (
-    <VStack w="full" h="full" p={6} spacing={6} align="flex-start">
+    <VStack w="full" h="full" p={6} spacing={6} align="center">
       <Heading size="xl">Your details</Heading>
       <SimpleGrid columns={2} columnGap={3} rowGap={2} w="full">
         <GridItem colSpan={1}>
