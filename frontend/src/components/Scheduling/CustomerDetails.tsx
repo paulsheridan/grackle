@@ -109,6 +109,18 @@ const CustomerDetails = () => {
             />
           </FormControl>
         </GridItem>
+        <GridItem colSpan={1}>
+          <FormLabel>Look, Buttons!</FormLabel>
+          <Button
+            variant="primary"
+            type="submit"
+            isLoading={isSubmitting}
+            isDisabled={!isDirty}
+          >
+            Save
+          </Button>
+          <Button ml={3}>Cancel</Button>
+        </GridItem>
       </SimpleGrid>
     </VStack>
   );
