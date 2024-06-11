@@ -95,7 +95,7 @@ function BookingForm() {
         as="form"
         onSubmit={methods.handleSubmit(onSubmit)}
       >
-        <SimpleGrid columns={[1, null, 5]}>
+        <SimpleGrid columns={[1, null, null, 5]}>
           <GridItem colSpan={2}>
             <CustomerDetails />
           </GridItem>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -37,6 +37,8 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
   currentMonth,
   setCurrentMonth,
 }) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
   const handleDateClick = (day: Date) => {
     let selectedDay = null; // Initialize selectedDay as null
     if (availability) {
@@ -45,11 +47,10 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
       );
     }
     if (selectedDay && selectedDay.windows.length > 0) {
+      setSelectedDate(day);
       onDateChange(day);
     }
   };
-
-  console.log(availability);
 
   const handlePreviousMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1));
@@ -112,6 +113,7 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
         const cloneDay = day;
 
         const dateHasWindows = isDateWithWindows(day);
+        const isSelected = selectedDate && isSameDay(day, selectedDate);
 
         days.push(
           <GridItem
@@ -122,15 +124,19 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
             bg={isSameMonth(day, monthStart) ? "white" : "gray.100"}
             color={isSameDay(day, new Date()) ? "white" : "black"}
             bgColor={
-              isSameDay(day, new Date())
-                ? "blue.500"
-                : dateHasWindows
-                  ? "green.200"
-                  : "gray.200"
+              isSelected
+                ? "red.500"
+                : isSameDay(day, new Date())
+                  ? "blue.500"
+                  : dateHasWindows
+                    ? "green.200"
+                    : "gray.200"
             }
-            borderRadius="md"
+            borderRadius="xl"
             _hover={dateHasWindows ? { bgColor: "blue.200" } : {}}
             onClick={() => dateHasWindows && handleDateClick(cloneDay)}
+            minHeight="44px"
+            m={1}
           >
             <Text>{formattedDate}</Text>
           </GridItem>,
@@ -138,7 +144,7 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
         day = addDays(day, 1);
       }
       rows.push(
-        <Grid templateColumns="repeat(7, 1fr)" gap={2} key={day.toString()}>
+        <Grid templateColumns="repeat(7, 1fr)" key={day.toString()}>
           {days}
         </Grid>,
       );
