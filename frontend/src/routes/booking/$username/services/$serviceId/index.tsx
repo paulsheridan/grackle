@@ -38,8 +38,9 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 
 function BookingForm() {
   const { serviceId } = Route.useParams();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
@@ -66,7 +67,7 @@ function BookingForm() {
         requestBody: data,
       }),
     onSuccess: () => {
-      showToast("Success!", "Your appointment is booked!", "success");
+      showToast("Success!", "Your appointment has been requested!", "success");
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail;
@@ -78,7 +79,8 @@ function BookingForm() {
   });
 
   const onSubmit: SubmitHandler<ClientAppointmentRequest> = async (data) => {
-    mutation.mutate(data);
+    const formData = { ...data, selectedTime };
+    mutation.mutate(formData);
   };
 
   const onCancel = () => {
@@ -111,6 +113,8 @@ function BookingForm() {
             <AvailableTimes
               availability={availability}
               selectedDate={selectedDate}
+              selectedTime={selectedTime}
+              setSelectedTime={setSelectedTime}
             />
           </GridItem>
         </SimpleGrid>
