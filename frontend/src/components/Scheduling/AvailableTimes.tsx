@@ -8,15 +8,18 @@ interface AvailableTimesProps {
   selectedDate: Date | null;
   availability: Availabilities;
   selectedTime: string;
-  setSelectedTime: (time: string) => void;
+  setApptStart: (time: string) => void;
+  setApptEnd: (time: string) => void;
 }
 
 const AvailableTimes: React.FC<AvailableTimesProps> = ({
   selectedDate,
   availability,
-  selectedTime,
-  setSelectedTime,
+  setApptStart,
+  setApptEnd,
 }) => {
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+
   let selectedDay = null;
 
   if (selectedDate) {
@@ -25,8 +28,10 @@ const AvailableTimes: React.FC<AvailableTimesProps> = ({
     );
   }
 
-  const handleButtonClick = (time: string) => {
-    setSelectedTime(time);
+  const handleButtonClick = (start: string, end: string, timeRange: string) => {
+    setSelectedTime(timeRange);
+    setApptStart(start);
+    setApptEnd(end);
   };
 
   return (
@@ -54,7 +59,9 @@ const AvailableTimes: React.FC<AvailableTimesProps> = ({
                   variant={selectedTime === timeRange ? "solid" : "outline"}
                   minHeight={10}
                   w="full"
-                  onClick={() => handleButtonClick(timeRange)}
+                  onClick={() =>
+                    handleButtonClick(window.start, window.end, timeRange)
+                  }
                 >
                   {timeRange}
                 </Button>

@@ -1,27 +1,27 @@
-import React, { useState } from "react";
 import {
   Box,
   Button,
-  SimpleGrid,
-  Text,
   Grid,
   GridItem,
-  VStack,
   Heading,
+  SimpleGrid,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
 import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  addMonths,
-  subMonths,
-  format,
-  isSameMonth,
-  isSameDay,
   addDays,
+  addMonths,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
   parseISO,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
 } from "date-fns";
+import React, { useState } from "react";
 import { Availabilities } from "../../client";
 
 interface DatePickerCalendarProps {

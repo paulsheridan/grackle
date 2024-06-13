@@ -2,14 +2,11 @@ import {
   Box,
   Button,
   Container,
-  Flex,
   GridItem,
-  Heading,
   SimpleGrid,
-  SkeletonCircle,
   SkeletonText,
+  SkeletonCircle,
   Text,
-  VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,15 +17,16 @@ import {
   Availabilities,
   ClientAppointmentRequest,
   ServicesService,
+  UserPublic,
 } from "../../../../../client";
 import useCustomToast from "../../../../../hooks/useCustomToast";
 
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import AvailableTimes from "../../../../../components/Scheduling/AvailableTimes";
 import CustomerDetails from "../../../../../components/Scheduling/CustomerDetails";
 import DatePickerCalendar from "../../../../../components/Scheduling/DatePickerCalendar";
-import AvailableTimes from "../../../../../components/Scheduling/AvailableTimes";
 
 export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
   {
@@ -40,7 +38,8 @@ function BookingForm() {
   const { serviceId } = Route.useParams();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [apptStart, setApptStart] = useState<string | null>(null);
+  const [apptEnd, setApptEnd] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
@@ -49,7 +48,7 @@ function BookingForm() {
     criteriaMode: "all",
   });
 
-  // const artist = queryClient.getQueryData<UserPublic>(["artist"]);
+  const artist = queryClient.getQueryData<UserPublic>(["artist"]);
 
   const { data: availability = { data: [] } } = useQuery<Availabilities>({
     queryKey: ["availability", currentMonth],
@@ -79,7 +78,13 @@ function BookingForm() {
   });
 
   const onSubmit: SubmitHandler<ClientAppointmentRequest> = async (data) => {
-    const formData = { ...data, selectedTime };
+    const formData = {
+      ...data,
+      start: apptStart,
+      end: apptEnd,
+      service_id: serviceId,
+      user_id: artist.id,
+    };
     mutation.mutate(formData);
   };
 
@@ -113,8 +118,8 @@ function BookingForm() {
             <AvailableTimes
               availability={availability}
               selectedDate={selectedDate}
-              selectedTime={selectedTime}
-              setSelectedTime={setSelectedTime}
+              setApptStart={setApptStart}
+              setApptEnd={setApptEnd}
             />
           </GridItem>
         </SimpleGrid>
