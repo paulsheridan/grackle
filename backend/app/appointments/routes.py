@@ -156,3 +156,12 @@ def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequ
     session.commit()
     session.refresh(appointment)
     return appt_request
+
+
+@router.get("/{appt_id}", response_model=AppointmentPublic)
+def get_confirmation(session: SessionDep, appt_id: uuid.UUID) -> Any:
+    appointment = session.get(Appointment, appt_id)
+
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Not found")
+    return appointment

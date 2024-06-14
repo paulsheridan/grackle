@@ -63,6 +63,13 @@ class AppointmentPublic(AppointmentBase):
     service_id: uuid.UUID
 
 
+class AppointmentConfirmation(AppointmentBase):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    client_id: uuid.UUID
+    service_id: uuid.UUID
+
+
 class ApptJoinSvcClient(AppointmentPublic):
     client: ClientPublic | None = None
     service: ServicePublic | None = None
