@@ -36,6 +36,19 @@ function BookingDetails() {
   //   queryKey: ["artist"],
   //   queryFn: () => UsersService.readByUsername({ username: username }),
   // });
+  //
+  const apptStart = new Date(appointment.start);
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true, // To get 12-hour format
+  };
 
   const address = "123 Music Lane, Suite 100, Nashville, TN";
 
@@ -49,8 +62,12 @@ function BookingDetails() {
           You'll be notified when the artist confirms your appointment
         </Text>
         <Box textAlign="center">
-          <Text fontSize="xl">{appointment.start}</Text>
-          <Text fontSize="xl">{appointment.start}</Text>
+          <Text fontSize="xl">
+            {apptStart.toLocaleDateString(undefined, dateOptions)}
+          </Text>
+          <Text fontSize="xl">
+            {apptStart.toLocaleTimeString(undefined, timeOptions)}
+          </Text>
         </Box>
         <HStack spacing={4} justify="center">
           <Button colorScheme="blue">Add to Calendar</Button>
