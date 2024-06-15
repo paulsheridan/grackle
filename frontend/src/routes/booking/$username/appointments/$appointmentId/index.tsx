@@ -6,31 +6,41 @@ import {
   Heading,
   Text,
   VStack,
+  Container,
+  Spinner,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
+import { Suspense, useState } from "react";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { AppointmentsService } from "../../../../../client";
+import { AppointmentsService, UsersService } from "../../../../../client";
 
 export const Route = createFileRoute(
   "/booking/$username/appointments/$appointmentId/",
 )({
-  component: BookingConfirmation,
+  component: ConfirmationPage,
 });
 
-function BookingConfirmation() {
-  const { appointmentId } = Route.useParams();
-  const { data: appointment } = useQuery({
+function BookingDetails() {
+  const { username, appointmentId } = Route.useParams();
+
+  const { data: appointment } = useSuspenseQuery({
     queryKey: ["appointment"],
     queryFn: () =>
-      AppointmentsService.getAppointment({ apptId: appointmentId }),
+      AppointmentsService.getConfirmation({ apptId: appointmentId }),
   });
+
+  // const { data: artist } = useQuery({
+  //   queryKey: ["artist"],
+  //   queryFn: () => UsersService.readByUsername({ username: username }),
+  // });
 
   const address = "123 Music Lane, Suite 100, Nashville, TN";
 
   return (
-    <Box p={8}>
+    <Container p={8}>
       <VStack spacing={6} align="stretch">
         <Heading as="h1" size="xl" textAlign="center">
           Thanks for booking
@@ -49,7 +59,7 @@ function BookingConfirmation() {
           <Button colorScheme="green">Rebook</Button>
         </HStack>
         <Divider />
-        <Heading as="h2" size="lg" textAlign="left">
+        <Heading as="h2" size="lg" textAlign="center">
           Location
         </Heading>
         <Box h="300px" w="100%">
@@ -71,15 +81,35 @@ function BookingConfirmation() {
           {address}
         </Text>
         <Divider />
-        <Heading as="h2" size="lg" textAlign="left">
+        <Heading as="h2" size="lg" textAlign="center">
           Payment
         </Heading>
         <Text fontSize="md" textAlign="center">
           Payment due at appointment
         </Text>
       </VStack>
-    </Box>
+    </Container>
   );
 }
 
-export default BookingConfirmation;
+function ConfirmationPage() {
+  return (
+    <Container>
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <Text>Something went wrong: {error.message}</Text>
+        )}
+      >
+        <Suspense
+          fallback={
+            <Box>
+              <Spinner />
+            </Box>
+          }
+        >
+          <BookingDetails />
+        </Suspense>
+      </ErrorBoundary>
+    </Container>
+  );
+}

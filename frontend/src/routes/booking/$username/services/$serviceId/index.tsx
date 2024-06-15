@@ -10,7 +10,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   ApiError,
   AppointmentsService,
@@ -20,7 +20,6 @@ import {
   UserPublic,
 } from "../../../../../client";
 import useCustomToast from "../../../../../hooks/useCustomToast";
-
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
@@ -35,12 +34,13 @@ export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
 );
 
 function BookingForm() {
-  const { serviceId } = Route.useParams();
+  const { username, serviceId } = Route.useParams();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [apptStart, setApptStart] = useState<string | null>(null);
   const [apptEnd, setApptEnd] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useCustomToast();
   const methods = useForm<ClientAppointmentRequest>({
@@ -65,8 +65,15 @@ function BookingForm() {
       AppointmentsService.requestAppointment({
         requestBody: data,
       }),
-    onSuccess: () => {
+    onSuccess: (response) => {
       showToast("Success!", "Your appointment has been requested!", "success");
+      navigate({
+        to: "/booking/$username/appointments/$appointmentId/",
+        params: {
+          username: username,
+          appointmentId: response.id,
+        },
+      });
     },
     onError: (err: ApiError) => {
       const errDetail = (err.body as any)?.detail;

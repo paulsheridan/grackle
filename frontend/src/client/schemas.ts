@@ -327,6 +327,40 @@ export const $ClientAppointmentRequest = {
 	},
 } as const;
 
+export const $ClientAppointmentResponse = {
+	properties: {
+		id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		user_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		service_id: {
+	type: 'string',
+	isRequired: true,
+	format: 'uuid',
+},
+		start: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		end: {
+	type: 'string',
+	isRequired: true,
+	format: 'date-time',
+},
+		confirmed: {
+	type: 'boolean',
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $ClientCreate = {
 	properties: {
 		email: {

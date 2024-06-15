@@ -33,3 +33,7 @@ upgrade:
 .PHONY: test
 test:
 	bash ./scripts/test.sh
+
+.PHONY: apirefresh
+apirefresh:
+	bash ./scripts/updateopenapi.sh

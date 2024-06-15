@@ -15,6 +15,7 @@ from app.appointments.models import (
     AppointmentCreate,
     AppointmentUpdate,
     ClientAppointmentRequest,
+    ClientAppointmentResponse,
     ApptsJoinSvcsClients,
 )
 from app.appointments.domain import list_appts_between_dates
@@ -125,7 +126,7 @@ def delete_appointment(
     return Message(message="Appointment deleted successfully")
 
 
-@router.post("/request", response_model=ClientAppointmentRequest)
+@router.post("/request", response_model=ClientAppointmentResponse)
 def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequest):
     user = session.get(User, appt_request.user_id)
     if not user:
@@ -155,10 +156,10 @@ def request_appointment(session: SessionDep, appt_request: ClientAppointmentRequ
     session.add(appointment)
     session.commit()
     session.refresh(appointment)
-    return appt_request
+    return appointment
 
 
-@router.get("/{appt_id}", response_model=AppointmentPublic)
+@router.get("/{appt_id}/confirmation", response_model=AppointmentPublic)
 def get_confirmation(session: SessionDep, appt_id: uuid.UUID) -> Any:
     appointment = session.get(Appointment, appt_id)
 

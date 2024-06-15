@@ -119,9 +119,8 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
           <GridItem
             key={day.toString()}
             textAlign="center"
-            p={2}
+            p={0.5}
             cursor={dateHasWindows ? "pointer" : "not-allowed"}
-            bg={isSameMonth(day, monthStart) ? "white" : "gray.100"}
             color={isSameDay(day, new Date()) ? "white" : "black"}
             bgColor={
               isSelected
@@ -132,7 +131,7 @@ const DatePickerCalendar: React.FC<DatePickerCalendarProps> = ({
                     ? "green.200"
                     : "gray.200"
             }
-            borderRadius="xl"
+            borderRadius="sm"
             _hover={dateHasWindows ? { bgColor: "blue.200" } : {}}
             onClick={() => dateHasWindows && handleDateClick(cloneDay)}
             minHeight="44px"

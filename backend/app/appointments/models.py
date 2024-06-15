@@ -97,3 +97,13 @@ class ClientAppointmentRequest(SQLModel):
     birthday: datetime
     preferred_contact: str
     phone_number: str
+
+
+class ClientAppointmentResponse(SQLModel):
+    model_config = {"extra": "ignore"}
+    id: uuid.UUID
+    user_id: uuid.UUID
+    service_id: uuid.UUID
+    start: datetime
+    end: datetime
+    confirmed: bool

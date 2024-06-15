@@ -102,7 +102,6 @@ export default function Contact() {
                     _hover={{
                       bg: "blue.500",
                     }}
-                    isFullWidth
                   >
                     Send Message
                   </Button>

@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserBooking,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,Availabilities,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,UpdatePassword,UserBooking,UserCreate,UserRegister,UsersPublic,UserUpdate,AppointmentCreate,AppointmentPublic,AppointmentUpdate,ApptsJoinSvcsClients,ClientAppointmentRequest,ClientAppointmentResponse,Availabilities,ServiceCreate,ServicePublic,ServicesPublic,ServiceUpdate,ClientCreate,ClientPublic,ClientsPublic,ClientUpdate } from './models';
 
 export type TDataLoginAccessToken = {
                 formData: Body_login_login_access_token
@@ -400,6 +400,10 @@ export type TDataRequestAppointment = {
                 requestBody: ClientAppointmentRequest
                 
             }
+export type TDataGetConfirmation = {
+                apptId: string
+                
+            }
 
 export class AppointmentsService {
 
@@ -535,10 +539,10 @@ apptId,
 
 	/**
 	 * Request Appointment
-	 * @returns ClientAppointmentRequest Successful Response
+	 * @returns ClientAppointmentResponse Successful Response
 	 * @throws ApiError
 	 */
-	public static requestAppointment(data: TDataRequestAppointment): CancelablePromise<ClientAppointmentRequest> {
+	public static requestAppointment(data: TDataRequestAppointment): CancelablePromise<ClientAppointmentResponse> {
 		const {
 requestBody,
 } = data;
@@ -547,6 +551,27 @@ requestBody,
 			url: '/api/v1/appointments/request',
 			body: requestBody,
 			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Get Confirmation
+	 * @returns AppointmentPublic Successful Response
+	 * @throws ApiError
+	 */
+	public static getConfirmation(data: TDataGetConfirmation): CancelablePromise<AppointmentPublic> {
+		const {
+apptId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'GET',
+			url: '/api/v1/appointments/{appt_id}/confirmation',
+			path: {
+				appt_id: apptId
+			},
 			errors: {
 				422: `Validation Error`,
 			},

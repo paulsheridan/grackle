@@ -94,6 +94,17 @@ export type ClientAppointmentRequest = {
 
 
 
+export type ClientAppointmentResponse = {
+	id: string;
+	user_id: string;
+	service_id: string;
+	start: string;
+	end: string;
+	confirmed: boolean;
+};
+
+
+
 export type ClientCreate = {
 	email: string;
 	first_name: string;
