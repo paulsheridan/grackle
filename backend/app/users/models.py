@@ -11,6 +11,20 @@ from app.clients.models import Client
 from app.services.models import Service
 
 
+class Address(SQLModel):
+    address_one: str
+    address_two: str | None
+    city: str
+    state: str
+    zip_code: str
+
+
+class ProfileBase(SQLModel):
+    about_me_long: str | None
+    about_me_short: str | None
+    address: Address
+
+
 class UserBase(SQLModel):
     email: str = Field(index=True)
     username: str | None = None

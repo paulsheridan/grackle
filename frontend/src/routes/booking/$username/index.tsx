@@ -1,4 +1,4 @@
-import { Text, Flex, Button } from "@chakra-ui/react";
+import { Text, Flex, Button, Grid, GridItem } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { UserPublic } from "../../../client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,22 +11,30 @@ function Booking() {
   const queryClient = useQueryClient();
   const artist = queryClient.getQueryData<UserPublic>(["artist"]);
   return (
-    <Flex
-      as="section"
-      direction="column"
-      align="center"
-      justify="center"
-      flex="1"
+    <Grid
+      padding={4}
+      w="90%"
+      gridTemplateRows={"150px 1fr"}
+      gridTemplateColumns={"150px 1fr"}
+      color="blackAlpha.700"
+      fontWeight="bold"
+      bg="gray.100"
+      p="4"
+      borderRadius="md"
+      gap="4"
     >
-      <Text fontSize="4xl" fontWeight="bold" mb={4}>
-        Book with {artist?.shop_name}
-      </Text>
-      <Text fontSize="xl" mb={8}>
-        Schedule your appointment easily and conveniently.
-      </Text>
-      <Button colorScheme="whiteAlpha" variant="solid" size="lg">
-        Get Started
-      </Button>
-    </Flex>
+      <GridItem pl="2" bg="orange.300">
+        Header
+      </GridItem>
+      <GridItem pl="2" bg="pink.300">
+        Nav
+      </GridItem>
+      <GridItem pl="2" bg="green.300">
+        Main
+      </GridItem>
+      <GridItem pl="2" bg="blue.300">
+        Footer
+      </GridItem>
+    </Grid>
   );
 }
