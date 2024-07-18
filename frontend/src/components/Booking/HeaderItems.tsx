@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { UserBooking } from "../../client";
@@ -12,10 +12,10 @@ const HeaderItems = ({ onClose }: HeaderItemsProps) => {
   const artist = queryClient.getQueryData<UserBooking>(["artist"]);
 
   const finalClients = [
-    { title: "About", path: `/booking/${artist?.username}/about` },
+    { title: "About", path: `/artist/${artist?.username}/about` },
     { title: "Services", path: `/booking/${artist?.username}/services` },
-    { title: "Portfolio", path: `/booking/${artist?.username}/portfolio` },
-    { title: "Contact", path: `/booking/${artist?.username}/contact` },
+    { title: "Portfolio", path: `/artist/${artist?.username}/portfolio` },
+    { title: "Contact", path: `/artist/${artist?.username}/contact` },
     { title: "Book Now", path: `/booking/${artist?.username}/services` },
   ];
 

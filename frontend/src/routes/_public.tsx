@@ -6,7 +6,7 @@ import { UsersService } from "../client";
 import Header from "../components/Booking/Header";
 import Footer from "../components/Booking/Footer";
 
-export const Route = createFileRoute("/booking")({
+export const Route = createFileRoute("/_public")({
   component: Booking,
 });
 

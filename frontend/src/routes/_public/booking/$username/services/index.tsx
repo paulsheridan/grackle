@@ -13,10 +13,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { ServicesService, UserPublic } from "../../../../client";
-import ServiceCard from "../../../../components/Booking/ServiceCard";
+import { ServicesService, UserPublic } from "../../../../../client";
+import ServiceCard from "../../../../../components/Booking/ServiceCard";
 
-export const Route = createFileRoute("/booking/$username/services/")({
+export const Route = createFileRoute("/_public/booking/$username/services/")({
   component: Services,
 });
 

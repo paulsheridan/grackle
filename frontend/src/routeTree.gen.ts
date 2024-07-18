@@ -15,7 +15,7 @@ import { Route as ResetPasswordImport } from './routes/reset-password'
 import { Route as RecoverPasswordImport } from './routes/recover-password'
 import { Route as LoginImport } from './routes/login'
 import { Route as LandingImport } from './routes/landing'
-import { Route as BookingImport } from './routes/booking'
+import { Route as PublicImport } from './routes/_public'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
@@ -23,13 +23,14 @@ import { Route as LayoutServicesImport } from './routes/_layout/services'
 import { Route as LayoutClientsImport } from './routes/_layout/clients'
 import { Route as LayoutCalendarImport } from './routes/_layout/calendar'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
-import { Route as BookingUsernameIndexImport } from './routes/booking/$username/index'
-import { Route as BookingUsernamePortfolioImport } from './routes/booking/$username/portfolio'
-import { Route as BookingUsernameContactImport } from './routes/booking/$username/contact'
-import { Route as BookingUsernameAboutImport } from './routes/booking/$username/about'
-import { Route as BookingUsernameServicesIndexImport } from './routes/booking/$username/services/index'
-import { Route as BookingUsernameServicesServiceIdIndexImport } from './routes/booking/$username/services/$serviceId/index'
-import { Route as BookingUsernameAppointmentsAppointmentIdIndexImport } from './routes/booking/$username/appointments/$appointmentId/index'
+import { Route as PublicBookingUsernameIndexImport } from './routes/_public/booking/$username/index'
+import { Route as PublicArtistUsernameIndexImport } from './routes/_public/artist/$username/index'
+import { Route as PublicArtistUsernamePortfolioImport } from './routes/_public/artist/$username/portfolio'
+import { Route as PublicArtistUsernameContactImport } from './routes/_public/artist/$username/contact'
+import { Route as PublicArtistUsernameAboutImport } from './routes/_public/artist/$username/about'
+import { Route as PublicBookingUsernameServicesIndexImport } from './routes/_public/booking/$username/services/index'
+import { Route as PublicBookingUsernameServicesServiceIdIndexImport } from './routes/_public/booking/$username/services/$serviceId/index'
+import { Route as PublicBookingUsernameAppointmentsAppointmentIdIndexImport } from './routes/_public/booking/$username/appointments/$appointmentId/index'
 
 // Create/Update Routes
 
@@ -53,8 +54,8 @@ const LandingRoute = LandingImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BookingRoute = BookingImport.update({
-  path: '/booking',
+const PublicRoute = PublicImport.update({
+  id: '/_public',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -93,42 +94,51 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const BookingUsernameIndexRoute = BookingUsernameIndexImport.update({
-  path: '/$username/',
-  getParentRoute: () => BookingRoute,
+const PublicBookingUsernameIndexRoute = PublicBookingUsernameIndexImport.update(
+  {
+    path: '/booking/$username/',
+    getParentRoute: () => PublicRoute,
+  } as any,
+)
+
+const PublicArtistUsernameIndexRoute = PublicArtistUsernameIndexImport.update({
+  path: '/artist/$username/',
+  getParentRoute: () => PublicRoute,
 } as any)
 
-const BookingUsernamePortfolioRoute = BookingUsernamePortfolioImport.update({
-  path: '/$username/portfolio',
-  getParentRoute: () => BookingRoute,
-} as any)
-
-const BookingUsernameContactRoute = BookingUsernameContactImport.update({
-  path: '/$username/contact',
-  getParentRoute: () => BookingRoute,
-} as any)
-
-const BookingUsernameAboutRoute = BookingUsernameAboutImport.update({
-  path: '/$username/about',
-  getParentRoute: () => BookingRoute,
-} as any)
-
-const BookingUsernameServicesIndexRoute =
-  BookingUsernameServicesIndexImport.update({
-    path: '/$username/services/',
-    getParentRoute: () => BookingRoute,
+const PublicArtistUsernamePortfolioRoute =
+  PublicArtistUsernamePortfolioImport.update({
+    path: '/artist/$username/portfolio',
+    getParentRoute: () => PublicRoute,
   } as any)
 
-const BookingUsernameServicesServiceIdIndexRoute =
-  BookingUsernameServicesServiceIdIndexImport.update({
-    path: '/$username/services/$serviceId/',
-    getParentRoute: () => BookingRoute,
+const PublicArtistUsernameContactRoute =
+  PublicArtistUsernameContactImport.update({
+    path: '/artist/$username/contact',
+    getParentRoute: () => PublicRoute,
   } as any)
 
-const BookingUsernameAppointmentsAppointmentIdIndexRoute =
-  BookingUsernameAppointmentsAppointmentIdIndexImport.update({
-    path: '/$username/appointments/$appointmentId/',
-    getParentRoute: () => BookingRoute,
+const PublicArtistUsernameAboutRoute = PublicArtistUsernameAboutImport.update({
+  path: '/artist/$username/about',
+  getParentRoute: () => PublicRoute,
+} as any)
+
+const PublicBookingUsernameServicesIndexRoute =
+  PublicBookingUsernameServicesIndexImport.update({
+    path: '/booking/$username/services/',
+    getParentRoute: () => PublicRoute,
+  } as any)
+
+const PublicBookingUsernameServicesServiceIdIndexRoute =
+  PublicBookingUsernameServicesServiceIdIndexImport.update({
+    path: '/booking/$username/services/$serviceId/',
+    getParentRoute: () => PublicRoute,
+  } as any)
+
+const PublicBookingUsernameAppointmentsAppointmentIdIndexRoute =
+  PublicBookingUsernameAppointmentsAppointmentIdIndexImport.update({
+    path: '/booking/$username/appointments/$appointmentId/',
+    getParentRoute: () => PublicRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -139,8 +149,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
-    '/booking': {
-      preLoaderRoute: typeof BookingImport
+    '/_public': {
+      preLoaderRoute: typeof PublicImport
       parentRoute: typeof rootRoute
     }
     '/landing': {
@@ -183,33 +193,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
     }
-    '/booking/$username/about': {
-      preLoaderRoute: typeof BookingUsernameAboutImport
-      parentRoute: typeof BookingImport
+    '/_public/artist/$username/about': {
+      preLoaderRoute: typeof PublicArtistUsernameAboutImport
+      parentRoute: typeof PublicImport
     }
-    '/booking/$username/contact': {
-      preLoaderRoute: typeof BookingUsernameContactImport
-      parentRoute: typeof BookingImport
+    '/_public/artist/$username/contact': {
+      preLoaderRoute: typeof PublicArtistUsernameContactImport
+      parentRoute: typeof PublicImport
     }
-    '/booking/$username/portfolio': {
-      preLoaderRoute: typeof BookingUsernamePortfolioImport
-      parentRoute: typeof BookingImport
+    '/_public/artist/$username/portfolio': {
+      preLoaderRoute: typeof PublicArtistUsernamePortfolioImport
+      parentRoute: typeof PublicImport
     }
-    '/booking/$username/': {
-      preLoaderRoute: typeof BookingUsernameIndexImport
-      parentRoute: typeof BookingImport
+    '/_public/artist/$username/': {
+      preLoaderRoute: typeof PublicArtistUsernameIndexImport
+      parentRoute: typeof PublicImport
     }
-    '/booking/$username/services/': {
-      preLoaderRoute: typeof BookingUsernameServicesIndexImport
-      parentRoute: typeof BookingImport
+    '/_public/booking/$username/': {
+      preLoaderRoute: typeof PublicBookingUsernameIndexImport
+      parentRoute: typeof PublicImport
     }
-    '/booking/$username/appointments/$appointmentId/': {
-      preLoaderRoute: typeof BookingUsernameAppointmentsAppointmentIdIndexImport
-      parentRoute: typeof BookingImport
+    '/_public/booking/$username/services/': {
+      preLoaderRoute: typeof PublicBookingUsernameServicesIndexImport
+      parentRoute: typeof PublicImport
     }
-    '/booking/$username/services/$serviceId/': {
-      preLoaderRoute: typeof BookingUsernameServicesServiceIdIndexImport
-      parentRoute: typeof BookingImport
+    '/_public/booking/$username/appointments/$appointmentId/': {
+      preLoaderRoute: typeof PublicBookingUsernameAppointmentsAppointmentIdIndexImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/booking/$username/services/$serviceId/': {
+      preLoaderRoute: typeof PublicBookingUsernameServicesServiceIdIndexImport
+      parentRoute: typeof PublicImport
     }
   }
 }
@@ -225,14 +239,15 @@ export const routeTree = rootRoute.addChildren([
     LayoutSettingsRoute,
     LayoutIndexRoute,
   ]),
-  BookingRoute.addChildren([
-    BookingUsernameAboutRoute,
-    BookingUsernameContactRoute,
-    BookingUsernamePortfolioRoute,
-    BookingUsernameIndexRoute,
-    BookingUsernameServicesIndexRoute,
-    BookingUsernameAppointmentsAppointmentIdIndexRoute,
-    BookingUsernameServicesServiceIdIndexRoute,
+  PublicRoute.addChildren([
+    PublicArtistUsernameAboutRoute,
+    PublicArtistUsernameContactRoute,
+    PublicArtistUsernamePortfolioRoute,
+    PublicArtistUsernameIndexRoute,
+    PublicBookingUsernameIndexRoute,
+    PublicBookingUsernameServicesIndexRoute,
+    PublicBookingUsernameAppointmentsAppointmentIdIndexRoute,
+    PublicBookingUsernameServicesServiceIdIndexRoute,
   ]),
   LandingRoute,
   LoginRoute,

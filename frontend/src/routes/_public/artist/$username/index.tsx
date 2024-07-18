@@ -1,9 +1,9 @@
-import { Text, Flex, Button, Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { UserPublic } from "../../../client";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/booking/$username/")({
+export const Route = createFileRoute("/_public/artist/$username/")({
   component: Booking,
 });
 

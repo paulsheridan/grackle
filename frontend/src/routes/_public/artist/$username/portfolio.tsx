@@ -1,7 +1,7 @@
 import { Heading, Flex, Box, Image } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/booking/$username/portfolio")({
+export const Route = createFileRoute("/_public/artist/$username/portfolio")({
   component: Portfolio,
 });
 

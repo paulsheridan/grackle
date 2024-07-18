@@ -18,20 +18,20 @@ import {
   ClientAppointmentRequest,
   ServicesService,
   UserPublic,
-} from "../../../../../client";
-import useCustomToast from "../../../../../hooks/useCustomToast";
+} from "../../../../../../client";
+import useCustomToast from "../../../../../../hooks/useCustomToast";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
-import AvailableTimes from "../../../../../components/Scheduling/AvailableTimes";
-import CustomerDetails from "../../../../../components/Scheduling/CustomerDetails";
-import DatePickerCalendar from "../../../../../components/Scheduling/DatePickerCalendar";
+import AvailableTimes from "../../../../../../components/Scheduling/AvailableTimes";
+import CustomerDetails from "../../../../../../components/Scheduling/CustomerDetails";
+import DatePickerCalendar from "../../../../../../components/Scheduling/DatePickerCalendar";
 
-export const Route = createFileRoute("/booking/$username/services/$serviceId/")(
-  {
-    component: ScheduleService,
-  },
-);
+export const Route = createFileRoute(
+  "/_public/booking/$username/services/$serviceId/",
+)({
+  component: ScheduleService,
+});
 
 function BookingForm() {
   const { username, serviceId } = Route.useParams();

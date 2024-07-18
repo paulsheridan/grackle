@@ -21,7 +21,7 @@ import { BsGithub, BsLinkedin, BsPerson, BsTwitter } from "react-icons/bs";
 import { MdEmail, MdOutlineEmail } from "react-icons/md";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/booking/$username/contact")({
+export const Route = createFileRoute("/_public/artist/$username/contact")({
   component: Contact,
 });
 

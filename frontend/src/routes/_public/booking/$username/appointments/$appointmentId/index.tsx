@@ -15,10 +15,10 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { AppointmentsService, UsersService } from "../../../../../client";
+import { AppointmentsService, UsersService } from "../../../../../../client";
 
 export const Route = createFileRoute(
-  "/booking/$username/appointments/$appointmentId/",
+  "/_public/booking/$username/appointments/$appointmentId/",
 )({
   component: ConfirmationPage,
 });
