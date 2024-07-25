@@ -37,6 +37,7 @@ function Booking() {
             flex="1"
             bgGradient="linear(to-r, purple.400, green.400)"
             color="white"
+            p={10}
           >
             <Outlet />
             <Footer />
