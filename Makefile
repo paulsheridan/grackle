@@ -24,11 +24,11 @@ bash:
 
 .PHONY: migrate
 migrate:
-	docker exec -it booking-htmx-backend-1 alembic revision --autogenerate
+	docker exec -it grackle-backend-1 alembic revision --autogenerate
 
 .PHONY: upgrade
 upgrade:
-	alembic upgrade head
+	docker exec -it grackle-backend-1 alembic upgrade head
 
 .PHONY: test
 test:

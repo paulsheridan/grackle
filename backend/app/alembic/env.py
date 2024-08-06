@@ -21,6 +21,7 @@ from app.appointments.models import SQLModel
 from app.clients.models import SQLModel
 from app.services.models import SQLModel
 from app.users.models import SQLModel
+from app.gallery.models import SQLModel
 
 
 target_metadata = SQLModel.metadata
